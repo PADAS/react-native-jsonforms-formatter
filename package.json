@@ -1,0 +1,37 @@
+{
+  "name": "react-native-jsonforms-formatter",
+  "version": "1.0.0",
+  "description": "Converts JTD into JSON Schema ",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PADAS/react-native-jsonforms-formatter.git"
+  },
+  "keywords": [
+    "json",
+    "schema",
+    "forms",
+    "JTD",
+    "UI",
+    "formatter",
+    "validator",
+    "validation"
+  ],
+  "author": "Earth Ranger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PADAS/react-native-jsonforms-formatter/issues"
+  },
+  "homepage": "https://github.com/PADAS/react-native-jsonforms-formatter#readme",
+  "dependencies": {
+    "@jsonforms/core": "^3.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.7"
+  }
+}
