@@ -48,7 +48,7 @@ const getDateTimeControlFormat = (key: string, jsonSchema: any, fieldSetItem: an
     return undefined;
 };
 
-export const useGenerateUISchema = (schema: any) => {
+export const generateUISchema = (schema: any) => {
     const elements: Object[] = [];
 
     if (isSchemaFieldSet(schema.definition)) {
