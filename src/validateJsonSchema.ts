@@ -195,7 +195,7 @@ const cleanUpInactiveEnumOptions = (schema: any) => {
     }
 };
 
-export const useValidateSchema = (stringSchema: string) => {
+export const validateSchema = (stringSchema: string) => {
     switch (true) {
         case stringSchema.match(specialCharactersInKey) !== null:
             throw Error('Special characters not supported in JSON Schema');
