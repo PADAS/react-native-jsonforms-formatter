@@ -1,2 +1,2 @@
-export * from './generateUISchema';
-export * from './validateJsonSchema';
+export { generateUISchema } from './generateUISchema';
+export { validateSchema } from './validateJsonSchema';
