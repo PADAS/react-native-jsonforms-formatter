@@ -84,7 +84,6 @@ describe('JSON Schema validation', () => {
 
     it('Format required inline properties',  () => {
         const validSchema = validateSchema(JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES);
-        console.log('Required', validSchema.schema.required);
         expect(validSchema.schema.properties['string'].required).toBeUndefined();
         expect(validSchema.schema.properties['paragraph'].required).toBeUndefined();
         expect(validSchema.schema.properties['number_no_min_max'].required).toBeUndefined();

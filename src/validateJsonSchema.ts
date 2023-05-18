@@ -44,6 +44,7 @@ const generateSchemaForCheckboxes = (schema: any) => {
         schema.schema.properties[key] = getSchemaForCheckbox(
             definition,
             schema.schema.properties[key].title || '',
+            schema.schema.properties[key].required || false,
         );
     });
 
@@ -62,7 +63,8 @@ const getFieldSetTitleSchema = (schema: any) => {
     return schema;
 };
 
-const getSchemaForCheckbox = (definition: any, title: string) => ({
+const getSchemaForCheckbox = (definition: any, title: string, required: boolean) => ({
+    ...required &&  { required },
     type: 'array',
     uniqueItems: true,
     isHidden: false,
@@ -122,10 +124,8 @@ const cleanUpRequiredProperty = (schema: any) => {
 
     // Iterate over the properties to get clean enum data
     for(const key of propertyNames) {
-        console.log('Key', key);
         if (schema.properties[key].required === true || schema.properties[key].required === 'true') {
             requiredProperties.push(key);
-            console.log('pushed', key);
             delete schema.properties[key].required;
         }
         if (schema.properties[key].type === 'array'
