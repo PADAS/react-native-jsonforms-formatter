@@ -1,0 +1,294 @@
+{
+  "auto-generate": true,
+  "description": "This schema will be used for regression testing in the mobile app",
+  "schema": {
+    "title": "Schema All Types - Non required",
+    "type": "object",
+    "required": [
+      "string",
+      "number_no_min_max",
+      "number_with_min",
+      "number_with_max",
+      "number_with_min_and_max",
+      "paragraph",
+      "checkbox_static_choice",
+      "checkbox_query",
+      "calendar",
+      "single_select",
+      "single_select_choices",
+      "collection"
+    ],
+    "properties": {
+      "string": {
+        "type": "string",
+        "title": "I'm a string",
+        "isHidden": false
+      },
+      "number_no_min_max": {
+        "type": "number",
+        "title": "I'm a number without min-max",
+        "isHidden": false
+      },
+      "number_with_min": {
+        "type": "number",
+        "title": "I'm a number with a min (10)",
+        "minimum": 10,
+        "isHidden": false
+      },
+      "number_with_max": {
+        "type": "number",
+        "title": "I'm a number with a max (100)",
+        "maximum": 100,
+        "isHidden": false
+      },
+      "number_with_min_and_max": {
+        "type": "number",
+        "title": "I'm a number with a min (80) and max (1000)",
+        "minimum": 80,
+        "maximum": 1000,
+        "isHidden": false
+      },
+      "paragraph": {
+        "type": "string",
+        "title": "I'm a text area",
+        "isHidden": false
+      },
+      "checkbox_static_choice": {
+        "type": "array",
+        "uniqueItems": true,
+        "isHidden": false,
+        "title": "I'm a checkbox with static choices",
+        "items": {
+          "enum": [
+            "coffee",
+            "water",
+            "juice",
+            "beer",
+            "flavor_water",
+            "milk",
+            "mix_drink",
+            "other",
+            "rompope",
+            "ron",
+            "rum",
+            "soda",
+            "spark_water",
+            "tequila",
+            "whisky"
+          ],
+          "enumNames": [
+            "Coffee",
+            "Water",
+            "Juice",
+            "Beer",
+            "Flavor Water",
+            "Milk",
+            "Mixed Drink",
+            "Other",
+            "Rompope",
+            "Ron",
+            "Rum",
+            "Soda",
+            "Spark Water",
+            "Tequila",
+            "Whisky"
+          ]
+        }
+      },
+      "checkbox_query": {
+        "type": "array",
+        "uniqueItems": true,
+        "isHidden": false,
+        "title": "I'm a checkbox with query",
+        "items": {
+          "enum": [
+            "rhino_value",
+            "blackrhino_value",
+            "whiterhino"
+          ],
+          "enumNames": [
+            "Rhino",
+            "Black Rhino",
+            "White Rhino"
+          ]
+        }
+      },
+      "calendar": {
+        "type": "string",
+        "htmlClass": "col-lg-6",
+        "readonly": false,
+        "title": "I'm a calendar",
+        "isHidden": false
+      },
+      "single_select": {
+        "type": "string",
+        "title": "I'm a single select query",
+        "enum": [
+          "new",
+          "impeded",
+          "old"
+        ],
+        "enumNames": {
+          "new": "New/Fresh",
+          "impeded": "Impeded",
+          "old": "Old"
+        },
+        "isHidden": false
+      },
+      "single_select_choices": {
+        "type": "string",
+        "title": "I'm a single select choices",
+        "enum": [
+          "Option 1",
+          "Option 2",
+          "Option 3"
+        ],
+        "isHidden": false
+      },
+      "collection": {
+        "type": "array",
+        "title": "I'm a collection",
+        "items": {
+          "type": "object",
+          "title": "String inside a collection",
+          "properties": {
+            "ItemConfiscated": {
+              "type": "string",
+              "title": "Item Type",
+              "enum": [
+                "trophies",
+                "weapons",
+                "bushmeat",
+                "other"
+              ],
+              "enumNames": {
+                "trophies": "Trophies",
+                "weapons": "Weapons",
+                "bushmeat": "Bush Beat",
+                "other": "Other"
+              }
+            },
+            "ItemNumber": {
+              "type": "number",
+              "title": "Number of Items",
+              "minimum": 0
+            }
+          }
+        },
+        "isHidden": false
+      }
+    },
+    "icon_id": "hippo_rep",
+    "image_url": "https://develop.pamdas.org/static/sprite-src/hippo_rep.svg"
+  },
+  "definition": [
+    "string",
+    {
+      "key": "paragraph",
+      "type": "textarea"
+    },
+    "number_no_min_max",
+    "number_with_min",
+    "number_with_max",
+    "number_with_min_and_max",
+    "single_select",
+    "single_select_choices",
+    {
+      "key": "collection",
+      "add": "New",
+      "style": {
+        "add": "btn-success"
+      }
+    },
+    {
+      "key": "calendar",
+      "type": "datetime"
+    },
+    {
+      "key": "checkbox_static_choice",
+      "type": "checkboxes",
+      "titleMap": [
+        {
+          "value": "coffee",
+          "name": "Coffee"
+        },
+        {
+          "value": "water",
+          "name": "Water"
+        },
+        {
+          "value": "juice",
+          "name": "Juice"
+        },
+        {
+          "value": "beer",
+          "name": "Beer"
+        },
+        {
+          "value": "flavor_water",
+          "name": "Flavor Water"
+        },
+        {
+          "value": "milk",
+          "name": "Milk"
+        },
+        {
+          "value": "mix_drink",
+          "name": "Mixed Drink"
+        },
+        {
+          "value": "other",
+          "name": "Other"
+        },
+        {
+          "value": "rompope",
+          "name": "Rompope"
+        },
+        {
+          "value": "ron",
+          "name": "Ron"
+        },
+        {
+          "value": "rum",
+          "name": "Rum"
+        },
+        {
+          "value": "soda",
+          "name": "Soda"
+        },
+        {
+          "value": "spark_water",
+          "name": "Spark Water"
+        },
+        {
+          "value": "tequila",
+          "name": "Tequila"
+        },
+        {
+          "value": "whisky",
+          "name": "Whisky"
+        }
+      ],
+      "htmlClass": "json-schema-checkbox-wrapper"
+    },
+    {
+      "htmlClass": "json-schema-checkbox-wrapper",
+      "key": "checkbox_query",
+      "titleMap": [
+        {
+          "name": "Rhino",
+          "value": "rhino_value"
+        },
+        {
+          "name": "Black Rhino",
+          "value": "blackrhino_value"
+        },
+        {
+          "name": "White Rhino",
+          "value": "whiterhino"
+        }
+      ],
+      "type": "checkboxes"
+    }
+  ]
+}
