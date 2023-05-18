@@ -28,6 +28,11 @@
     "url": "https://github.com/PADAS/react-native-jsonforms-formatter/issues"
   },
   "homepage": "https://github.com/PADAS/react-native-jsonforms-formatter#readme",
+  "jest": {
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!lodash-es)"
+    ]
+  },
   "dependencies": {
     "@jsonforms/core": "^3.0.0",
     "lodash-es": "^4.17.21"
