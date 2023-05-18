@@ -99,7 +99,7 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.properties['calendar'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_static_choice'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_query'].required).toBeUndefined();
-        expect(() => (validSchema.schema.required)).toIncludeAllMembers([
+        expect(validSchema.schema.required).toIncludeAllMembers([
             'string',
             'paragraph',
             'number_no_min_max',

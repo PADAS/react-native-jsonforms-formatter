@@ -121,15 +121,17 @@ const cleanUpRequiredProperty = (schema: any) => {
     const requiredProperties = [];
 
     // Iterate over the properties to get clean enum data
-    for (let i = 0, l = propertyNames.length; i < l; i++) {
-        if (schema.properties[propertyNames[i]].required === true || schema.properties[propertyNames[i]].required === 'true') {
-            requiredProperties.push(propertyNames[i]);
-            delete schema.properties[propertyNames[i]].required;
+    for(const key of propertyNames) {
+        console.log('Key', key);
+        if (schema.properties[key].required === true || schema.properties[key].required === 'true') {
+            requiredProperties.push(key);
+            console.log('pushed', key);
+            delete schema.properties[key].required;
         }
-        if (schema.properties[propertyNames[i]].type === 'array'
-            && schema.properties[propertyNames[i]].items.enum === undefined
-            && schema.properties[propertyNames[i]].items.enumNames === undefined) {
-            cleanUpRequiredProperty(schema.properties[propertyNames[i]].items);
+        if (schema.properties[key].type === 'array'
+            && schema.properties[key].items.enum === undefined
+            && schema.properties[key].items.enumNames === undefined) {
+            cleanUpRequiredProperty(schema.properties[key].items);
         }
     }
 
