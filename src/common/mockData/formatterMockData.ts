@@ -6,7 +6,7 @@ export const JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA = '{\n' +
     ' ],\n' +
     ' "schema": {\n' +
     '  "properties": {\n' +
-    '   "text_input": {\n' +
+    '   "text_input_%": {\n' +
     '    "title": "Text input field",\n' +
     '    "type": "string"\n' +
     '   }\n' +
@@ -64,8 +64,8 @@ export const JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA = '{\n' +
     '  "text_input"\n' +
     ' ],\n' +
     ' "schema": {\n' +
-    '  $schema": "http://json-schema.org/draft-04/schema#,' +
-    '  "id": "https://develop.pamdas.org/api/v1.0/activity/events/schema/eventtype/all_types_required_point",' +
+    '  "$schema": "http://json-schema.org/draft-04/schema#",\n' +
+    '  "id": "https://develop.pamdas.org/api/v1.0/activity/events/schema/eventtype/all_types_required_point",\n' +
     '  "properties": {\n' +
     '   "text_input": {\n' +
     '    "title": "Text input field",\n' +
@@ -161,14 +161,14 @@ export const JSON_SCHEMA_FIELD_SETS_FAKE_DATA = '{\n' +
     '}'
 
 export const FIELD_SET_HEADER_FAKE_DATA = {
-    fieldset_title_fieldset_title: {
+    fieldset__title_fieldset_title: {
         type: 'string',
         readOnly: true,
         isHidden: false,
         display: ElementDisplay.Header,
         title: 'Fieldset title',
     },
-    fieldset_title_fieldset_number_title: {
+    fieldset__title_fieldset_number_title: {
         type: 'string',
         readOnly: true,
         isHidden: false,
@@ -231,7 +231,7 @@ export const COLLECTION_FIELD_HEADER_FAKE_DATA = {
         readOnly: true,
         isHidden: false,
         display: ElementDisplay.Header,
-        title: 'Fieldset title',
+        title: 'Exhibits Recovered',
     }
 };
 

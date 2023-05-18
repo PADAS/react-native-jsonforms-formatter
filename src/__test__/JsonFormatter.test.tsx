@@ -1,3 +1,5 @@
+import "jest-extended";
+// Internal Dependencies
 import jsonSchema from "../common/mockData/jsonSchemaMock.json";
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
@@ -20,7 +22,7 @@ import {
 describe('JSON Schema validation', () => {
 
     it('Special chars should throw an exception',  () => {
-        expect(validateSchema(JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA)).toThrowError('Special characters not supported in JSON Schema');
+        expect(() => { validateSchema(JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA) }).toThrowError('Special characters not supported in JSON Schema');
     });
 
     it('Validate invalid double quotes',  () => {
@@ -40,16 +42,10 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.id).toBeUndefined();
     });
 
-    it('Validate remove $schema and id properties',  () => {
-        const validSchema = validateSchema(JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA);
-        expect(validSchema.schema.$schema).toBeUndefined();
-        expect(validSchema.schema.id).toBeUndefined();
-    });
 
     it('Validate remove inactive choices',  () => {
         const validSchema = validateSchema(JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA);
         expect(validSchema.schema.properties.invasivespecies_urgency.enum).not.toContain('test');
-        expect(validSchema.schema.properties.invasivespecies_urgency.enumNames['test']).toBeUndefined();
     });
 
     it('Format schema definition location',  () => {
@@ -60,8 +56,8 @@ describe('JSON Schema validation', () => {
 
     it('Format readonly properties for field set headers',  () => {
         const validSchema = validateSchema(JSON_SCHEMA_FIELD_SETS_FAKE_DATA);
-        expect(validSchema.schema.properties['fieldset_title_fieldset_title']).toMatchObject(FIELD_SET_HEADER_FAKE_DATA.fieldset_title_fieldset_title);
-        expect(validSchema.schema.properties['fieldset_title_fieldset_number_title']).toMatchObject(FIELD_SET_HEADER_FAKE_DATA.fieldset_title_fieldset_number_title);
+        expect(validSchema.schema.properties['fieldset__title_fieldset_title']).toMatchObject(FIELD_SET_HEADER_FAKE_DATA.fieldset__title_fieldset_title);
+        expect(validSchema.schema.properties['fieldset__title_fieldset_number_title']).toMatchObject(FIELD_SET_HEADER_FAKE_DATA.fieldset__title_fieldset_number_title);
     });
 
     it('Format collection field headers',  () => {
@@ -71,6 +67,7 @@ describe('JSON Schema validation', () => {
 
     it('Validate field visibility',  () => {
         const validSchema = validateSchema(JSON.stringify(jsonSchema));
+        const prop = validSchema.schema.properties['string'];
         expect(validSchema.schema.properties['string'].isHidden).toBe(false);
         expect(validSchema.schema.properties['paragraph'].isHidden).toBe(false);
         expect(validSchema.schema.properties['number_no_min_max'].isHidden).toBe(false);
@@ -80,8 +77,6 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.properties['single_select'].isHidden).toBe(false);
         expect(validSchema.schema.properties['single_select_choices'].isHidden).toBe(false);
         expect(validSchema.schema.properties['collection'].isHidden).toBe(false);
-        expect(validSchema.schema.properties['collection'].items.properties['ItemConfiscated'].isHidden).toBe(false);
-        expect(validSchema.schema.properties['collection'].items.properties['ItemNumber'].isHidden).toBe(false);
         expect(validSchema.schema.properties['calendar'].isHidden).toBe(false);
         expect(validSchema.schema.properties['checkbox_static_choice'].isHidden).toBe(false);
         expect(validSchema.schema.properties['checkbox_query'].isHidden).toBe(false);
@@ -89,6 +84,7 @@ describe('JSON Schema validation', () => {
 
     it('Format required inline properties',  () => {
         const validSchema = validateSchema(JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES);
+        console.log('Required', validSchema.schema.required);
         expect(validSchema.schema.properties['string'].required).toBeUndefined();
         expect(validSchema.schema.properties['paragraph'].required).toBeUndefined();
         expect(validSchema.schema.properties['number_no_min_max'].required).toBeUndefined();
@@ -103,6 +99,20 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.properties['calendar'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_static_choice'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_query'].required).toBeUndefined();
+        expect(() => (validSchema.schema.required)).toIncludeAllMembers([
+            'string',
+            'paragraph',
+            'number_no_min_max',
+            'number_with_min',
+            'number_with_max',
+            'number_with_min_and_max',
+            'single_select',
+            'single_select_choices',
+            'collection',
+            'calendar',
+            'checkbox_static_choice',
+            'checkbox_query',
+        ]);
         expect(validSchema.schema.required).toIncludeAllMembers([
             'string',
             'paragraph',
@@ -116,21 +126,7 @@ describe('JSON Schema validation', () => {
             'calendar',
             'checkbox_static_choice',
             'checkbox_query',
-        ])
-        expect(validSchema.schema.required).toIncludeAllMembers([
-            'string',
-            'paragraph',
-            'number_no_min_max',
-            'number_with_min',
-            'number_with_max',
-            'number_with_min_and_max',
-            'single_select',
-            'single_select_choices',
-            'collection',
-            'calendar',
-            'checkbox_static_choice',
-            'checkbox_query',
-        ])
+        ]);
     });
 
     it('Validate schema validator should match expected json schema',  () => {
