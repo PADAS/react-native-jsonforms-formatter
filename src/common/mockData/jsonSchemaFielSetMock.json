@@ -1,0 +1,972 @@
+{
+  "schema": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "icon_id": "array_fieldsets_issue_fix",
+    "id": "https://develop.pamdas.org/api/v1.0/activity/events/schema/eventtype/array_fieldsets_issue_fix",
+    "image_url": "https://develop.pamdas.org/static/generic-black.svg",
+    "properties": {
+      "access_roads": {
+        "items": {
+          "properties": {
+            "access_roads_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Presence of Access Roads",
+              "type": "string"
+            },
+            "potholes": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.2. Potholes",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Access Roads",
+        "type": "array"
+      },
+      "additional_info": {
+        "title": "Additional Comments/Observations/Recommendations",
+        "type": "string"
+      },
+      "benches": {
+        "items": {
+          "properties": {
+            "benches_state": {
+              "enum": [],
+              "enumNames": {},
+              "title": "5.1. Condition of Benches",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "5. Benches",
+        "type": "array"
+      },
+      "boardwalks": {
+        "items": {
+          "properties": {
+            "boardwalks_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "3.1. Presence of Boardwalks",
+              "type": "string"
+            },
+            "foundation_sills": {
+              "enum": [],
+              "enumNames": {},
+              "title": "3.3. Foundation sills",
+              "type": "string"
+            },
+            "wooden_parts_boardwalks_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "3.2. Condition of Wooden Parts",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "3. Boardwalks",
+        "type": "array"
+      },
+      "bridges": {
+        "items": {
+          "properties": {
+            "bridges_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.1. Presence of Bridges",
+              "type": "string"
+            },
+            "foundation_undermined": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.6. Is the foundation being undermined?",
+              "type": "string"
+            },
+            "foundations_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.4. Condition of Foundations",
+              "type": "string"
+            },
+            "metal_parts_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.3. Condition of Metal Parts",
+              "type": "string"
+            },
+            "streambanks": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.5. Are streambanks eroding?",
+              "type": "string"
+            },
+            "wooden_parts_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.2. Condition of Wooden Parts",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "2. Bridges",
+        "type": "array"
+      },
+      "bulletin_board_sign": {
+        "items": {
+          "properties": {
+            "info_shelter": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.3. Information Sign Shelter/Kiosk",
+              "type": "string"
+            },
+            "sign_info": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.2. Map Signs/Information",
+              "type": "string"
+            },
+            "sign_state": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.1. Plexiglass",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "4. Bulletin board/Information Sign(s)",
+        "type": "array"
+      },
+      "corridor_clearance": {
+        "items": {
+          "properties": {
+            "blowdowns_windfalls": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.2. Are all blowdowns and windfalls removed?",
+              "type": "string"
+            },
+            "chainsaw_work": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.3. Chainsaw/brush-saw work required to remove hazards or blockages?",
+              "type": "string"
+            },
+            "corridor_clear": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Is corridor clear?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Corridor Clearance (note: Height & Width Min Standards: 2.5m high x 1.5m)",
+        "type": "array"
+      },
+      "drain_dips": {
+        "items": {
+          "properties": {
+            "drain_reconstruction": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "3.2. Do any drain dips or water-bars need to be reconstructed?",
+              "type": "string"
+            },
+            "drains_condition": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "3.1. Are all drain dips/water-bars flowing freely?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "3. Drain dips and Water-bars",
+        "type": "array"
+      },
+      "drainage_channels": {
+        "items": {
+          "properties": {
+            "ditch_condition": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Are all ditches clear and running freely?",
+              "type": "string"
+            },
+            "ditch_restoration": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.2. Do any ditches need to restored or new ones constructed?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Ditches",
+        "type": "array"
+      },
+      "drainage_culverts": {
+        "items": {
+          "properties": {
+            "culverts_condition": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.1. Are all culverts clear and running freely?",
+              "type": "string"
+            },
+            "culverts_rick_rap": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.3. Is any rock rip-rap (stone faces around inlet/outlet) required?",
+              "type": "string"
+            },
+            "new_culverts": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.2. Are any new culverts required to be installed?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "2. Culverts",
+        "type": "array"
+      },
+      "fences": {
+        "items": {
+          "properties": {
+            "fences_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "3.2. State of Fences",
+              "type": "string"
+            },
+            "presence_fences": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "3.1. Presence of Fences",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "3. Fences",
+        "type": "array"
+      },
+      "general_info": {
+        "title": "General Information",
+        "type": "string"
+      },
+      "litter": {
+        "items": {
+          "properties": {
+            "litter_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "1.1. Status of Litter",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Litter",
+        "type": "array"
+      },
+      "parking_lot": {
+        "items": {
+          "properties": {
+            "bollards": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.5. Bollards/Posts",
+              "type": "string"
+            },
+            "parking_potholes": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.2. Potholes",
+              "type": "string"
+            },
+            "parking_stall": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.4. Parking Stall Marking/Striping",
+              "type": "string"
+            },
+            "presence_parking_lot": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.1. Presence of Parking Lot",
+              "type": "string"
+            },
+            "wheel_barrier": {
+              "enum": [],
+              "enumNames": {},
+              "title": "2.3. Wheel Stops/Barriers",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "2. Parking Lot",
+        "type": "array"
+      },
+      "picnic_tables": {
+        "items": {
+          "properties": {
+            "picnic_state": {
+              "enum": [],
+              "enumNames": {},
+              "title": "6.1. Condition of Picnic Tables",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "6. Picnic Tables",
+        "type": "array"
+      },
+      "restrooms": {
+        "items": {
+          "properties": {
+            "clean_toilet": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.3. Cleanliness of Toilets",
+              "type": "string"
+            },
+            "toilet_paper": {
+              "enum": [],
+              "enumNames": {},
+              "title": "8.2. Toilet Paper Status",
+              "type": "string"
+            },
+            "toilets_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "8.1. Condition of Toilets",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "8. Restrooms/Portable toilets",
+        "type": "array"
+      },
+      "signs_waypoints": {
+        "items": {
+          "properties": {
+            "sign_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "1.3. Signs/Wayside Exhibits Condition",
+              "type": "string"
+            },
+            "sign_number": {
+              "minimum": 0,
+              "title": "1.2. Sign Number",
+              "type": "number"
+            },
+            "signs_waypoints_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Presence of Signs/Wayside Exhibits",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Signs/Wayside Exhibits",
+        "type": "array"
+      },
+      "steps": {
+        "items": {
+          "properties": {
+            "condition_dirt": {
+              "enum": [],
+              "enumNames": {},
+              "title": "5.2. Condition of Material (Dirt/Gravel/Other)",
+              "type": "string"
+            },
+            "steps_landings": {
+              "enum": [],
+              "enumNames": {},
+              "title": "5.3. Condition of Steps Landings",
+              "type": "string"
+            },
+            "wooden_steps": {
+              "enum": [],
+              "enumNames": {},
+              "title": "5.1. Condition of Wooden Steps",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "5. Steps",
+        "type": "array"
+      },
+      "structures": {
+        "items": {
+          "properties": {
+            "structure_condition": {
+              "enum": [],
+              "enumNames": {},
+              "title": "1.2. Condition of Structures",
+              "type": "string"
+            },
+            "structure_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Presence of Structures",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Structures",
+        "type": "array"
+      },
+      "surface": {
+        "items": {
+          "properties": {
+            "eroded_surface": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "6.2. Are sections of the tread eroded?",
+              "type": "string"
+            },
+            "estimated_erosion": {
+              "title": "6.2.1. Estimated size of Erosion",
+              "type": "string"
+            },
+            "muddy_erosion": {
+              "title": "6.3.1. Estimated size of Muddy Area",
+              "type": "string"
+            },
+            "muddy_surface": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "6.3. Is the tread unusually muddy?",
+              "type": "string"
+            },
+            "slumping_area": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "6.3. Is there slumping on side hills of trail?",
+              "type": "string"
+            },
+            "status_trail_surface": {
+              "enum": [],
+              "enumNames": {},
+              "title": "6.1. Condition of Trail Surface",
+              "type": "string"
+            },
+            "trip_hazards": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "6.4. Is trail free of tripping hazards?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "6. Trail Surface/Tread",
+        "type": "array"
+      },
+      "trail_assessor": {
+        "title": "Assessor",
+        "type": "string"
+      },
+      "trail_class": {
+        "title": "Trail Class",
+        "type": "number"
+      },
+      "trail_name": {
+        "enum": [],
+        "enumNames": {},
+        "title": "Trail Name",
+        "type": "string"
+      },
+      "trail_number": {
+        "title": "Trail Number",
+        "type": "number"
+      },
+      "trail_purpose": {
+        "items": {
+          "properties": {
+            "if_not_why": {
+              "title": "2.3. If No, why not?",
+              "type": "string"
+            },
+            "intent_met": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "2.2. Is the Intent being met?",
+              "type": "string"
+            },
+            "trail_counters": {
+              "title": "2.1. What is the original intent of trail, i.e. general leisure walk; access to feature; interpretive; viewpoint(s); wilderness experience; rugged challenge; camping; etc?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "2. Trail Purpose",
+        "type": "array"
+      },
+      "trail_use": {
+        "items": {
+          "properties": {
+            "batteries_counters": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.4. Does the counter require new batteries?",
+              "type": "string"
+            },
+            "condition_trail_counters": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.2. If Yes, are they functioning properly?",
+              "type": "string"
+            },
+            "no_counter_estimate": {
+              "enum": [],
+              "enumNames": {},
+              "title": "1.4. If there are no counters, what was the observed use (Opinion)?",
+              "type": "string"
+            },
+            "number_counters": {
+              "title": "1.3. What was the observed count number?",
+              "type": "string"
+            },
+            "trail_counters": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "1.1. Are there trail counters?",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "1. Trail Use",
+        "type": "array"
+      },
+      "trash": {
+        "items": {
+          "properties": {
+            "trash_state": {
+              "enum": [],
+              "enumNames": {},
+              "title": "7.1. Status of Trash Cans",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "7. Trash Cans/Screened Sheds",
+        "type": "array"
+      },
+      "turnpikes": {
+        "items": {
+          "properties": {
+            "anchor_stakes": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.3. Anchor Stakes Condition",
+              "type": "string"
+            },
+            "edge_logs": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.2. Edge Logs Condition",
+              "type": "string"
+            },
+            "edge_rocks": {
+              "enum": [],
+              "enumNames": {},
+              "title": "4.4. Edge Rocks Condition",
+              "type": "string"
+            },
+            "turnpikes_presence": {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "enumNames": {
+                "no": "No",
+                "yes": "Yes"
+              },
+              "title": "4.1. Presence of Turnpikes",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title": "4. Turnpikes (Raised trail-bed with supported edges)",
+        "type": "array"
+      }
+    },
+    "title": "Trail Assessment Form (trail_assessment)",
+    "type": "object"
+  },
+  "definition": [
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "Trail Information_Location",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-6",
+      "key": "trail_number"
+    },
+    {
+      "htmlClass": "col-lg-6",
+      "key": "trail_name"
+    },
+    {
+      "htmlClass": "col-lg-6",
+      "key": "trail_class"
+    },
+    {
+      "htmlClass": "col-lg-6",
+      "key": "trail_assessor"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "key": "general_info"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "access_roads",
+        "parking_lot",
+        "fences",
+        "bulletin_board_sign",
+        "benches",
+        "picnic_tables",
+        "trash",
+        "restrooms"
+      ],
+      "title": "Identified Problems to be Addressed: TRAILHEAD(S)",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "signs_waypoints"
+      ],
+      "title": "Identified Problems to be Addressed: SIGNS AND WAYSIDE EXHIBITS",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "litter"
+      ],
+      "title": "Identified Problems to be Addressed: LITTER",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "structures",
+        "bridges",
+        "boardwalks",
+        "turnpikes",
+        "steps"
+      ],
+      "title": "Identified Problems to be Addressed: STRUCTURES",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "surface"
+      ],
+      "title": "Identified Problems to be Addressed: TRAIL SURFACE/TREAD",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "corridor_clearance"
+      ],
+      "title": "Identified Problems to be Addressed: CORRIDOR CLEARANCE",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "drainage_channels",
+        "drainage_culverts",
+        "drain_dips"
+      ],
+      "title": "Identified Problems to be Addressed: DRAINAGE",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [
+        "trail_use",
+        "trail_purpose"
+      ],
+      "title": "Information about the Trail",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "items": [],
+      "title": "Additional Information",
+      "type": "fieldset"
+    },
+    {
+      "htmlClass": "col-lg-12",
+      "key": "additional_info",
+      "type": "textarea"
+    }
+  ]
+}

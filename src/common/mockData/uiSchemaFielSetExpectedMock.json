@@ -1,0 +1,297 @@
+{
+  "type": "Category",
+  "elements": [
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_trail_information_location",
+      "label": "Trail Information_Location",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_number",
+      "label": "Trail Number",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_name",
+      "label": "Trail Name",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_class",
+      "label": "Trail Class",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_assessor",
+      "label": "Assessor",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/general_info",
+      "label": "General Information",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_trailhead(s)",
+      "label": "Identified Problems to be Addressed: TRAILHEAD(S)",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/access_roads",
+      "label": "1. Access Roads",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/parking_lot",
+      "label": "2. Parking Lot",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fences",
+      "label": "3. Fences",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/bulletin_board_sign",
+      "label": "4. Bulletin board/Information Sign(s)",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/benches",
+      "label": "5. Benches",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/picnic_tables",
+      "label": "6. Picnic Tables",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trash",
+      "label": "7. Trash Cans/Screened Sheds",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/restrooms",
+      "label": "8. Restrooms/Portable toilets",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_signs_and_wayside_exhibits",
+      "label": "Identified Problems to be Addressed: SIGNS AND WAYSIDE EXHIBITS",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/signs_waypoints",
+      "label": "1. Signs/Wayside Exhibits",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_litter",
+      "label": "Identified Problems to be Addressed: LITTER",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/litter",
+      "label": "1. Litter",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_structures",
+      "label": "Identified Problems to be Addressed: STRUCTURES",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/structures",
+      "label": "1. Structures",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/bridges",
+      "label": "2. Bridges",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/boardwalks",
+      "label": "3. Boardwalks",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/turnpikes",
+      "label": "4. Turnpikes (Raised trail-bed with supported edges)",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/steps",
+      "label": "5. Steps",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_trail_surface_tread",
+      "label": "Identified Problems to be Addressed: TRAIL SURFACE/TREAD",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/surface",
+      "label": "6. Trail Surface/Tread",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_corridor_clearance",
+      "label": "Identified Problems to be Addressed: CORRIDOR CLEARANCE",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/corridor_clearance",
+      "label": "1. Corridor Clearance (note: Height & Width Min Standards: 2.5m high x 1.5m)",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_identified_problems_to_be_addressed:_drainage",
+      "label": "Identified Problems to be Addressed: DRAINAGE",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/drainage_channels",
+      "label": "1. Ditches",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/drainage_culverts",
+      "label": "2. Culverts",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/drain_dips",
+      "label": "3. Drain dips and Water-bars",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_information_about_the_trail",
+      "label": "Information about the Trail",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_use",
+      "label": "1. Trail Use",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/trail_purpose",
+      "label": "2. Trail Purpose",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_additional_information",
+      "label": "Additional Information",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/additional_info",
+      "label": "Additional Comments/Observations/Recommendations",
+      "options": {}
+    }
+  ]
+}

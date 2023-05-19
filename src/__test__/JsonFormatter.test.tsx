@@ -1,8 +1,9 @@
-import "jest-extended";
 // Internal Dependencies
 import jsonSchema from "../common/mockData/jsonSchemaMock.json";
+import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
+import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
 import { validateSchema } from "../validateJsonSchema";
 import { generateUISchema } from "../generateUISchema";
 import {
@@ -17,7 +18,6 @@ import {
     JSON_SCHEMA_COLLECTION_FIELD_FAKE_DATA,
     COLLECTION_FIELD_HEADER_FAKE_DATA, JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
 } from "../common/mockData/formatterMockData";
-
 
 describe('JSON Schema validation', () => {
 
@@ -136,9 +136,15 @@ describe('JSON Schema validation', () => {
 
 describe('JSON UI Schema generation', () => {
 
-    it('ui schema generator should match expected ui schema',  () => {
+    it('Generate UI Schema for all renderers',  () => {
         const validSchema = validateSchema(JSON.stringify(jsonSchema));
         const uiSchema = generateUISchema(validSchema);
         expect(uiSchema).toMatchObject(expectedUISchema);
+    });
+
+    it('Generate UI Schema for field sets',  () => {
+        const validSchema = validateSchema(JSON.stringify(jsonSchemaFieldSets));
+        const uiSchema = generateUISchema(validSchema);
+        expect(uiSchema).toMatchObject(expectedFieldSetUISchema);
     });
 });

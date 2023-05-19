@@ -15,6 +15,7 @@
       "checkbox_static_choice",
       "checkbox_query",
       "calendar",
+      "calendar_clock",
       "single_select",
       "single_select_choices",
       "collection"
@@ -56,11 +57,16 @@
         "title": "I'm a checkbox with query",
         "type": "checkboxes"
       },
-      "calendar": {
+      "calendar_clock": {
         "type": "string",
         "htmlClass": "col-lg-6",
         "readonly": false,
-        "title": "I'm a calendar"
+        "title": "I'm a calendar with clock"
+      },
+      "calendar": {
+        "type": "string",
+        "title": "I'm a calendar",
+        "format": "date"
       },
       "single_select": {
         "type": "string",
@@ -134,6 +140,10 @@
     "single_select",
     "single_select_choices",
     {
+      "helpvalue": "<h2>Collection header</h2>",
+      "type": "help"
+    },
+    {
       "key": "collection",
       "add": "New",
       "style": {
@@ -141,8 +151,14 @@
       }
     },
     {
-      "key": "calendar",
+      "key": "calendar_clock",
       "type": "datetime"
+    },
+    {
+      "key": "calendar",
+      "type": "",
+      "fieldHtmlClass": "date-picker json-schema",
+      "readonly": false
     },
     {
       "key": "checkbox_static_choice",
