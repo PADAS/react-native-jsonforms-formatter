@@ -162,7 +162,7 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
         if (typeof item === 'string') {
             properties[item] = schema.schema.properties[item];
             delete schema.schema.properties[item];
-        } else if (item instanceof Object) {
+        } else {
             if (item.helpvalue !== undefined) {
                 const property = `help_value_${headerCount}`;
                 headerCount += 1;
