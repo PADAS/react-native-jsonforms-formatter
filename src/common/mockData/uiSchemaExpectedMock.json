@@ -1,0 +1,103 @@
+{
+  "type": "Category",
+  "elements": [
+    {
+      "type": "Control",
+      "scope": "#/properties/string",
+      "label": "I'm a string",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/paragraph",
+      "label": "I'm a text area",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/number_no_min_max",
+      "label": "I'm a number without min-max",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/number_with_min",
+      "label": "I'm a number with a min (10)",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/number_with_max",
+      "label": "I'm a number with a max (100)",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/number_with_min_and_max",
+      "label": "I'm a number with a min (80) and max (1000)",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/single_select",
+      "label": "I'm a single select query",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/single_select_choices",
+      "label": "I'm a single select choices",
+      "options": {}
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/help_value_0",
+      "label": "Collection header",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/collection",
+      "label": "I'm a collection",
+      "options": {
+        "format": "repeatable-field"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/calendar_clock",
+      "label": "I'm a calendar with clock",
+      "options": {
+        "format": "date-time",
+        "display": "date-time"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/calendar",
+      "label": "I'm a calendar",
+      "options": {
+        "format": "date-time",
+        "display": "date"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/checkbox_static_choice",
+      "label": "I'm a checkbox with static choices",
+      "options": {
+        "format": "multiselect"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/checkbox_query",
+      "label": "I'm a checkbox with query",
+      "options": {
+        "format": "multiselect"
+      }
+    }
+  ]
+}
