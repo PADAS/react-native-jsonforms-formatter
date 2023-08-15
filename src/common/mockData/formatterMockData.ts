@@ -362,12 +362,12 @@ export const JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES = '{\n' +
     '    "type": "string"\n' +
     '   },\n' +
     '   "checkbox_query": {\n' +
-    '    "required": true,\n' +
+    '    "required": "true",\n' +
     '    "title": "I\'m a checkbox with query",\n' +
     '    "type": "checkboxes"\n' +
     '   },\n' +
     '   "checkbox_static_choice": {\n' +
-    '    "required": true,\n' +
+    '    "required": 1,\n' +
     '    "title": "I\'m a checkbox with static choices",\n' +
     '    "type": "checkboxes"\n' +
     '   },\n' +
