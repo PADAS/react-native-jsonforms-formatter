@@ -124,7 +124,8 @@ const cleanUpRequiredProperty = (schema: any) => {
 
     // Iterate over the properties to get clean enum data
     for(const key of propertyNames) {
-        if (schema.properties[key].required === true || schema.properties[key].required === 'true') {
+        if (schema.properties[key].required === 'true'
+          || schema.properties[key].required > 0) {
             requiredProperties.push(key);
             delete schema.properties[key].required;
         }

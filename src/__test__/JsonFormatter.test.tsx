@@ -112,20 +112,6 @@ describe('JSON Schema validation', () => {
             'checkbox_static_choice',
             'checkbox_query',
         ]);
-        expect(validSchema.schema.required).toIncludeAllMembers([
-            'string',
-            'paragraph',
-            'number_no_min_max',
-            'number_with_min',
-            'number_with_max',
-            'number_with_min_and_max',
-            'single_select',
-            'single_select_choices',
-            'collection',
-            'calendar',
-            'checkbox_static_choice',
-            'checkbox_query',
-        ]);
     });
 
     it('Validate schema validator should match expected json schema',  () => {

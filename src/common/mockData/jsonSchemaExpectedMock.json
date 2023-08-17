@@ -14,6 +14,7 @@
       "checkbox_static_choice",
       "checkbox_query",
       "calendar",
+      "calendar_clock",
       "single_select",
       "single_select_choices",
       "collection"
@@ -22,6 +23,11 @@
       "string": {
         "type": "string",
         "title": "I'm a string",
+        "isHidden": false
+      },
+      "paragraph": {
+        "type": "string",
+        "title": "I'm a text area",
         "isHidden": false
       },
       "number_no_min_max": {
@@ -48,9 +54,81 @@
         "maximum": 1000,
         "isHidden": false
       },
-      "paragraph": {
+      "single_select": {
         "type": "string",
-        "title": "I'm a text area",
+        "title": "I'm a single select query",
+        "enum": [
+          "new",
+          "impeded",
+          "old"
+        ],
+        "enumNames": {
+          "new": "New/Fresh",
+          "impeded": "Impeded",
+          "old": "Old"
+        },
+        "isHidden": false
+      },
+      "single_select_choices": {
+        "type": "string",
+        "title": "I'm a single select choices",
+        "enum": [
+          "Option 1",
+          "Option 2",
+          "Option 3"
+        ],
+        "isHidden": false
+      },
+      "help_value_0": {
+        "type": "string",
+        "readOnly": true,
+        "isHidden": false,
+        "display": "header",
+        "title": "Collection header"
+      },
+      "collection": {
+        "type": "array",
+        "title": "I'm a collection",
+        "items": {
+          "type": "object",
+          "title": "String inside a collection",
+          "properties": {
+            "ItemConfiscated": {
+              "type": "string",
+              "title": "Item Type",
+              "enum": [
+                "trophies",
+                "weapons",
+                "bushmeat",
+                "other"
+              ],
+              "enumNames": {
+                "trophies": "Trophies",
+                "weapons": "Weapons",
+                "bushmeat": "Bush Beat",
+                "other": "Other"
+              }
+            },
+            "ItemNumber": {
+              "type": "number",
+              "title": "Number of Items",
+              "minimum": 0
+            }
+          }
+        },
+        "isHidden": false
+      },
+      "calendar_clock": {
+        "type": "string",
+        "htmlClass": "col-lg-6",
+        "readonly": false,
+        "title": "I'm a calendar with clock",
+        "isHidden": false
+      },
+      "calendar": {
+        "type": "string",
+        "title": "I'm a calendar",
+        "format": "date",
         "isHidden": false
       },
       "checkbox_static_choice": {
@@ -112,70 +190,6 @@
             "White Rhino"
           ]
         }
-      },
-      "calendar": {
-        "type": "string",
-        "htmlClass": "col-lg-6",
-        "readonly": false,
-        "title": "I'm a calendar",
-        "isHidden": false
-      },
-      "single_select": {
-        "type": "string",
-        "title": "I'm a single select query",
-        "enum": [
-          "new",
-          "impeded",
-          "old"
-        ],
-        "enumNames": {
-          "new": "New/Fresh",
-          "impeded": "Impeded",
-          "old": "Old"
-        },
-        "isHidden": false
-      },
-      "single_select_choices": {
-        "type": "string",
-        "title": "I'm a single select choices",
-        "enum": [
-          "Option 1",
-          "Option 2",
-          "Option 3"
-        ],
-        "isHidden": false
-      },
-      "collection": {
-        "type": "array",
-        "title": "I'm a collection",
-        "items": {
-          "type": "object",
-          "title": "String inside a collection",
-          "properties": {
-            "ItemConfiscated": {
-              "type": "string",
-              "title": "Item Type",
-              "enum": [
-                "trophies",
-                "weapons",
-                "bushmeat",
-                "other"
-              ],
-              "enumNames": {
-                "trophies": "Trophies",
-                "weapons": "Weapons",
-                "bushmeat": "Bush Beat",
-                "other": "Other"
-              }
-            },
-            "ItemNumber": {
-              "type": "number",
-              "title": "Number of Items",
-              "minimum": 0
-            }
-          }
-        },
-        "isHidden": false
       }
     },
     "icon_id": "hippo_rep",
@@ -194,6 +208,10 @@
     "single_select",
     "single_select_choices",
     {
+      "helpvalue": "<h2>Collection header</h2>",
+      "type": "help"
+    },
+    {
       "key": "collection",
       "add": "New",
       "style": {
@@ -201,8 +219,14 @@
       }
     },
     {
-      "key": "calendar",
+      "key": "calendar_clock",
       "type": "datetime"
+    },
+    {
+      "key": "calendar",
+      "type": "",
+      "fieldHtmlClass": "date-picker json-schema",
+      "readonly": false
     },
     {
       "key": "checkbox_static_choice",
