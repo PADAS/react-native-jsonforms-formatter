@@ -23,7 +23,7 @@
     "validation"
   ],
   "author": "EarthRanger",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/PADAS/react-native-jsonforms-formatter/issues"
   },
