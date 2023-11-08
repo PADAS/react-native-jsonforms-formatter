@@ -31,7 +31,9 @@
   },
   "homepage": "https://github.com/PADAS/react-native-jsonforms-formatter#readme",
   "jest": {
-    "setupFilesAfterEnv": ["jest-extended/all"],
+    "setupFilesAfterEnv": [
+      "jest-extended/all"
+    ],
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!lodash-es)"
     ]
