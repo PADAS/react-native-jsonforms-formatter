@@ -5,8 +5,9 @@
   "description": "Converts JTD into JSON Schema ",
   "main": "src/index.ts",
   "scripts": {
+    "preinstall": "git config core.hooksPath .githooks",
     "build": "tsc",
-    "lint": "xo --fix",
+    "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest src/.*\\.test\\..* --coverage"
   },
   "repository": {
