@@ -16,7 +16,10 @@ import {
     JSON_SCHEMA_FIELD_SETS_FAKE_DATA,
     FIELD_SET_HEADER_FAKE_DATA,
     JSON_SCHEMA_COLLECTION_FIELD_FAKE_DATA,
-    COLLECTION_FIELD_HEADER_FAKE_DATA, JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
+    COLLECTION_FIELD_HEADER_FAKE_DATA,
+    JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
+    JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA,
+    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
 } from "../common/mockData/formatterMockData";
 
 describe('JSON Schema validation', () => {
@@ -43,9 +46,19 @@ describe('JSON Schema validation', () => {
     });
 
 
-    it('Validate remove inactive choices',  () => {
+    it('Validate remove inactive enum choices',  () => {
         const validSchema = validateSchema(JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA);
         expect(validSchema.schema.properties.invasivespecies_urgency.enum).not.toContain('test');
+    });
+
+    it('Validate remove inactive titleMap choices',  () => {
+        const validSchema = validateSchema(JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA);
+        expect(validSchema.schema.properties.behavior.items.enum).not.toContain('phot_evidence_collected');
+    });
+
+    it('Validate remove inactive fieldset titleMap choices',  () => {
+        const validSchema = validateSchema(JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA);
+        expect(validSchema.schema.properties.reportorigin.items.enum).not.toContain('phot_evidence_collected');
     });
 
     it('Format schema definition location',  () => {
