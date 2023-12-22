@@ -32,6 +32,11 @@ const generateSchemaForCheckboxes = (schema: any) => {
       item instanceof Object && isFieldSet(item)));
 
     fieldSet.forEach((fieldSetItem: any) => {
+      fieldSetItem.items.forEach((fieldSetItems: any) => {
+        if (fieldSetItems?.inactive_titleMap?.length > 0) {
+          removeDisabledEnumChoices(fieldSetItems.inactive_titleMap, fieldSetItems);
+        }
+      });
       const nestedCheckboxes = fieldSetItem.items.filter((item: any) => isCheckbox(item));
       if (nestedCheckboxes.length > 0) {
         checkboxes.push(...nestedCheckboxes);
@@ -198,6 +203,40 @@ const cleanUpInactiveEnumOptions = (schema: any) => {
   }
 };
 
+const cleanUpDisabledEnumChoices = (schema: any) => {
+  if (schema.definition !== undefined) {
+    const definitions = Object.keys(schema.definition);
+
+    // Iterate over the properties to get clean enum data
+    for (let i = 0, l = definitions.length; i < l; i++) {
+      if (schema.definition[definitions[i]].type === 'checkboxes'
+        && schema.definition[definitions[i]].titleMap
+        && schema.definition[definitions[i]].inactive_titleMap) {
+        const disabledEnums = schema.definition[definitions[i]].inactive_titleMap;
+
+        removeDisabledEnumChoices(disabledEnums, schema.definition[definitions[i]]);
+      }
+    }
+  }
+};
+
+const removeDisabledEnumChoices = (disabledEnums: string[], definitions: any) => {
+  for (let j = 0, m = disabledEnums.length; j < m; j++) {
+    for (let k = 0, n = definitions.titleMap.length; k < n; k++) {
+      if (definitions.titleMap[k].value === disabledEnums[j]) {
+        // Mark it as disabled to remove it in a new loop, since we are iterating over it.
+        definitions.titleMap[k].disabled = true;
+      }
+    }
+  }
+
+  for (let j = 0, m = definitions.titleMap.length; j < m; j++) {
+    if (definitions.titleMap[j]?.disabled) {
+      definitions.titleMap.splice(j, 1);
+    }
+  }
+};
+
 export const validateSchema = (stringSchema: string) => {
   switch (true) {
     case stringSchema.match(specialCharactersInKey) !== null:
@@ -225,6 +264,9 @@ export const validateSchema = (stringSchema: string) => {
 
   // Clean up inactive enums
   cleanUpInactiveEnumOptions(schema);
+
+  // Clean up disabled enum choices
+  cleanUpDisabledEnumChoices(schema);
 
   schema = formatDefinitionInSchema(schema);
   if (stringSchema.includes(CHECKBOXES)) {

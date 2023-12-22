@@ -108,6 +108,120 @@ export const JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA = '{\n' +
   ' }\n' +
   '}';
 
+export const JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA = '{\n' +
+  '    "definition": [\n' +
+  '        {\n' +
+  '            "inactive_titleMap": [\n' +
+  '                "phot_evidence_collected"\n' +
+  '            ],\n' +
+  '            "key": "behavior",\n' +
+  '            "title": "test checkbox enum",\n' +
+  '            "titleMap": [\n' +
+  '                {\n' +
+  '                    "name": "Confirmed automated alerts received",\n' +
+  '                    "value": "confirmed_alerts"\n' +
+  '                },\n' +
+  '                {\n' +
+  '                    "name": "Deployed HWCMU",\n' +
+  '                    "value": "deployed_pac"\n' +
+  '                },\n' +
+  '                {\n' +
+  '                    "name": "Photographic evidence collected",\n' +
+  '                    "value": "phot_evidence_collected"\n' +
+  '                }\n' +
+  '            ],\n' +
+  '            "type": "checkboxes"\n' +
+  '        }\n' +
+  '    ],\n' +
+  '    "schema": {\n' +
+  '        "$schema": "http://json-schema.org/draft-04/schema#",\n' +
+  '        "icon_id": "j93b",\n' +
+  '        "id": "https://mobile-bash.pamdas.org/api/v1.0/activity/events/schema/eventtype/j93b",\n' +
+  '        "image_url": "https://mobile-bash.pamdas.org/static/generic-black.svg",\n' +
+  '        "properties": {\n' +
+  '            "behavior": {\n' +
+  '                "title": "test checkbox enum",\n' +
+  '                "type": "a"\n' +
+  '            }\n' +
+  '        },\n' +
+  '        "title": "Radio Report (radio_rep)",\n' +
+  '        "type": "object"\n' +
+  '    }\n' +
+  '}';
+
+export const JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA = '{\n' +
+  ' "definition": [\n' +
+  '  {\n' +
+  '   "htmlClass": "col-lg-12",\n' +
+  '   "items": [],\n' +
+  '   "title": "Reporters Details",\n' +
+  '   "type": "fieldset"\n' +
+  '  },\n' +
+  '  {\n' +
+  '   "htmlClass": "col-lg-6",\n' +
+  '   "items": [\n' +
+  '    {\n' +
+  '     "inactive_titleMap": [\n' +
+  '      "phot_evidence_collected"\n' +
+  '     ],\n' +
+  '     "key": "reportorigin",\n' +
+  '     "title": "test checkbox enum",\n' +
+  '     "titleMap": [\n' +
+  '      {\n' +
+  '       "name": "Confirmed automated alerts received",\n' +
+  '       "value": "confirmed_alerts"\n' +
+  '      },\n' +
+  '      {\n' +
+  '       "name": "Deployed HWCMU",\n' +
+  '       "value": "deployed_pac"\n' +
+  '      },\n' +
+  '      {\n' +
+  '       "name": "Photographic evidence collected",\n' +
+  '       "value": "phot_evidence_collected"\n' +
+  '      }\n' +
+  '     ],\n' +
+  '     "type": "checkboxes"\n' +
+  '    }\n' +
+  '   ],\n' +
+  '   "type": "fieldset"\n' +
+  '  },\n' +
+  '  {\n' +
+  '   "htmlClass": "col-lg-12",\n' +
+  '   "items": [],\n' +
+  '   "title": "Reporters Details",\n' +
+  '   "type": "fieldset"\n' +
+  '  },\n' +
+  '  {\n' +
+  '   "htmlClass": "col-lg-6",\n' +
+  '   "items": [\n' +
+  '    "vehicles"\n' +
+  '   ],\n' +
+  '   "type": "fieldset"\n' +
+  '  }\n' +
+  ' ],\n' +
+  ' "schema": {\n' +
+  '  "$schema": "http://json-schema.org/draft-04/schema#",\n' +
+  '  "icon_id": "fieldsets_disabled_choice",\n' +
+  '  "id": "https://mobile-bash.pamdas.org/api/v1.0/activity/events/schema/eventtype/fieldsets_disabled_choice",\n' +
+  '  "image_url": "https://mobile-bash.pamdas.org/static/generic-black.svg",\n' +
+  '  "properties": {\n' +
+  '    "reportorigin": {\n' +
+  '    "enum": [\n' +
+  '     "choice1",\n' +
+  '     "choice2"\n' +
+  '    ],\n' +
+  '    "enumNames": {\n' +
+  '     "choice1": "Choice 1",\n' +
+  '     "choice2": "Choice 2"\n' +
+  '    },\n' +
+  '    "title": "Report Origin TEST dropdown enum",\n' +
+  '    "type": "string"\n' +
+  '   }\n' +
+  '  },\n' +
+  '  "title": "Road Banditry Report",\n' +
+  '  "type": "object"\n' +
+  ' }\n' +
+  '}';
 export const JSON_SCHEMA_INVALID_DEFINITION_LOCATION_FAKE_DATA = '{\n' +
   ' "schema": {\n' +
   '  "definition": [\n' +
