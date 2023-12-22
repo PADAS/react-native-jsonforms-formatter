@@ -204,16 +204,18 @@ const cleanUpInactiveEnumOptions = (schema: any) => {
 };
 
 const cleanUpDisabledEnumChoices = (schema: any) => {
-  const definitions = Object.keys(schema.definition);
+  if (schema.definition !== undefined) {
+    const definitions = Object.keys(schema.definition);
 
-  // Iterate over the properties to get clean enum data
-  for (let i = 0, l = definitions.length; i < l; i++) {
-    if (schema.definition[definitions[i]].type === 'checkboxes'
-      && schema.definition[definitions[i]].titleMap
-      && schema.definition[definitions[i]].inactive_titleMap) {
-      const disabledEnums = schema.definition[definitions[i]].inactive_titleMap;
+    // Iterate over the properties to get clean enum data
+    for (let i = 0, l = definitions.length; i < l; i++) {
+      if (schema.definition[definitions[i]].type === 'checkboxes'
+        && schema.definition[definitions[i]].titleMap
+        && schema.definition[definitions[i]].inactive_titleMap) {
+        const disabledEnums = schema.definition[definitions[i]].inactive_titleMap;
 
-      removeDisabledEnumChoices(disabledEnums, schema.definition[definitions[i]]);
+        removeDisabledEnumChoices(disabledEnums, schema.definition[definitions[i]]);
+      }
     }
   }
 };
