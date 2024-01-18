@@ -26,6 +26,8 @@ export const  DISABLED_ENUM = 'inactive_titleMap';
 export const  STRING_TYPE = 'string';
 
 export const isObject = (item: any) => item instanceof Object;
+
+export const isString = (item: any) => typeof item === STRING_TYPE;
 export const isSchemaFieldSet = (definition: any[]) => {
   if (definition.length === 0) {
     return false;

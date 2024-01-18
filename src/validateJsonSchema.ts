@@ -11,8 +11,8 @@ import {
   isInactiveChoice,
   isPropertyKey,
   isSchemaFieldSet,
+  isString,
 } from './utils/utils';
-import { isString } from 'lodash-es';
 
 const specialCharactersInKey = /[^\w\n\s_"](?=[^:\n\s{}[]]*:[\t\n\s]*(\{|\[)+)/g;
 const emptyEnumRegex = '\\"enum\\"\\n*\\s*\\:\\n*\\s*\\[\\n*\\s*\\]';
@@ -181,23 +181,26 @@ const validateFieldSetDefinition = (validations: any, schema: any) => {
     switch (true) {
       case isString(item):
         break;
-      case isFieldSet(item):
-        for (const subItem of item.items) {
-          validateDefinition(validations, subItem, schema, item);
-        }
-        break;
         // Create field set header
       case isFieldSetTitle(item):
         const key = getFieldSetTitleKey(item.title);
         schema.schema.properties[key] = getTitleProperty(item.title);
+        break;
+        // Format field-set sub-items
+      case isFieldSet(item):
+        for (const subItem of item.items) {
+          validateDefinition(validations, subItem, schema, item);
+        }
         break;
     }
   }
 }
 
 const validateDefinition = (validations: any, item: any, schema: any, parentItem?: any) => {
-  const { hasCheckBoxes, hasDisabledChoices } = validations;
+  const { hasCheckboxes, hasDisabledChoices } = validations;
     switch (true) {
+      case isString(item):
+        break
       // Clean up disabled choices
       case hasDisabledChoices && isDisabledChoice(item):
         if (parentItem) {
@@ -209,7 +212,7 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
         }
       // Generate checkbox data in schema
       // falls through
-      case hasCheckBoxes && isCheckbox(item):
+      case hasCheckboxes && isCheckbox(item):
         schema.schema.properties[item.key] = getSchemaForCheckbox(
           item,
           schema.schema.properties[item.key].title || '',
@@ -218,7 +221,6 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
         break
     }
 }
-
 const validateSchema = (validations: any, schema: any) => {
   const { hasInactiveChoices } = validations;
   if (hasInactiveChoices) {
