@@ -69,6 +69,5 @@ const hasDisabledChoices = (stringSchema: string) => stringSchema.includes(DISAB
 export const isInactiveChoice = (item: any) => item.type === STRING_TYPE
  && item.enum?.length > 0 && item.inactive_enum?.length > 0;
 
-export const isDisabledChoice = (item: any) => isObject(item) && item.type === CHECKBOXES
-  && item.titleMap?.length > 0 && item.inactive_titleMap?.length > 0;
-
+export const isDisabledChoice = (item: any) => isObject(item) && item.type === CHECKBOXES && item.inactive_titleMap?.length > 0
+  && item.titleMap?.length > 0;
