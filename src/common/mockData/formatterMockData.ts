@@ -584,4 +584,187 @@ export const JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES = '{\n' +
   ' }\n' +
   '}'
 
-
+export const JSON_SCHEMA_DEFAULT_VALUES = '{\n' +
+  '  "schema": {\n' +
+  '    "type": "object",\n' +
+  '    "properties": {\n' +
+  '      "test_one_date": {\n' +
+  '        "type": "string",\n' +
+  '        "title": "Test 1 date",\n' +
+  '        "default": "2023-08-14 15:15",\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_two_string": {\n' +
+  '        "type": "string",\n' +
+  '        "title": "Test 2 String",\n' +
+  '        "default": "Test 2",\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_three_number": {\n' +
+  '        "type": "number",\n' +
+  '        "title": "Test 3 Number With Min and Max",\n' +
+  '        "minimum": 0,\n' +
+  '        "default": 25,\n' +
+  '        "maximum": 50,\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_four_number": {\n' +
+  '        "type": "number",\n' +
+  '        "default": 6,\n' +
+  '        "title": "Test 4 Number",\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_five_enumString": {\n' +
+  '        "type": "string",\n' +
+  '        "title": "Test 5 enum value is a string",\n' +
+  '        "default": "behavior1",\n' +
+  '        "enum": [\n' +
+  '          "0"\n' +
+  '        ],\n' +
+  '        "enumNames": {\n' +
+  '          "0": "No Options"\n' +
+  '        },\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_six_enum_dictionary": {\n' +
+  '        "type": "string",\n' +
+  '        "title": "Test 6 enum and dictionary test",\n' +
+  '        "default": "testone",\n' +
+  '        "enum": [\n' +
+  '          "0"\n' +
+  '        ],\n' +
+  '        "enumNames": {\n' +
+  '          "0": "No Options"\n' +
+  '        },\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "testseven": {\n' +
+  '        "type": "array",\n' +
+  '        "uniqueItems": true,\n' +
+  '        "isHidden": false,\n' +
+  '        "title": "Test Seven Checkbox Enum",\n' +
+  '        "items": {\n' +
+  '          "enum": [\n' +
+  '            "no_option"\n' +
+  '          ],\n' +
+  '          "enumNames": [\n' +
+  '            "No Option"\n' +
+  '          ]\n' +
+  '        },\n' +
+  '        "default": [\n' +
+  '          "testseventhree"\n' +
+  '        ]\n' +
+  '      },\n' +
+  '      "test_eight_checkbox_query": {\n' +
+  '        "type": "array",\n' +
+  '        "uniqueItems": true,\n' +
+  '        "isHidden": false,\n' +
+  '        "title": "Test 8 checkbox query",\n' +
+  '        "items": {\n' +
+  '          "enum": [\n' +
+  '            "no_option"\n' +
+  '          ],\n' +
+  '          "enumNames": [\n' +
+  '            "No Option"\n' +
+  '          ]\n' +
+  '        },\n' +
+  '        "default": [\n' +
+  '          "9b5cb19e-b7bd-4fa8-9263-8e34502e35ca"\n' +
+  '        ]\n' +
+  '      },\n' +
+  '      "test_nine_dropdown_query": {\n' +
+  '        "type": "string",\n' +
+  '        "title": "Test 9 dropdown query dynamic choice on queens",\n' +
+  '        "default": "9b5cb19e-b7bd-4fa8-9263-8e34502e35ca",\n' +
+  '        "enum": [\n' +
+  '          "0"\n' +
+  '        ],\n' +
+  '        "enumNames": [],\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "testElevenArrayTest": {\n' +
+  '        "type": "array",\n' +
+  '        "title": "Array and Object Test",\n' +
+  '        "default": [\n' +
+  '          {\n' +
+  '            "test_array_string": "string",\n' +
+  '            "test_array_number": 1\n' +
+  '          }\n' +
+  '        ],\n' +
+  '        "items": {\n' +
+  '          "type": "object",\n' +
+  '          "title": "Array and Object Test",\n' +
+  '          "properties": {\n' +
+  '            "test_array_string": {\n' +
+  '              "type": "string",\n' +
+  '              "title": "Test 2 String"\n' +
+  '            },\n' +
+  '            "test_array_number": {\n' +
+  '              "type": "number",\n' +
+  '              "title": "Test number",\n' +
+  '              "minimum": 0\n' +
+  '            }\n' +
+  '          }\n' +
+  '        },\n' +
+  '        "isHidden": false\n' +
+  '      },\n' +
+  '      "test_fourteen_textarea": {\n' +
+  '        "type": "string",\n' +
+  '        "default": "Test 14",\n' +
+  '        "title": "Test 14 Text Area",\n' +
+  '        "isHidden": false\n' +
+  '      }\n' +
+  '    },\n' +
+  '    "icon_id": "hippo_rep",\n' +
+  '    "image_url": "https://mobile-bash.pamdas.org/static/sprite-src/hippo_rep.svg",\n' +
+  '    "required": [\n' +
+  '      "test_one_date",\n' +
+  '      "test_two_string"\n' +
+  '    ]\n' +
+  '  },\n' +
+  '  "definition": [\n' +
+  '    {\n' +
+  '      "key": "test_one_date",\n' +
+  '      "fieldHtmlClass": "date-time-picker json-schema"\n' +
+  '    },\n' +
+  '    "test_two_string",\n' +
+  '    "test_three_number",\n' +
+  '    "test_four_number",\n' +
+  '    "test_five_enumString",\n' +
+  '    "test_six_enum_dictionary",\n' +
+  '    {\n' +
+  '      "key": "testseven",\n' +
+  '      "type": "checkboxes",\n' +
+  '      "titleMap": [\n' +
+  '        {\n' +
+  '          "value": "no_option",\n' +
+  '          "name": "No Option"\n' +
+  '        }\n' +
+  '      ]\n' +
+  '    },\n' +
+  '    {\n' +
+  '      "key": "test_eight_checkbox_query",\n' +
+  '      "type": "checkboxes",\n' +
+  '      "title": "Test 8 checkbox query",\n' +
+  '      "titleMap": [\n' +
+  '        {\n' +
+  '          "value": "no_option",\n' +
+  '          "name": "No Option"\n' +
+  '        }\n' +
+  '      ],\n' +
+  '      "htmlClass": "json-schema-checkbox-wrapper"\n' +
+  '    },\n' +
+  '    "test_nine_dropdown_query",\n' +
+  '    {\n' +
+  '      "key": "testElevenArrayTest",\n' +
+  '      "add": "New",\n' +
+  '      "style": {\n' +
+  '        "add": "btn-success"\n' +
+  '      }\n' +
+  '    },\n' +
+  '    {\n' +
+  '      "key": "test_fourteen_textarea",\n' +
+  '      "type": "textarea"\n' +
+  '    }\n' +
+  '  ]\n' +
+  '}'

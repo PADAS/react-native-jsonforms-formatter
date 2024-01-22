@@ -19,7 +19,7 @@ import {
     COLLECTION_FIELD_HEADER_FAKE_DATA,
     JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
     JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA,
-    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
+    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA, JSON_SCHEMA_DEFAULT_VALUES,
 } from "../common/mockData/formatterMockData";
 
 describe('JSON Schema validation', () => {
@@ -45,6 +45,25 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.id).toBeUndefined();
     });
 
+    it('Validate field default values',  () => {
+        const validSchema = validateJSONSchema(JSON_SCHEMA_DEFAULT_VALUES);
+        expect(validSchema.schema.properties.test_one_date.default).toBe('2023-08-14 15:15');
+        expect(validSchema.schema.properties.test_two_string.default).toBe('Test 2');
+        expect(validSchema.schema.properties.test_three_number.default).toBe(25);
+        expect(validSchema.schema.properties.test_four_number.default).toBe(6);
+        expect(validSchema.schema.properties.test_five_enumString.default).toBe('behavior1');
+        expect(validSchema.schema.properties.test_six_enum_dictionary.default).toBe('testone');
+        expect(validSchema.schema.properties.testseven.default).toMatchObject(['testseventhree']);
+        expect(validSchema.schema.properties.test_eight_checkbox_query.default).toMatchObject(['9b5cb19e-b7bd-4fa8-9263-8e34502e35ca']);
+        expect(validSchema.schema.properties.test_nine_dropdown_query.default).toBe('9b5cb19e-b7bd-4fa8-9263-8e34502e35ca');
+        expect(validSchema.schema.properties.testElevenArrayTest.default).toMatchObject([
+            {
+                "test_array_number": 1,
+                "test_array_string": "string"
+            }
+        ]);
+        expect(validSchema.schema.properties.test_fourteen_textarea.default).toBe('Test 14');
+    });
 
     it('Validate remove inactive enum choices',  () => {
         const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA);
