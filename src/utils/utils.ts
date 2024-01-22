@@ -24,6 +24,7 @@ export const CHECKBOXES = 'checkboxes';
 export const  INACTIVE_ENUM = 'inactive_enum';
 export const  DISABLED_ENUM = 'inactive_titleMap';
 export const  STRING_TYPE = 'string';
+export const  ARRAY_TYPE = 'array';
 
 export const isObject = (item: any) => item instanceof Object;
 
@@ -59,6 +60,11 @@ export const getSchemaValidations = (stringSchema: string) => ({
   hasInactiveChoices: hasInactiveChoices(stringSchema),
   hasDisabledChoices: hasDisabledChoices(stringSchema),
 });
+
+export const isArrayProperty = (property: any) => property.type === ARRAY_TYPE && property.items?.enum === undefined
+&& property.items?.enumNames === undefined;
+
+export const isRequiredProperty = (property: any) => property.required === 'true' || property.required > 0;
 
 const hasCheckboxes = (stringSchema: string) => stringSchema.includes(CHECKBOXES);
 

@@ -3,13 +3,13 @@ import {
   ElementDisplay,
   getFieldSetTitleKey,
   getSchemaValidations,
-  HELP_VALUE,
+  HELP_VALUE, isArrayProperty,
   isCheckbox,
   isDisabledChoice,
   isFieldSet,
   isFieldSetTitle,
   isInactiveChoice, isObject,
-  isPropertyKey,
+  isPropertyKey, isRequiredProperty,
   isSchemaFieldSet,
   isString,
 } from './utils/utils';
@@ -45,21 +45,17 @@ const getTitleProperty = (title: string) => ({
 const getPropertyVisibility = (property: any) => property?.isHidden || false;
 
 const cleanUpRequiredProperty = (schema: any) => {
-  // Get all properties in schema
-  const propertyNames = Object.keys(schema.properties);
   const requiredProperties = [];
 
   // Iterate over the properties to get clean enum data
-  for (const key of propertyNames) {
-    if (schema.properties[key].required === 'true'
-      || schema.properties[key].required > 0) {
+  for (const key of Object.keys(schema.properties)) {
+    const property = schema.properties[key];
+    if (isRequiredProperty(property)) {
       requiredProperties.push(key);
       delete schema.properties[key].required;
     }
-    if (schema.properties[key].type === 'array'
-      && schema.properties[key].items.enum === undefined
-      && schema.properties[key].items.enumNames === undefined) {
-      cleanUpRequiredProperty(schema.properties[key].items);
+    if (isArrayProperty(property)) {
+      cleanUpRequiredProperty(property.items);
     }
   }
 
@@ -87,7 +83,7 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const item of schema.definition) {
-    if (typeof item === 'string') {
+    if (isString(item)) {
       properties[item] = schema.schema.properties[item];
       delete schema.schema.properties[item];
     } else {
@@ -219,7 +215,7 @@ export const validateJSONSchema = (stringSchema: string) => {
   delete schema.schema.id;
 
   // Definition array should be at the same level as a schema object
-  schema = formatDefinitionInSchema(schema);
+  formatDefinitionInSchema(schema);
 
   const schemaValidations = getSchemaValidations(stringSchema);
 
