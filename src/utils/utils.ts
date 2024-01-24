@@ -20,11 +20,13 @@ export enum ElementDisplay {
 
 export const FIELD_SET = 'fieldset';
 export const HELP_VALUE = 'helpvalue';
+
+export const REQUIRED_PROPERTY = 'required';
 export const CHECKBOXES = 'checkboxes';
-export const  INACTIVE_ENUM = 'inactive_enum';
-export const  DISABLED_ENUM = 'inactive_titleMap';
-export const  STRING_TYPE = 'string';
-export const  ARRAY_TYPE = 'array';
+export const INACTIVE_ENUM = 'inactive_enum';
+export const DISABLED_ENUM = 'inactive_titleMap';
+export const STRING_TYPE = 'string';
+export const ARRAY_TYPE = 'array';
 
 export const isObject = (item: any) => item instanceof Object;
 

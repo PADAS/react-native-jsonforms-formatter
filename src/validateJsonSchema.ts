@@ -12,6 +12,7 @@ import {
   isPropertyKey, isRequiredProperty,
   isSchemaFieldSet,
   isString,
+  REQUIRED_PROPERTY,
 } from './utils/utils';
 
 const specialCharactersInKey = /[^\w\n\s_"](?=[^:\n\s{}[]]*:[\t\n\s]*(\{|\[)+)/g;
@@ -22,10 +23,11 @@ const emptyEnumNamesValue = '"enumNames": {"0":"No Options"}';
 const emptyTitleMapRegex = '\\"titleMap\\"\\n*\\s*\\:\\n*\\s*\\[\\n*\\s*\\]';
 const emptyTitleMapValue = '"titleMap": [{"value":"no_option", "name":"No Option"}]';
 
-const getSchemaForCheckbox = (definition: any, title: string, defaultValue: string) => ({
+const getSchemaForCheckbox = (definition: any, title: string, required: boolean, defaultValue: string) => ({
   type: 'array',
   uniqueItems: true,
   isHidden: false,
+  ...required && { required },
   title: title || definition.title,
   items: {
     enum: definition.titleMap.map((item: any) => item.value),
@@ -163,13 +165,14 @@ const validateFieldSetDefinition = (validations: any, schema: any) => {
 const validateDefinition = (validations: any, item: any, schema: any, parentItem?: any) => {
   const { hasCheckboxes, hasDisabledChoices } = validations;
   // Set property visibility
-  if ((isObject(item) || isPropertyKey(item)) && item.key !== undefined && schema.schema.properties[item.key] !== undefined) {
-    schema.schema.properties[item.key].isHidden = getPropertyVisibility(schema.schema.properties[item.key]);
-  }
-  // Set property visibility
   if (isString(item) && schema.schema.properties[item]) {
     schema.schema.properties[item].isHidden = getPropertyVisibility(schema.schema.properties[item]);
   } else {
+    // Set property visibility
+    if ((isObject(item) || isPropertyKey(item)) && item.key !== undefined && schema.schema.properties[item.key] !== undefined) {
+      schema.schema.properties[item.key].isHidden = getPropertyVisibility(schema.schema.properties[item.key]);
+    }
+
     // Clean up disabled choices
     if (hasDisabledChoices && isDisabledChoice(item)) {
       if (parentItem) {
@@ -186,6 +189,7 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
       schema.schema.properties[item.key] = getSchemaForCheckbox(
         item,
         schema.schema.properties[item.key].title || '',
+        schema.schema.properties[item.key].required || false,
         schema.schema.properties[item.key].default || false,
       );
     }
@@ -228,6 +232,8 @@ export const validateJSONSchema = (stringSchema: string) => {
     formatSchemaRepeatableFieldLayout(schema);
   }
 
-  schema.schema = cleanUpRequiredProperty(schema.schema);
+  if (stringSchema.includes(REQUIRED_PROPERTY)) {
+    schema.schema = cleanUpRequiredProperty(schema.schema);
+  }
   return schema;
 };
