@@ -3,13 +3,16 @@ import {
   ElementDisplay,
   getFieldSetTitleKey,
   getSchemaValidations,
-  HELP_VALUE, isArrayProperty,
+  HELP_VALUE,
+  isArrayProperty,
   isCheckbox,
   isDisabledChoice,
   isFieldSet,
   isFieldSetTitle,
-  isInactiveChoice, isObject,
-  isPropertyKey, isRequiredProperty,
+  isInactiveChoice,
+  isObject,
+  isPropertyKey,
+  isRequiredProperty,
   isSchemaFieldSet,
   isString,
   REQUIRED_PROPERTY,
@@ -70,7 +73,7 @@ const cleanUpRequiredProperty = (schema: any) => {
 };
 
 const formatDefinitionInSchema = (schema: any) => {
-  if (schema.schema.definition !== undefined) {
+  if (schema.schema.definition) {
     const { definition } = schema.schema;
     delete schema.schema.definition;
     schema.definition = definition;
@@ -89,11 +92,11 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
       properties[item] = schema.schema.properties[item];
       delete schema.schema.properties[item];
     } else if (isObject(item)) {
-      if (item.helpvalue !== undefined) {
+      if (item.helpvalue) {
         const property = `help_value_${headerCount}`;
         headerCount += 1;
         properties[property] = getTitleProperty((item.helpvalue || '').replace(/(<.+?>)/g, ''));
-      } else if (item.key !== undefined) {
+      } else if (item.key) {
         properties[item.key] = schema.schema.properties[item.key];
         delete schema.schema.properties[item.key];
       }
@@ -169,7 +172,7 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
     schema.schema.properties[item].isHidden = getPropertyVisibility(schema.schema.properties[item]);
   } else {
     // Set property visibility
-    if ((isObject(item) || isPropertyKey(item)) && item.key !== undefined && schema.schema.properties[item.key] !== undefined) {
+    if ((isObject(item) || isPropertyKey(item)) && item.key && schema.schema.properties[item.key]) {
       schema.schema.properties[item.key].isHidden = getPropertyVisibility(schema.schema.properties[item.key]);
     }
 

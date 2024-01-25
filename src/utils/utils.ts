@@ -63,8 +63,8 @@ export const getSchemaValidations = (stringSchema: string) => ({
   hasDisabledChoices: hasDisabledChoices(stringSchema),
 });
 
-export const isArrayProperty = (property: any) => property.type === ARRAY_TYPE && property.items?.enum === undefined
-&& property.items?.enumNames === undefined;
+export const isArrayProperty = (property: any) => property.type === ARRAY_TYPE && !property.items?.enum
+&& !property.items?.enumNames;
 
 export const isRequiredProperty = (property: any) => property.required === 'true' || property.required > 0;
 
