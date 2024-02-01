@@ -1,15 +1,21 @@
 // Internal Dependencies
 import {
-  CHECKBOXES,
   ElementDisplay,
-  FIELD_SET,
   getFieldSetTitleKey,
+  getSchemaValidations,
   HELP_VALUE,
+  isArrayProperty,
   isCheckbox,
+  isDisabledChoice,
   isFieldSet,
   isFieldSetTitle,
+  isInactiveChoice,
+  isObject,
   isPropertyKey,
+  isRequiredProperty,
   isSchemaFieldSet,
+  isString,
+  REQUIRED_PROPERTY,
 } from './utils/utils';
 
 const specialCharactersInKey = /[^\w\n\s_"](?=[^:\n\s{}[]]*:[\t\n\s]*(\{|\[)+)/g;
@@ -20,64 +26,17 @@ const emptyEnumNamesValue = '"enumNames": {"0":"No Options"}';
 const emptyTitleMapRegex = '\\"titleMap\\"\\n*\\s*\\:\\n*\\s*\\[\\n*\\s*\\]';
 const emptyTitleMapValue = '"titleMap": [{"value":"no_option", "name":"No Option"}]';
 
-const generateSchemaForCheckboxes = (schema: any) => {
-  const checkboxes: Object[] = [];
-  const definitions = schema.definition.filter((item: any) => isCheckbox(item));
-  if (definitions.length > 0) {
-    checkboxes.push(...definitions);
-  }
-
-  if (isSchemaFieldSet(schema.definition)) {
-    const fieldSet = schema.definition.filter((item: any) => (
-      item instanceof Object && isFieldSet(item)));
-
-    fieldSet.forEach((fieldSetItem: any) => {
-      fieldSetItem.items.forEach((fieldSetItems: any) => {
-        if (fieldSetItems?.inactive_titleMap?.length > 0) {
-          removeDisabledEnumChoices(fieldSetItems.inactive_titleMap, fieldSetItems);
-        }
-      });
-      const nestedCheckboxes = fieldSetItem.items.filter((item: any) => isCheckbox(item));
-      if (nestedCheckboxes.length > 0) {
-        checkboxes.push(...nestedCheckboxes);
-      }
-    });
-  }
-
-  checkboxes.forEach((definition: any) => {
-    const { key } = definition;
-    schema.schema.properties[key] = getSchemaForCheckbox(
-      definition,
-      schema.schema.properties[key].title || '',
-      schema.schema.properties[key].required || false,
-    );
-  });
-
-  return schema;
-};
-
-const getFieldSetTitleSchema = (schema: any) => {
-  const definitions = schema.definition.filter((item: any) => item instanceof Object
-    && isFieldSetTitle(item));
-
-  definitions.forEach((definition: any) => {
-    const { title } = definition;
-    const key = getFieldSetTitleKey(title);
-    schema.schema.properties[key] = getTitleProperty(title);
-  });
-  return schema;
-};
-
-const getSchemaForCheckbox = (definition: any, title: string, required: boolean) => ({
-  ...required && { required },
+const getSchemaForCheckbox = (definition: any, title: string, required: boolean, defaultValue: string) => ({
   type: 'array',
   uniqueItems: true,
   isHidden: false,
+  ...required && { required },
   title: title || definition.title,
   items: {
     enum: definition.titleMap.map((item: any) => item.value),
     enumNames: definition.titleMap.map((item: any) => item.name),
   },
+  ...defaultValue && { default: defaultValue },
 });
 
 const getTitleProperty = (title: string) => ({
@@ -88,56 +47,20 @@ const getTitleProperty = (title: string) => ({
   title,
 });
 
-const setFieldsVisibility = (schema: any) => {
-  const listOfKeys: string[] = [];
-
-  // Get keys in the definition section
-  schema.definition.forEach((item: any) => {
-    if (typeof item === 'string') {
-      listOfKeys.push(item);
-    } else if (item instanceof Object) {
-      if (isFieldSet(item)) {
-        item.items.forEach((fieldSetItem: any) => {
-          if (typeof fieldSetItem === 'string') {
-            listOfKeys.push(fieldSetItem);
-          } else if (isPropertyKey(fieldSetItem)) {
-            listOfKeys.push(fieldSetItem.key);
-          }
-        });
-      } else if (isPropertyKey(item)) {
-        listOfKeys.push(item.key);
-      }
-    }
-  });
-
-  // Mark the schema properties as hidden or visible
-  Object.keys(schema.schema.properties).forEach((property: string) => {
-    if (schema.schema.properties[property].isHidden !== undefined) {
-      return;
-    }
-    // @ts-ignore
-    schema.schema.properties[property].isHidden = listOfKeys.indexOf(property) === -1;
-  });
-
-  return schema;
-};
+const getPropertyVisibility = (property: any) => property?.isHidden || false;
 
 const cleanUpRequiredProperty = (schema: any) => {
-  // Get all properties in schema
-  const propertyNames = Object.keys(schema.properties);
   const requiredProperties = [];
 
   // Iterate over the properties to get clean enum data
-  for (const key of propertyNames) {
-    if (schema.properties[key].required === 'true'
-      || schema.properties[key].required > 0) {
+  for (const key of Object.keys(schema.properties)) {
+    const property = schema.properties[key];
+    if (isRequiredProperty(property)) {
       requiredProperties.push(key);
       delete schema.properties[key].required;
     }
-    if (schema.properties[key].type === 'array'
-      && schema.properties[key].items.enum === undefined
-      && schema.properties[key].items.enumNames === undefined) {
-      cleanUpRequiredProperty(schema.properties[key].items);
+    if (isArrayProperty(property)) {
+      cleanUpRequiredProperty(property.items);
     }
   }
 
@@ -150,7 +73,7 @@ const cleanUpRequiredProperty = (schema: any) => {
 };
 
 const formatDefinitionInSchema = (schema: any) => {
-  if (schema.schema.definition !== undefined) {
+  if (schema.schema.definition) {
     const { definition } = schema.schema;
     delete schema.schema.definition;
     schema.definition = definition;
@@ -165,15 +88,15 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const item of schema.definition) {
-    if (typeof item === 'string') {
+    if (isString(item)) {
       properties[item] = schema.schema.properties[item];
       delete schema.schema.properties[item];
-    } else {
-      if (item.helpvalue !== undefined) {
+    } else if (isObject(item)) {
+      if (item.helpvalue) {
         const property = `help_value_${headerCount}`;
         headerCount += 1;
         properties[property] = getTitleProperty((item.helpvalue || '').replace(/(<.+?>)/g, ''));
-      } else if (item.key !== undefined) {
+      } else if (item.key) {
         properties[item.key] = schema.schema.properties[item.key];
         delete schema.schema.properties[item.key];
       }
@@ -183,61 +106,11 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
   schema.schema.properties = Object.assign(properties, schema.schema.properties);
 };
 
-const cleanUpInactiveEnumOptions = (schema: any) => {
-  // Get all properties in schema
-  const propertyNames = Object.keys(schema.schema.properties);
+const cleanUpInactiveEnumChoice = (property: any) => property.enum.filter((choice: any) => !property.inactive_enum.includes(choice));
 
-  // Iterate over the properties to get clean enum data
-  for (let i = 0, l = propertyNames.length; i < l; i++) {
-    if (schema.schema.properties[propertyNames[i]].type === 'string'
-      && schema.schema.properties[propertyNames[i]].enum
-      && schema.schema.properties[propertyNames[i]].inactive_enum) {
-      const inactiveEnums = schema.schema.properties[propertyNames[i]].inactive_enum;
+const cleanUpDisabledEnumChoice = (definitionItem: any) => definitionItem.titleMap.filter((item: any) => !definitionItem.inactive_titleMap.includes(item.value))
 
-      for (let j = 0, m = inactiveEnums.length; j < m; j++) {
-        const enumIndex = schema.schema.properties[propertyNames[i]].enum.indexOf(inactiveEnums[j]);
-
-        schema.schema.properties[propertyNames[i]].enum.splice(enumIndex, 1);
-      }
-    }
-  }
-};
-
-const cleanUpDisabledEnumChoices = (schema: any) => {
-  if (schema.definition !== undefined) {
-    const definitions = Object.keys(schema.definition);
-
-    // Iterate over the properties to get clean enum data
-    for (let i = 0, l = definitions.length; i < l; i++) {
-      if (schema.definition[definitions[i]].type === 'checkboxes'
-        && schema.definition[definitions[i]].titleMap
-        && schema.definition[definitions[i]].inactive_titleMap) {
-        const disabledEnums = schema.definition[definitions[i]].inactive_titleMap;
-
-        removeDisabledEnumChoices(disabledEnums, schema.definition[definitions[i]]);
-      }
-    }
-  }
-};
-
-const removeDisabledEnumChoices = (disabledEnums: string[], definitions: any) => {
-  for (let j = 0, m = disabledEnums.length; j < m; j++) {
-    for (let k = 0, n = definitions.titleMap.length; k < n; k++) {
-      if (definitions.titleMap[k].value === disabledEnums[j]) {
-        // Mark it as disabled to remove it in a new loop, since we are iterating over it.
-        definitions.titleMap[k].disabled = true;
-      }
-    }
-  }
-
-  for (let j = 0, m = definitions.titleMap.length; j < m; j++) {
-    if (definitions.titleMap[j]?.disabled) {
-      definitions.titleMap.splice(j, 1);
-    }
-  }
-};
-
-export const validateSchema = (stringSchema: string) => {
+const validateJSON = (stringSchema: string) => {
   switch (true) {
     case stringSchema.match(specialCharactersInKey) !== null:
       throw Error('Special characters not supported in JSON Schema');
@@ -258,29 +131,112 @@ export const validateSchema = (stringSchema: string) => {
       break;
   }
 
+  return stringSchema;
+};
+
+const cleanUpJTD = (validations: any, schema: any) => {
+  if (isSchemaFieldSet(schema.definition)) {
+    validateFieldSetDefinition(validations, schema);
+  } else if (schema.definition?.length > 0) {
+    for (const item of schema.definition) {
+      validateDefinition(validations, item, schema);
+    }
+  }
+
+}
+
+const validateFieldSetDefinition = (validations: any, schema: any) => {
+  for (const item of schema.definition) {
+    switch (true) {
+      case isString(item):
+        break;
+        // Create field set header
+      case isFieldSetTitle(item):
+        const key = getFieldSetTitleKey(item.title);
+        schema.schema.properties[key] = getTitleProperty(item.title);
+        break;
+        // Format field-set sub-items
+      case isFieldSet(item):
+        for (const subItem of item.items) {
+          validateDefinition(validations, subItem, schema, item);
+        }
+        break;
+    }
+  }
+}
+
+const validateDefinition = (validations: any, item: any, schema: any, parentItem?: any) => {
+  const { hasCheckboxes, hasDisabledChoices } = validations;
+  // Set property visibility
+  if (isString(item) && schema.schema.properties[item]) {
+    schema.schema.properties[item].isHidden = getPropertyVisibility(schema.schema.properties[item]);
+  } else {
+    // Set property visibility
+    if ((isObject(item) || isPropertyKey(item)) && item.key && schema.schema.properties[item.key]) {
+      schema.schema.properties[item.key].isHidden = getPropertyVisibility(schema.schema.properties[item.key]);
+    }
+
+    // Clean up disabled choices
+    if (hasDisabledChoices && isDisabledChoice(item)) {
+      if (parentItem) {
+        const parentIndex = schema.definition.indexOf(parentItem);
+        const childIndex = schema.definition[parentIndex].items.indexOf(item);
+        schema.definition[parentIndex].items[childIndex].titleMap = cleanUpDisabledEnumChoice(item);
+      } else {
+        schema.definition[schema.definition.indexOf(item)].titleMap = cleanUpDisabledEnumChoice(item);
+      }
+    }
+
+    // Generate checkbox data in schema
+    if (hasCheckboxes && isCheckbox(item)) {
+      schema.schema.properties[item.key] = getSchemaForCheckbox(
+        item,
+        schema.schema.properties[item.key].title || '',
+        schema.schema.properties[item.key].required || false,
+        schema.schema.properties[item.key].default || false,
+      );
+    }
+  }
+}
+const validateSchema = (validations: any, schema: any) => {
+  const { hasInactiveChoices } = validations;
+  if (hasInactiveChoices) {
+    for (const key of Object.keys(schema.schema.properties)) {
+      const property = schema.schema.properties[key];
+      // Clean up inactive choices
+      if (isInactiveChoice(property)) {
+        schema.schema.properties[key].enum = cleanUpInactiveEnumChoice(property);
+      }
+    }
+  }
+}
+
+export const validateJSONSchema = (stringSchema: string) => {
+  // Validate/Remove JSON issues
+  stringSchema = validateJSON(stringSchema);
+
   let schema = JSON.parse(stringSchema);
+
+  // $schema and id make JSON forms crash
   delete schema.schema.$schema;
   delete schema.schema.id;
 
-  // Clean up inactive enums
-  cleanUpInactiveEnumOptions(schema);
+  // Definition array should be at the same level as a schema object
+  formatDefinitionInSchema(schema);
 
-  // Clean up disabled enum choices
-  cleanUpDisabledEnumChoices(schema);
+  const schemaValidations = getSchemaValidations(stringSchema);
 
-  schema = formatDefinitionInSchema(schema);
-  if (stringSchema.includes(CHECKBOXES)) {
-    schema = generateSchemaForCheckboxes(schema);
-  }
+  validateSchema(schemaValidations, schema);
 
-  if (stringSchema.includes(FIELD_SET)) {
-    schema = getFieldSetTitleSchema(schema);
-  }
+  // JSON forms library does not support JSON Type Definition JTD
+  cleanUpJTD(schemaValidations, schema);
+
   if (stringSchema.includes(HELP_VALUE)) {
     formatSchemaRepeatableFieldLayout(schema);
   }
 
-  schema = setFieldsVisibility(schema);
-  schema.schema = cleanUpRequiredProperty(schema.schema);
+  if (stringSchema.includes(REQUIRED_PROPERTY)) {
+    schema.schema = cleanUpRequiredProperty(schema.schema);
+  }
   return schema;
 };
