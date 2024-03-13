@@ -18,13 +18,13 @@ yarn add react-native-jsonforms-formatter
 npm install --save react-native-jsonforms-formatter
 ```
 
-## How to use it?
+## Usage
 
 ```javascript
 import { validateJSONSchema, generateUISchema } 'react-native-jsonforms-formatter';
 ```
 
-First, your json schema needs to be validated and formatted in order to make it parsable and valid for JSON Forms library. The library will generate a valid UI schema for input into JSON Forms to be used in a `JsonForms` component.
+Your json schema needs to be validated and formatted in order to make it parsable and valid for JSON Forms library. The library will generate a valid UI schema for input into JSON Forms to be used in a `JsonForms` component.
 
 ```javascript
 const jsonSchema = validateJSONSchema(stringSchema);
