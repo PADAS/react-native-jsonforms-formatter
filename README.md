@@ -4,7 +4,7 @@ A [React Native](https://reactnative.dev/) [JSON Schema](https://json-schema.org
 
 React Native JSON Forms Formatter is an alternative solution for rendering JTD schemas in JSON Forms. It validates JSON Schemas and generates UI schemas compatible with the [JSON Forms library](https://github.com/eclipsesource/jsonforms), even for schemas that are not supported by other JSON Schema libraries.
 
-## Installing the library
+## Install
 
 #### Using `yarn`
 
