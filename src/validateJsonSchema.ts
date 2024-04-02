@@ -3,6 +3,7 @@ import {
   ElementDisplay,
   getFieldSetTitleKey,
   getSchemaValidations,
+  hasEnumDuplicatedItems,
   HELP_VALUE,
   isArrayProperty,
   isCheckbox,
@@ -25,8 +26,16 @@ const emptyEnumNamesRegex = '\\"enumNames\\"\\n*\\s*\\:\\n*\\s*\\{\\n*\\s*\\}';
 const emptyEnumNamesValue = '"enumNames": {"0":"No Options"}';
 const emptyTitleMapRegex = '\\"titleMap\\"\\n*\\s*\\:\\n*\\s*\\[\\n*\\s*\\]';
 const emptyTitleMapValue = '"titleMap": [{"value":"no_option", "name":"No Option"}]';
+const minParamRegex = /"minimum"(?:[^\\"]|\\\\|\\")*"\d+\.*\d*"/g;
+const maxParamRegex = /"maximum"(?:[^\\"]|\\\\|\\")*"\d+\.*\d*"/g;
+const doubleSingleQuotesRegex = /"(?=[^"]*(?:"[^"]*)?$)/g;
 
-const getSchemaForCheckbox = (definition: any, title: string, required: boolean, defaultValue: string) => ({
+const getSchemaForCheckbox = (
+  definition: any,
+  title: string,
+  required: boolean,
+  defaultValue: string,
+) => ({
   type: 'array',
   uniqueItems: true,
   isHidden: false,
@@ -106,30 +115,27 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
   schema.schema.properties = Object.assign(properties, schema.schema.properties);
 };
 
+// eslint-disable-next-line max-len
 const cleanUpInactiveEnumChoice = (property: any) => property.enum.filter((choice: any) => !property.inactive_enum.includes(choice));
 
-const cleanUpDisabledEnumChoice = (definitionItem: any) => definitionItem.titleMap.filter((item: any) => !definitionItem.inactive_titleMap.includes(item.value))
+// eslint-disable-next-line max-len
+const cleanUpDisabledEnumChoice = (definitionItem: any) => definitionItem.titleMap.filter((item: any) => !definitionItem.inactive_titleMap.includes(item.value));
 
 const validateJSON = (stringSchema: string) => {
-  switch (true) {
-    case stringSchema.match(specialCharactersInKey) !== null:
-      throw Error('Special characters not supported in JSON Schema');
-    // Fall through
-    case stringSchema.includes('“') || stringSchema.includes('”'):
-      stringSchema = stringSchema.replace(/([“”])/g, '"');
-    // Fall through
-    case stringSchema.match(new RegExp(emptyEnumRegex, 'g')) !== null:
-      stringSchema = stringSchema.replace(new RegExp(emptyEnumRegex, 'g'), emptyEnumValue);
-    // Fall through
-    case stringSchema.match(new RegExp(emptyEnumNamesRegex, 'g')) !== null:
-      stringSchema = stringSchema.replace(new RegExp(emptyEnumNamesRegex, 'g'), emptyEnumNamesValue);
-    // Fall through
-    case stringSchema.match(new RegExp(emptyTitleMapRegex, 'g')) !== null:
-      stringSchema = stringSchema.replace(new RegExp(emptyTitleMapRegex, 'g'), emptyTitleMapValue);
-    // Fall through
-    default:
-      break;
+  if (stringSchema.match(specialCharactersInKey) !== null) {
+    throw Error('Special characters not supported in JSON Schema');
   }
+  // Invalid double quotes
+  stringSchema = stringSchema.replace(/([“”])/g, '"');
+  // Empty enum choices
+  stringSchema = stringSchema.replace(new RegExp(emptyEnumRegex, 'g'), emptyEnumValue);
+  // Empty enumNames choices
+  stringSchema = stringSchema.replace(new RegExp(emptyEnumNamesRegex, 'g'), emptyEnumNamesValue);
+  // Empty titleMap choices
+  stringSchema = stringSchema.replace(new RegExp(emptyTitleMapRegex, 'g'), emptyTitleMapValue);
+  // Numeric ranges
+  stringSchema = stringSchema.replace(minParamRegex, (match: string) => match.replace(doubleSingleQuotesRegex, ''));
+  stringSchema = stringSchema.replace(maxParamRegex, (match: string) => match.replace(doubleSingleQuotesRegex, ''));
 
   return stringSchema;
 };
@@ -142,28 +148,32 @@ const cleanUpJTD = (validations: any, schema: any) => {
       validateDefinition(validations, item, schema);
     }
   }
-
-}
+};
 
 const validateFieldSetDefinition = (validations: any, schema: any) => {
   for (const item of schema.definition) {
     switch (true) {
       case isString(item):
         break;
-        // Create field set header
+      // Create field set header
       case isFieldSetTitle(item):
-        const key = getFieldSetTitleKey(item.title);
-        schema.schema.properties[key] = getTitleProperty(item.title);
+        {
+          const key = getFieldSetTitleKey(item.title);
+          schema.schema.properties[key] = getTitleProperty(item.title);
+        }
         break;
-        // Format field-set sub-items
+      // Format field-set sub-items
       case isFieldSet(item):
+        // eslint-disable-next-line no-restricted-syntax
         for (const subItem of item.items) {
           validateDefinition(validations, subItem, schema, item);
         }
         break;
+      default:
+        break;
     }
   }
-}
+};
 
 const validateDefinition = (validations: any, item: any, schema: any, parentItem?: any) => {
   const { hasCheckboxes, hasDisabledChoices } = validations;
@@ -172,7 +182,11 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
     schema.schema.properties[item].isHidden = getPropertyVisibility(schema.schema.properties[item]);
   } else {
     // Set property visibility
-    if ((isObject(item) || isPropertyKey(item)) && item.key && schema.schema.properties[item.key]) {
+    if ((isObject(item) || isPropertyKey(item))
+        && item.key
+        && schema.schema.properties[item.key]
+    ) {
+      // eslint-disable-next-line max-len
       schema.schema.properties[item.key].isHidden = getPropertyVisibility(schema.schema.properties[item.key]);
     }
 
@@ -183,6 +197,7 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
         const childIndex = schema.definition[parentIndex].items.indexOf(item);
         schema.definition[parentIndex].items[childIndex].titleMap = cleanUpDisabledEnumChoice(item);
       } else {
+        // eslint-disable-next-line max-len
         schema.definition[schema.definition.indexOf(item)].titleMap = cleanUpDisabledEnumChoice(item);
       }
     }
@@ -197,25 +212,43 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
       );
     }
   }
-}
+};
+
 const validateSchema = (validations: any, schema: any) => {
-  const { hasInactiveChoices } = validations;
+  const { hasInactiveChoices, hasEnums } = validations;
   if (hasInactiveChoices) {
     for (const key of Object.keys(schema.schema.properties)) {
       const property = schema.schema.properties[key];
       // Clean up inactive choices
       if (isInactiveChoice(property)) {
         schema.schema.properties[key].enum = cleanUpInactiveEnumChoice(property);
+
+        if (schema.schema.properties[key].enum.length === 0) {
+          schema.schema.properties[key].enum = ['0'];
+          schema.schema.properties[key].enumNames = { 0: 'No Options' };
+        }
       }
     }
   }
-}
+
+  if (hasEnums) {
+    for (const key of Object.keys(schema.schema.properties)) {
+      // Detect duplicated enum items
+      if (
+        schema.schema.properties[key].enum?.length > 0
+        && hasEnumDuplicatedItems(schema.schema.properties[key].enum)
+      ) {
+        throw new Error('Duplicated items');
+      }
+    }
+  }
+};
 
 export const validateJSONSchema = (stringSchema: string) => {
   // Validate/Remove JSON issues
   stringSchema = validateJSON(stringSchema);
 
-  let schema = JSON.parse(stringSchema);
+  const schema = JSON.parse(stringSchema);
 
   // $schema and id make JSON forms crash
   delete schema.schema.$schema;

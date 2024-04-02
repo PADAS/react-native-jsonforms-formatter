@@ -79,3 +79,5 @@ export const isInactiveChoice = (item: any) => item.type === STRING_TYPE
 
 export const isDisabledChoice = (item: any) => isObject(item) && item.type === CHECKBOXES && item.inactive_titleMap?.length > 0
   && item.titleMap?.length > 0;
+
+export const hasEnumDuplicatedItems = (options: string[]) => (new Set(options).size !== options.length);
