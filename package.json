@@ -3,12 +3,15 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Converts JTD into JSON Schema ",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "preinstall": "git config core.hooksPath .githooks",
     "build": "tsc",
+    "clean": "rm -rf dist",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
-    "test": "jest src/.*\\.test\\..* --coverage"
+    "test": "jest src/.*\\.test\\..* --coverage",
+    "typecheck": "tsc -b"
   },
   "repository": {
     "type": "git",
