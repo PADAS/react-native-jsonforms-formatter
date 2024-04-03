@@ -1,10 +1,10 @@
 {
-  "name": "react-native-jsonforms-formatter",
+  "name": "@earthranger/react-native-jsonforms-formatter",
   "version": "0.1.0",
   "type": "module",
   "description": "Converts JTD into JSON Schema ",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "preinstall": "git config core.hooksPath .githooks",
     "build": "tsc",
@@ -17,6 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/PADAS/react-native-jsonforms-formatter.git"
   },
+  "publishConfig": {
+    "access": "public"
+  }
   "keywords": [
     "json",
     "schema",
