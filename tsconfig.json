@@ -1,19 +1,16 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "ES2021",
-    "module": "ESNext",
-    "lib": ["es2017"],
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src/",
-    "noEmit": true,
+    "rootDir": "src",
     "isolatedModules": true,
-
-    /* Strict Type-Checking Options */
-    "strict": true,
+    "allowJs": true,
 
     /* Module Resolution Options */
     "moduleResolution": "node",
@@ -23,8 +20,13 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "include": [
-    "src/"
+    "src"
   ],
   "exclude": [
     "node_modules", "babel.config.cjs", "metro.config.js", "jest.config.js"
