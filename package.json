@@ -10,7 +10,7 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
-    "test": "jest src/.*\\.test\\..* --coverage",
+    "test": "jest test/.*\\.test\\..* --coverage",
     "typecheck": "tsc -b"
   },
   "repository": {
