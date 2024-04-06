@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "preinstall": "git config core.hooksPath .githooks",
-    "build": "tsc",
+    "build": "npx webpack",
     "clean": "rm -rf dist",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "jest test/.*\\.test\\..* --coverage",
