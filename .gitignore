@@ -4,13 +4,13 @@
 *.vscode
 *.fleet
 
-# OSX
-.DS_Store
-
 # node.js
 node_modules/
 npm-debug.log
 yarn-error.log
+
+# build
+dist/
 
 # Optional npm cache directory
 .npm
@@ -40,3 +40,6 @@ jspm_packages/
 
 # Unit Test Coverage
 coverage/
+
+# OSX
+.DS_Store
