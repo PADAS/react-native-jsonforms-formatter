@@ -19,8 +19,11 @@ import {
     COLLECTION_FIELD_HEADER_FAKE_DATA,
     JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
     JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA,
-    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA, JSON_SCHEMA_DEFAULT_VALUES,
+    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
+    JSON_SCHEMA_DEFAULT_VALUES,
+    JSON_SCHEMA_DATE_TIME_FIELDSETS, JSON_SCHEMA_DATE_TIME_FIELD_SETS, UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS,
 } from "../common/mockData/formatterMockData";
+import exp = require('node:constants');
 
 describe('JSON Schema validation', () => {
 
@@ -158,6 +161,12 @@ describe('JSON UI Schema generation', () => {
         const validSchema = validateJSONSchema(JSON.stringify(jsonSchema));
         const uiSchema = generateUISchema(validSchema);
         expect(uiSchema).toMatchObject(expectedUISchema);
+    });
+
+    it('Validate UI schema date-time fieldset property',  () => {
+        const validSchema = validateJSONSchema(JSON_SCHEMA_DATE_TIME_FIELD_SETS);
+        const uiSchema = generateUISchema(validSchema);
+        expect(uiSchema.elements[0]).toMatchObject(UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS)
     });
 
     it('Generate UI Schema for field sets',  () => {
