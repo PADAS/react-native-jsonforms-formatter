@@ -10,7 +10,7 @@
     "build": "npx webpack",
     "clean": "rm -rf dist",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
-    "test": "jest test/.*\\.test\\..* --coverage",
+    "test": "jest src/test/.*\\\\.test\\\\..* --coverage",
     "typecheck": "tsc -b"
   },
   "repository": {

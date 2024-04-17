@@ -4,8 +4,8 @@ import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
-import { validateJSONSchema } from "../src/validateJsonSchema";
-import { generateUISchema } from "../src/generateUISchema";
+import { validateJSONSchema } from "../validateJsonSchema";
+import { generateUISchema } from "../generateUISchema";
 import {
     JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
     JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
@@ -25,18 +25,18 @@ import {
 describe('JSON Schema validation', () => {
 
     it('Special chars should throw an exception',  () => {
-        expect(() => { validateJSONSchema(JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA) }).toThrowError('Special characters not supported in JSON Schema');
+        expect(() => { validateJSONSchema(JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA) }).toThrow('Special characters not supported in JSON Schema');
     });
 
     it('Validate invalid double quotes',  () => {
-        expect(validateJSONSchema(JSON_SCHEMA_INVALID_DOUBLE_QUOTES_FAKE_DATA).toString).not.toContain(/([“”])/g);
+        expect(JSON.stringify(validateJSONSchema(JSON_SCHEMA_INVALID_DOUBLE_QUOTES_FAKE_DATA))).not.toMatch(/([“”])/g);
     });
 
     it('Validate empty choices',  () => {
-        const validSchema = validateJSONSchema(JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA).toString;
-        expect(validSchema).not.toContain(/\"enum\"\n*\s*\:\n*\s*\[\n*\s*\]/g);
-        expect(validSchema).not.toContain(/\"enumNames\"\n*\s*\:\n*\s*\{\n*\s*\}/g);
-        expect(validSchema).not.toContain(/\"titleMap\"\n*\s*\:\n*\s*\[\n*\s*\]/g);
+        const validSchema = JSON.stringify(validateJSONSchema(JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA));
+        expect(validSchema).not.toMatch(/"enum"\n*\s*:\n*\s*\[\n*\s*]/g);
+        expect(validSchema).not.toMatch(/"enumNames"\n*\s*:\n*\s*\{\n*\s*}/g);
+        expect(validSchema).not.toMatch(/"titleMap"\n*\s*:\n*\s*\[\n*\s*]/g);
     });
 
     it('Validate remove $schema and id properties',  () => {
@@ -129,7 +129,6 @@ describe('JSON Schema validation', () => {
         expect(validSchema.schema.properties['calendar'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_static_choice'].required).toBeUndefined();
         expect(validSchema.schema.properties['checkbox_query'].required).toBeUndefined();
-        // @ts-ignore
         expect(validSchema.schema.required).toIncludeAllMembers([
             'string',
             'paragraph',
