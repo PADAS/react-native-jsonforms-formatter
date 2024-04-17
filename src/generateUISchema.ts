@@ -158,8 +158,7 @@ const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) =
       }
       return getBaseUIObject(key, schema.schema.properties[key].title || '', options);
 
-    case undefined:
-    {
+    case undefined: {
       const dateTimeFormat = getDateTimeControlFormat(key, schema, fieldSetItem);
       if (!isEmptyString(dateTimeFormat)) {
         options = getElementOptions(PropertyFormat.DateTime, dateTimeFormat);
