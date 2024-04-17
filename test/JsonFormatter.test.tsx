@@ -19,7 +19,9 @@ import {
     COLLECTION_FIELD_HEADER_FAKE_DATA,
     JSON_SCHEMA_INLINE_REQUIRED_PROPERTIES,
     JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA,
-    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA, JSON_SCHEMA_DEFAULT_VALUES,
+    JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
+    JSON_SCHEMA_DEFAULT_VALUES,
+    JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
 } from "../common/mockData/formatterMockData";
 
 describe('JSON Schema validation', () => {
@@ -78,6 +80,10 @@ describe('JSON Schema validation', () => {
     it('Validate remove disabled fieldset titleMap choices',  () => {
         const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA);
         expect(validSchema.schema.properties.reportorigin.items.enum).not.toContain('phot_evidence_collected');
+    });
+
+    it('Validate duplicated items in single select',  () => {
+        expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA)).toThrow('Duplicated items');
     });
 
     it('Format schema definition location',  () => {
