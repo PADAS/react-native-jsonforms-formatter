@@ -252,6 +252,42 @@ export const JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA = '{\n' +
   '  }\n' +
   '}';
 
+export const JSON_SCHEMA_DATE_TIME_FIELD_SETS = '{\n' +
+  ' "schema": {\n' +
+  '  "$schema": "http://json-schema.org/draft-04/schema#",\n' +
+  '  "definition": [\n' +
+  '   {\n' +
+  '    "htmlClass": "col-lg-6",\n' +
+  '    "items": [\n' +
+  '     {\n' +
+  '      "fieldHtmlClass": "date-time-picker json-schema",\n' +
+  '      "key": "arrival_time"\n' +
+  '     }\n' +
+  '    ],\n' +
+  '    "type": "fieldset"\n' +
+  '   }\n' +
+  '  ],\n' +
+  '  "properties": {\n' +
+  '   "arrival_time": {\n' +
+  '    "key": "Arrival Time",\n' +
+  '    "title": "HWC MU Arrival Time (at scene)"\n' +
+  '   }\n' +
+  '  },\n' +
+  '  "title": "EventType Test Data",\n' +
+  '  "type": "object"\n' +
+  ' }\n' +
+  '}';
+
+export const UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS = {
+  "type": "Control",
+  "scope": "#/properties/arrival_time",
+  "label": "HWC MU Arrival Time (at scene)",
+  "options": {
+    "format": "date-time",
+    "display": "date-time"
+  }
+};
+
 export const JSON_SCHEMA_INVALID_DEFINITION_LOCATION_FAKE_DATA = '{\n' +
   ' "schema": {\n' +
   '  "definition": [\n' +
