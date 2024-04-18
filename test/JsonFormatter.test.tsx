@@ -4,8 +4,8 @@ import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
-import { validateJSONSchema } from "../src/validateJsonSchema";
-import { generateUISchema } from "../src/generateUISchema";
+import { validateJSONSchema } from "../src";
+import { generateUISchema } from "../src";
 import {
     JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
     JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
@@ -22,11 +22,9 @@ import {
     JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
     JSON_SCHEMA_DEFAULT_VALUES,
     JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
-    JSON_SCHEMA_DATE_TIME_FIELDSETS,
     JSON_SCHEMA_DATE_TIME_FIELD_SETS,
     UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS,
 } from "../common/mockData/formatterMockData";
-import exp = require('node:constants');
 
 describe('JSON Schema validation', () => {
 
