@@ -4,8 +4,8 @@ import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
-import { validateJSONSchema } from "../src/validateJsonSchema";
-import { generateUISchema } from "../src/generateUISchema";
+import { validateJSONSchema } from "../src";
+import { generateUISchema } from "../src";
 import {
     JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
     JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
@@ -21,9 +21,10 @@ import {
     JSON_SCHEMA_INACTIVE_TITLE_MAP_FAKE_DATA,
     JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA,
     JSON_SCHEMA_DEFAULT_VALUES,
-    JSON_SCHEMA_DATE_TIME_FIELDSETS, JSON_SCHEMA_DATE_TIME_FIELD_SETS, UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS,
+    JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
+    JSON_SCHEMA_DATE_TIME_FIELD_SETS,
+    UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS,
 } from "../common/mockData/formatterMockData";
-import exp = require('node:constants');
 
 describe('JSON Schema validation', () => {
 
@@ -81,6 +82,10 @@ describe('JSON Schema validation', () => {
     it('Validate remove disabled fieldset titleMap choices',  () => {
         const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA);
         expect(validSchema.schema.properties.reportorigin.items.enum).not.toContain('phot_evidence_collected');
+    });
+
+    it('Validate duplicated items in single select',  () => {
+        expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA)).toThrow('Duplicated items');
     });
 
     it('Format schema definition location',  () => {

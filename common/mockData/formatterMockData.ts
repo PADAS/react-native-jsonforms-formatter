@@ -223,6 +223,35 @@ export const JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA = '{\n' +
   ' }\n' +
   '}';
 
+export const JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA = '{\n' +
+  '  "definition": [\n' +
+  '    "single_select"\n' +
+  '  ],\n' +
+  '  "description": "This schema will be used for regression testing in the mobile app",\n' +
+  '  "schema": {\n' +
+  '    "$schema": "http://json-schema.org/draft-04/schema#",\n' +
+  '    "icon_id": "generic_rep",\n' +
+  '    "id": "https://mobile-bash.pamdas.org/api/v1.0/activity/events/schema/eventtype/single_select_query_no_required",\n' +
+  '    "image_url": "https://mobile-bash.pamdas.org/static/generic-black.svg",\n' +
+  '    "properties": {\n' +
+  '      "single_select": {\n' +
+  '        "enum": [\n' +
+  '          "new",\n' +
+  '          "new"\n' +
+  '        ],\n' +
+  '        "enumNames": {\n' +
+  '          "new": "New/Fresh",\n' +
+  '          "old": "New/Fresh"\n' +
+  '        },\n' +
+  '        "title": "I\'m a single select query",\n' +
+  '        "type": "string"\n' +
+  '      }\n' +
+  '    },\n' +
+  '    "title": "String",\n' +
+  '    "type": "object"\n' +
+  '  }\n' +
+  '}';
+
 export const JSON_SCHEMA_DATE_TIME_FIELD_SETS = '{\n' +
   ' "schema": {\n' +
   '  "$schema": "http://json-schema.org/draft-04/schema#",\n' +
