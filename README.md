@@ -1,4 +1,5 @@
 # React Native JSONForms Formatter
+
 ![Build Status][ci-url]
 
 [ci-url]: https://github.com/PADAS/react-native-jsonforms-formatter/actions/workflows/npm-build.yml/badge.svg
@@ -22,6 +23,7 @@ npm install --save react-native-jsonforms-formatter
 ```
 
 ## Usage
+
 The library provides two main functions: `validateJSONSchema` and `generateUISchema`.
 
 ### Validating JSONSchema
@@ -29,7 +31,7 @@ The library provides two main functions: `validateJSONSchema` and `generateUISch
 You can use the `validateJSONSchema` function to validate a JSONSchema string:
 
 ```typescript
-import { validateJSONSchema } from 'react-native-jsonforms-formatter';
+import { validateJSONSchema } from "react-native-jsonforms-formatter";
 
 const stringSchema = `
 {
@@ -47,16 +49,17 @@ const stringSchema = `
 }
 `;
 
-const jsonSchema = validateJSONSchema(stringSchema);  
+const jsonSchema = validateJSONSchema(stringSchema);
 ```
 
 The `validateJSONSchema` function returns a valid JSONSchema object if the input string is a valid JSONSchema. If the input is not valid, it will throw an error.
 
 ### Generating UISchema
+
 You can use the `generateUISchema` function to generate a UISchema object from a valid JSONSchema:
 
 ```typescript
-import { generateUISchema } from 'react-native-jsonforms-formatter';
+import { generateUISchema } from "react-native-jsonforms-formatter";
 
 const uiSchema = generateUISchema(jsonSchema);
 ```
@@ -64,13 +67,17 @@ const uiSchema = generateUISchema(jsonSchema);
 The `generateUISchema` function returns a `UISchema` object that can be used with the ReactNative JSONForms library.
 
 ## Putting it all together
+
 Here's an example of how you can use the library in a ReactNative application:
 
 ```typescript
-import React from 'react';
-import { JsonForms } from '@jsonforms/react-native';
-import { validateJSONSchema, generateUISchema } from 'react-native-jsonforms-formatter';
-import { RNRenderers, RNCells } from '@jsonforms/react-native-renderers';
+import { JsonForms } from "@jsonforms/react-native";
+import { RNCells, RNRenderers } from "@jsonforms/react-native-renderers";
+import React from "react";
+import {
+  generateUISchema,
+  validateJSONSchema,
+} from "react-native-jsonforms-formatter";
 
 const stringSchema = `
 {
@@ -92,7 +99,7 @@ const jsonSchema = validateJSONSchema(stringSchema);
 const uiSchema = generateUISchema(jsonSchema);
 
 const App = () => {
-  const [data, setData] = React.useState({ name: 'John Doe', age: 30 });
+  const [data, setData] = React.useState({ name: "John Doe", age: 30 });
 
   return (
     <JsonForms
@@ -110,6 +117,7 @@ export default App;
 ```
 
 ## Contributors
+
 Contributions are welcome! If you find a bug or have a feature request, please open an issue.
 
 <a href="https://github.com/PADAS/react-native-jsonforms-formatter/graphs/contributors">
@@ -117,4 +125,5 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 </a>
 
 ## Licensing
+
 A copy of the license is available in the repository's [LICENSE](LICENSE) file.
