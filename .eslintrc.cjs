@@ -10,9 +10,9 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['test/**/*.{ts,tsx}'],
+      files: ["test/**/*.{ts,tsx}"],
       parserOptions: {
-        project: './tsconfig.test.json',
+        project: "./tsconfig.test.json",
       },
     },
   ],

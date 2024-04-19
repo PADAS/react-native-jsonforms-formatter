@@ -1,4 +1,3 @@
-/* eslint-disable import/no-named-as-default */
 // External Dependencies
 import { isEmpty } from 'lodash-es';
 
@@ -20,13 +19,13 @@ export enum ElementDisplay {
 
 export const FIELD_SET = 'fieldset';
 export const HELP_VALUE = 'helpvalue';
-
 export const REQUIRED_PROPERTY = 'required';
 export const CHECKBOXES = 'checkboxes';
 export const INACTIVE_ENUM = 'inactive_enum';
 export const DISABLED_ENUM = 'inactive_titleMap';
 export const STRING_TYPE = 'string';
 export const ARRAY_TYPE = 'array';
+export const ENUM = 'enum';
 
 export const isObject = (item: any) => item instanceof Object;
 
@@ -61,6 +60,7 @@ export const getSchemaValidations = (stringSchema: string) => ({
   hasCheckboxes: hasCheckboxes(stringSchema),
   hasInactiveChoices: hasInactiveChoices(stringSchema),
   hasDisabledChoices: hasDisabledChoices(stringSchema),
+  hasEnums: hasEnums(stringSchema),
 });
 
 export const isArrayProperty = (property: any) => property.type === ARRAY_TYPE && !property.items?.enum
@@ -73,6 +73,8 @@ const hasCheckboxes = (stringSchema: string) => stringSchema.includes(CHECKBOXES
 const hasInactiveChoices = (stringSchema: string) => stringSchema.includes(INACTIVE_ENUM);
 
 const hasDisabledChoices = (stringSchema: string) => stringSchema.includes(DISABLED_ENUM);
+
+const hasEnums = (stringSchema: string) => stringSchema.includes(ENUM);
 
 export const isInactiveChoice = (item: any) => item.type === STRING_TYPE
  && item.enum?.length > 0 && item.inactive_enum?.length > 0;

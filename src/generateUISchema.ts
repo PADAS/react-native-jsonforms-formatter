@@ -10,6 +10,7 @@ import {
   isFieldSetTitleWithoutItems, isPropertyKey,
   isSchemaFieldSet, PropertyFormat,
 } from './utils/utils';
+import { isEmptyString } from './utils/stringUtils';
 
 // Enums
 enum SchemaTypes {
@@ -137,16 +138,16 @@ const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) =
     case SchemaTypes.Number:
       return getBaseUIObject(key, schema.schema.properties[key].title || '');
 
-    case SchemaTypes.String:
-      // eslint-disable-next-line no-case-declarations
+    case SchemaTypes.String: {
       const dateTimeFormat = getDateTimeControlFormat(key, schema, fieldSetItem);
-      if (!isEmpty(dateTimeFormat)) {
+      if (!isEmptyString(dateTimeFormat)) {
         options = getElementOptions(PropertyFormat.DateTime, dateTimeFormat);
       } else if (schema.schema.properties[key].display
         && schema.schema.properties[key].display === ElementDisplay.Header) {
         options = getElementOptions(PropertyFormat.FormLabel);
       }
       return getBaseUIObject(key, schema.schema.properties[key].title || '', options);
+    }
 
     case SchemaTypes.Array:
       if (schema.schema.properties[key].items.enum
@@ -156,6 +157,16 @@ const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) =
         options = getElementOptions(PropertyFormat.RepeatableField);
       }
       return getBaseUIObject(key, schema.schema.properties[key].title || '', options);
+
+    case undefined: {
+      const dateTimeFormat = getDateTimeControlFormat(key, schema, fieldSetItem);
+      if (!isEmptyString(dateTimeFormat)) {
+        options = getElementOptions(PropertyFormat.DateTime, dateTimeFormat);
+        return getBaseUIObject(key, schema.schema.properties[key].title || '', options);
+      }
+      return undefined;
+    }
+
     default:
       break;
   }
