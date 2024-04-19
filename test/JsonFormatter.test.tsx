@@ -3,7 +3,9 @@ import {
   COLLECTION_FIELD_HEADER_FAKE_DATA,
   FIELD_SET_HEADER_FAKE_DATA,
   JSON_SCHEMA_COLLECTION_FIELD_FAKE_DATA,
+  JSON_SCHEMA_DATE_TIME_FIELD_SETS,
   JSON_SCHEMA_DEFAULT_VALUES,
+  JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
   JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
   JSON_SCHEMA_FIELD_SETS_FAKE_DATA,
   JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
@@ -14,6 +16,7 @@ import {
   JSON_SCHEMA_INVALID_DEFINITION_LOCATION_FAKE_DATA,
   JSON_SCHEMA_INVALID_DOUBLE_QUOTES_FAKE_DATA,
   JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA,
+  UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS,
 } from "../common/mockData/formatterMockData"
 import expectedSchema from "../common/mockData/jsonSchemaExpectedMock.json";
 import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
@@ -82,6 +85,10 @@ describe("JSON Schema validation", () => {
   it("Validate remove disabled fieldset titleMap choices", () => {
     const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_FIELD_SET_TITLE_MAP_FAKE_DATA);
     expect(validSchema.schema.properties.reportorigin.items.enum).not.toContain("phot_evidence_collected");
+  });
+
+  it('Validate duplicated items in single select',  () => {
+    expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA)).toThrow('Duplicated items');
   });
 
   it("Format schema definition location", () => {
@@ -166,6 +173,12 @@ describe("JSON UI Schema generation", () => {
     const uiSchema = generateUISchema(validSchema);
     expect(uiSchema).toMatchObject(expectedUISchema);
   });
+
+    it('Validate UI schema date-time fieldset property',  () => {
+      const validSchema = validateJSONSchema(JSON_SCHEMA_DATE_TIME_FIELD_SETS);
+      const uiSchema = generateUISchema(validSchema);
+      expect(uiSchema.elements[0]).toMatchObject(UI_SCHEMA_ELEMENT_DATE_TIME_FIELD_SETS)
+    });
 
   it("Generate UI Schema for field sets", () => {
     const validSchema = validateJSONSchema(JSON.stringify(jsonSchemaFieldSets));
