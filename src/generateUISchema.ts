@@ -19,7 +19,7 @@ enum SchemaTypes {
   Array = 'array',
 }
 
-const getBaseUIObject = (key: string, title: string, options: any = {}) => (
+const getBaseUIObject = (key: string, title: string, options: unknown = {}) => (
   {
     type: 'Control',
     scope: `#/properties/${key}`,
@@ -27,10 +27,10 @@ const getBaseUIObject = (key: string, title: string, options: any = {}) => (
     ...options && { options },
   });
 
-const getDateTimeControlFormat = (key: string, jsonSchema: any, fieldSetItem: any = undefined) => {
+const getDateTimeControlFormat = (key: string, jsonSchema: unknown, fieldSetItem: unknown = undefined) => {
   try {
     const definitionObject = fieldSetItem
-      || jsonSchema.definition.find((object: any) => (object.key === key));
+      || jsonSchema.definition.find((object: unknown) => (object.key === key));
 
     if (definitionObject.fieldHtmlClass === 'date-time-picker json-schema'
       || (definitionObject && (definitionObject.type || '') === 'datetime')) {
@@ -49,7 +49,7 @@ const getDateTimeControlFormat = (key: string, jsonSchema: any, fieldSetItem: an
   return undefined;
 };
 
-export const generateUISchema = (schema: any) => {
+export const generateUISchema = (schema: unknown) => {
   const elements: Object[] = [];
 
   if (isSchemaFieldSet(schema.definition)) {
@@ -68,10 +68,10 @@ export const generateUISchema = (schema: any) => {
   };
 };
 
-const getFieldSetsElements = (schema: any) => {
+const getFieldSetsElements = (schema: unknown) => {
   const elements: Object[] = [];
 
-  schema.definition.forEach((item: any) => {
+  schema.definition.forEach((item: unknown) => {
     if (typeof item === 'string') {
       elements.push(getBaseUIObject(item, schema.schema.properties[item].title || ''));
     } else if (item instanceof Object) {
@@ -91,7 +91,7 @@ const getFieldSetsElements = (schema: any) => {
               getElementOptions(PropertyFormat.FormLabel),
             ));
           }
-          item.items.forEach((value: any) => {
+          item.items.forEach((value: unknown) => {
             if (value instanceof Object) {
               const element = getUIElement(value.key || '', schema, value);
               if (element) {
@@ -132,7 +132,7 @@ const getElementOptions = (format: string = '', display: string = '') => {
   return options;
 };
 
-const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) => {
+const getUIElement = (key: string, schema: unknown, fieldSetItem: unknown = undefined) => {
   let options = {};
   switch (schema.schema.properties[key].type as SchemaTypes) {
     case SchemaTypes.Number:

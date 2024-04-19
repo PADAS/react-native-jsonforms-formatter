@@ -31,7 +31,7 @@ const maxParamRegex = /"maximum"(?:[^\\"]|\\\\|\\")*"\d+\.*\d*"/g;
 const doubleSingleQuotesRegex = /"(?=[^"]*(?:"[^"]*)?$)/g;
 
 const getSchemaForCheckbox = (
-  definition: any,
+  definition: unknown,
   title: string,
   required: boolean,
   defaultValue: string,
@@ -42,8 +42,8 @@ const getSchemaForCheckbox = (
   ...required && { required },
   title: title || definition.title,
   items: {
-    enum: definition.titleMap.map((item: any) => item.value),
-    enumNames: definition.titleMap.map((item: any) => item.name),
+    enum: definition.titleMap.map((item: unknown) => item.value),
+    enumNames: definition.titleMap.map((item: unknown) => item.name),
   },
   ...defaultValue && { default: defaultValue },
 });
@@ -56,9 +56,9 @@ const getTitleProperty = (title: string) => ({
   title,
 });
 
-const getPropertyVisibility = (property: any) => property?.isHidden || false;
+const getPropertyVisibility = (property: unknown) => property?.isHidden || false;
 
-const cleanUpRequiredProperty = (schema: any) => {
+const cleanUpRequiredProperty = (schema: unknown) => {
   const requiredProperties = [];
 
   // Iterate over the properties to get clean enum data
@@ -81,7 +81,7 @@ const cleanUpRequiredProperty = (schema: any) => {
   return schema;
 };
 
-const formatDefinitionInSchema = (schema: any) => {
+const formatDefinitionInSchema = (schema: unknown) => {
   if (schema.schema.definition) {
     const { definition } = schema.schema;
     delete schema.schema.definition;
@@ -91,8 +91,8 @@ const formatDefinitionInSchema = (schema: any) => {
   return schema;
 };
 
-const formatSchemaRepeatableFieldLayout = (schema: any) => {
-  const properties: any = {};
+const formatSchemaRepeatableFieldLayout = (schema: unknown) => {
+  const properties: unknown = {};
   let headerCount = 0;
 
   // eslint-disable-next-line no-restricted-syntax
@@ -116,10 +116,10 @@ const formatSchemaRepeatableFieldLayout = (schema: any) => {
 };
 
 // eslint-disable-next-line max-len
-const cleanUpInactiveEnumChoice = (property: any) => property.enum.filter((choice: any) => !property.inactive_enum.includes(choice));
+const cleanUpInactiveEnumChoice = (property: unknown) => property.enum.filter((choice: unknown) => !property.inactive_enum.includes(choice));
 
 // eslint-disable-next-line max-len
-const cleanUpDisabledEnumChoice = (definitionItem: any) => definitionItem.titleMap.filter((item: any) => !definitionItem.inactive_titleMap.includes(item.value));
+const cleanUpDisabledEnumChoice = (definitionItem: unknown) => definitionItem.titleMap.filter((item: unknown) => !definitionItem.inactive_titleMap.includes(item.value));
 
 const validateJSON = (stringSchema: string) => {
   if (stringSchema.match(specialCharactersInKey) !== null) {
@@ -140,7 +140,7 @@ const validateJSON = (stringSchema: string) => {
   return stringSchema;
 };
 
-const cleanUpJTD = (validations: any, schema: any) => {
+const cleanUpJTD = (validations: unknown, schema: unknown) => {
   if (isSchemaFieldSet(schema.definition)) {
     validateFieldSetDefinition(validations, schema);
   } else if (schema.definition?.length > 0) {
@@ -150,7 +150,7 @@ const cleanUpJTD = (validations: any, schema: any) => {
   }
 };
 
-const validateFieldSetDefinition = (validations: any, schema: any) => {
+const validateFieldSetDefinition = (validations: unknown, schema: unknown) => {
   for (const item of schema.definition) {
     switch (true) {
       case isString(item):
@@ -175,7 +175,7 @@ const validateFieldSetDefinition = (validations: any, schema: any) => {
   }
 };
 
-const validateDefinition = (validations: any, item: any, schema: any, parentItem?: any) => {
+const validateDefinition = (validations: unknown, item: unknown, schema: unknown, parentItem?: unknown) => {
   const { hasCheckboxes, hasDisabledChoices } = validations;
   // Set property visibility
   if (isString(item) && schema.schema.properties[item]) {
@@ -214,7 +214,7 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
   }
 };
 
-const validateSchema = (validations: any, schema: any) => {
+const validateSchema = (validations: unknown, schema: unknown) => {
   const { hasInactiveChoices, hasEnums } = validations;
   if (hasInactiveChoices) {
     for (const key of Object.keys(schema.schema.properties)) {

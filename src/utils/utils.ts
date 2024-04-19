@@ -27,29 +27,29 @@ export const STRING_TYPE = 'string';
 export const ARRAY_TYPE = 'array';
 export const ENUM = 'enum';
 
-export const isObject = (item: any) => item instanceof Object;
+export const isObject = (item: unknown) => item instanceof Object;
 
-export const isString = (item: any) => typeof item === STRING_TYPE;
-export const isSchemaFieldSet = (definition: any[]) => {
+export const isString = (item: unknown) => typeof item === STRING_TYPE;
+export const isSchemaFieldSet = (definition: unknown[]) => {
   if (definition.length === 0) {
     return false;
   }
-  const fieldSet = definition.find((item: any) => isObject(item)
+  const fieldSet = definition.find((item: unknown) => isObject(item)
     && item && (item.type || '') === FIELD_SET);
   return fieldSet !== undefined;
 };
 
-export const isFieldSetTitle = (item: any) => isObject(item) && item.type === FIELD_SET
+export const isFieldSetTitle = (item: unknown) => isObject(item) && item.type === FIELD_SET
   && !isEmpty(item.title);
 
-export const isFieldSetTitleWithoutItems = (item: any) => isObject(item) && item.type === FIELD_SET
+export const isFieldSetTitleWithoutItems = (item: unknown) => isObject(item) && item.type === FIELD_SET
   && item.items.length === 0 && !isEmpty(item.title);
 
-export const isFieldSet = (item: any) => isObject(item) && item.type === FIELD_SET && item.items.length > 0;
+export const isFieldSet = (item: unknown) => isObject(item) && item.type === FIELD_SET && item.items.length > 0;
 
-export const isCheckbox = (item: any) => isObject(item) && item.type === CHECKBOXES;
+export const isCheckbox = (item: unknown) => isObject(item) && item.type === CHECKBOXES;
 
-export const isPropertyKey = (item: any) => !isEmpty(item.key);
+export const isPropertyKey = (item: unknown) => !isEmpty(item.key);
 
 export const getFieldSetTitleKey = (title: string) => {
   const key = title.toLowerCase().replace(/[\s\\/\\%]/gi, '_');
@@ -63,10 +63,10 @@ export const getSchemaValidations = (stringSchema: string) => ({
   hasEnums: hasEnums(stringSchema),
 });
 
-export const isArrayProperty = (property: any) => property.type === ARRAY_TYPE && !property.items?.enum
+export const isArrayProperty = (property: unknown) => property.type === ARRAY_TYPE && !property.items?.enum
 && !property.items?.enumNames;
 
-export const isRequiredProperty = (property: any) => property.required === 'true' || property.required > 0;
+export const isRequiredProperty = (property: unknown) => property.required === 'true' || property.required > 0;
 
 const hasCheckboxes = (stringSchema: string) => stringSchema.includes(CHECKBOXES);
 
@@ -76,10 +76,10 @@ const hasDisabledChoices = (stringSchema: string) => stringSchema.includes(DISAB
 
 const hasEnums = (stringSchema: string) => stringSchema.includes(ENUM);
 
-export const isInactiveChoice = (item: any) => item.type === STRING_TYPE
+export const isInactiveChoice = (item: unknown) => item.type === STRING_TYPE
  && item.enum?.length > 0 && item.inactive_enum?.length > 0;
 
-export const isDisabledChoice = (item: any) => isObject(item) && item.type === CHECKBOXES && item.inactive_titleMap?.length > 0
+export const isDisabledChoice = (item: unknown) => isObject(item) && item.type === CHECKBOXES && item.inactive_titleMap?.length > 0
   && item.titleMap?.length > 0;
 
 export const hasEnumDuplicatedItems = (options: string[]) => (new Set(options).size !== options.length);
