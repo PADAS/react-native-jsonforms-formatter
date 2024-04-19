@@ -1,20 +1,26 @@
 {
   "compilerOptions": {
-    /* Basic Options */
     "noImplicitAny": true,
     "module": "es6",
     "target": "es5",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",
+    "rootDir": ".",
     "isolatedModules": true,
     "allowJs": true,
-
-    /* Module Resolution Options */
     "moduleResolution": "node",
-    "types": ["node", "jest"],
+    "paths": {
+      "*": [
+        "./src/*",
+        "./test/*"
+      ]
+    },
+    "types": [
+      "node",
+      "jest"
+    ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -26,9 +32,14 @@
     }
   },
   "include": [
-    "src"
+    "src/**/*",
+    "test/**/*"
   ],
   "exclude": [
-    "node_modules", "babel.config.cjs", "metro.config.js", "jest.config.js"
+    "node_modules",
+    "babel.config.cjs",
+    "metro.config.js",
+    "jest.config.js",
+    "common/**/*"
   ]
 }
