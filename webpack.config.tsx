@@ -1,15 +1,15 @@
-const path = require('path');
-const webpack = require('webpack');
+const path = require("path");
+const webpack = require("webpack");
 
 const config = {
-  mode: 'production',
+  mode: "production",
   entry: {
-    index: './src/index.ts',
+    index: "./src/index.ts",
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'commonjs2',
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+    libraryTarget: "commonjs2",
     clean: true,
   },
   module: {
@@ -18,18 +18,19 @@ const config = {
         test: /\.tsx?$/,
         use: [
           {
-            loader: 'ts-loader',
+            loader: "ts-loader",
             options: {
-              configFile: 'tsconfig.json',
+              configFile: "tsconfig.json",
             },
           },
         ],
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(__dirname, "src")],
+        exclude: [path.resolve(__dirname, "test")],
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: [".tsx", ".ts", ".js"],
   },
   optimization: {
     minimize: true,
@@ -43,19 +44,19 @@ const config = {
   },
   externals: {
     react: {
-      commonjs: 'react',
-      commonjs2: 'react',
-      amd: 'react',
-      root: 'React',
+      commonjs: "react",
+      commonjs2: "react",
+      amd: "react",
+      root: "React",
     },
-    'react-dom': {
-      commonjs: 'react-dom',
-      commonjs2: 'react-dom',
-      amd: 'react-dom',
-      root: 'ReactDOM',
+    "react-dom": {
+      commonjs: "react-dom",
+      commonjs2: "react-dom",
+      amd: "react-dom",
+      root: "ReactDOM",
     },
   },
-  target: 'node',
+  target: "node",
 };
 
 module.exports = config;
