@@ -21,6 +21,7 @@ module.exports = {
     "import/prefer-default-export": "off",
     "react/require-default-props": "off",
     "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "no-plusplus": [2, { allowForLoopAfterthoughts: true }],
   },
   root: true,
