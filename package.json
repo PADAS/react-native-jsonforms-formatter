@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Converts JTD into JSON Schema ",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/bundle.js",
   "scripts": {
     "preinstall": "git config core.hooksPath .githooks",
     "build": "npx webpack",
