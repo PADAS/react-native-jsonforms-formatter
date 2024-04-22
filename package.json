@@ -1,6 +1,6 @@
 {
   "name": "@earthranger/react-native-jsonforms-formatter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Converts JTD into JSON Schema ",
   "main": "./dist/bundle.js",
