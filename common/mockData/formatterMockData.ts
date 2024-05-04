@@ -252,6 +252,57 @@ export const JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA = '{\n' +
   '  }\n' +
   '}';
 
+export const JSON_SCHEMA_DUPLICATED_REQUIRED_PROPERTIES_FAKE_DATA = '{\n' +
+  '    "definition": [\n' +
+  '        "fieldset__title_abnormalities_info",\n' +
+  '        "fieldset__title_general_info",\n' +
+  '        "fieldset__title_markings_info",\n' +
+  '        "fieldset__title_tagging_info"\n' +
+  '    ],\n' +
+  '    "schema": {\n' +
+  '        "icon_id": "reptiles_amphibians_rep",\n' +
+  '        "image_url": "https://mobile-bash.pamdas.org/static/sprite-src/reptiles_amphibians_rep.svg",\n' +
+  '        "properties": {\n' +
+  '            "fieldset__title_abnormalities_info": {\n' +
+  '                "display": "header",\n' +
+  '                "isHidden": false,\n' +
+  '                "readOnly": true,\n' +
+  '                "title": "Abnormalities info",\n' +
+  '                "type": "string"\n' +
+  '            },\n' +
+  '            "fieldset__title_general_info": {\n' +
+  '                "display": "header",\n' +
+  '                "isHidden": false,\n' +
+  '                "readOnly": true,\n' +
+  '                "title": "General info",\n' +
+  '                "type": "string"\n' +
+  '            },\n' +
+  '            "fieldset__title_markings_info": {\n' +
+  '                "display": "header",\n' +
+  '                "isHidden": false,\n' +
+  '                "readOnly": true,\n' +
+  '                "title": "Markings info",\n' +
+  '                "type": "string"\n' +
+  '            },\n' +
+  '            "fieldset__title_tagging_info": {\n' +
+  '                "display": "header",\n' +
+  '                "isHidden": false,\n' +
+  '                "readOnly": true,\n' +
+  '                "title": "Tagging info",\n' +
+  '                "type": "string"\n' +
+  '            }\n' +
+  '        },\n' +
+  '        "required": [\n' +
+  '            "fieldset__title_abnormalities_info",\n' +
+  '            "fieldset__title_general_info",\n' +
+  '            "fieldset__title_markings_info",\n' +
+  '            "fieldset__title_markings_info"\n' +
+  '        ],\n' +
+  '        "title": "Turtle data Report",\n' +
+  '        "type": "object"\n' +
+  '    }\n' +
+  '}';
+
 export const JSON_SCHEMA_DATE_TIME_FIELD_SETS = '{\n' +
   ' "schema": {\n' +
   '  "$schema": "http://json-schema.org/draft-04/schema#",\n' +
