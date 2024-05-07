@@ -6,6 +6,7 @@ import {
   JSON_SCHEMA_DATE_TIME_FIELD_SETS,
   JSON_SCHEMA_DEFAULT_VALUES,
   JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
+  JSON_SCHEMA_DUPLICATED_REQUIRED_PROPERTIES_FAKE_DATA,
   JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
   JSON_SCHEMA_FIELD_SETS_FAKE_DATA,
   JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
@@ -39,9 +40,9 @@ describe("JSON Schema validation", () => {
 
   it("Validate empty choices", () => {
     const validSchema = validateJSONSchema(JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA).toString;
-    expect(validSchema).not.toContain(/\"enum\"\n*\s*\:\n*\s*\[\n*\s*\]/g);
-    expect(validSchema).not.toContain(/\"enumNames\"\n*\s*\:\n*\s*\{\n*\s*\}/g);
-    expect(validSchema).not.toContain(/\"titleMap\"\n*\s*\:\n*\s*\[\n*\s*\]/g);
+    expect(validSchema).not.toContain(/"enum"\n*\s*:\n*\s*\[\n*\s*\]/g);
+    expect(validSchema).not.toContain(/"enumNames"\n*\s*:\n*\s*\{\n*\s*\}/g);
+    expect(validSchema).not.toContain(/"titleMap"\n*\s*:\n*\s*\[\n*\s*\]/g);
   });
 
   it("Validate remove $schema and id properties", () => {
@@ -88,7 +89,11 @@ describe("JSON Schema validation", () => {
   });
 
   it('Validate duplicated items in single select',  () => {
-    expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA)).toThrow('Duplicated items');
+    expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA)).toThrow('Duplicated enum items');
+  });
+
+  it('Validate duplicated required properties',  () => {
+    expect(() => validateJSONSchema(JSON_SCHEMA_DUPLICATED_REQUIRED_PROPERTIES_FAKE_DATA)).toThrow('Duplicated required properties');
   });
 
   it("Format schema definition location", () => {

@@ -3,7 +3,7 @@ import {
   ElementDisplay,
   getFieldSetTitleKey,
   getSchemaValidations,
-  hasEnumDuplicatedItems,
+  hasDuplicatedItems,
   HELP_VALUE,
   isArrayProperty,
   isCheckbox,
@@ -236,9 +236,9 @@ const validateSchema = (validations: any, schema: any) => {
       // Detect duplicated enum items
       if (
         schema.schema.properties[key].enum?.length > 0
-        && hasEnumDuplicatedItems(schema.schema.properties[key].enum)
+        && hasDuplicatedItems(schema.schema.properties[key].enum)
       ) {
-        throw new Error('Duplicated items');
+        throw new Error('Duplicated enum items');
       }
     }
   }
@@ -270,6 +270,9 @@ export const validateJSONSchema = (stringSchema: string) => {
 
   if (stringSchema.includes(REQUIRED_PROPERTY)) {
     schema.schema = cleanUpRequiredProperty(schema.schema);
+    if (schema.schema.required?.length > 0 && hasDuplicatedItems(schema.schema.required)) {
+      throw new Error('Duplicated required properties');
+    }
   }
   return schema;
 };
