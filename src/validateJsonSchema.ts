@@ -1,11 +1,11 @@
 // Internal Dependencies
+import { isEmpty } from 'lodash-es';
 import {
   ElementDisplay,
   getFieldSetTitleKey,
   getSchemaValidations,
   hasDuplicatedItems,
   HELP_VALUE,
-  isArrayProperty,
   isCheckbox,
   isDisabledChoice,
   isFieldSet,
@@ -17,6 +17,7 @@ import {
   isSchemaFieldSet,
   isString,
   REQUIRED_PROPERTY,
+  traverseSchema,
 } from './utils/utils';
 
 const specialCharactersInKey = /[^\w\n\s_"](?=[^:\n\s{}[]]*:[\t\n\s]*(\{|\[)+)/g;
@@ -59,24 +60,35 @@ const getTitleProperty = (title: string) => ({
 const getPropertyVisibility = (property: any) => property?.isHidden || false;
 
 const cleanUpRequiredProperty = (schema: any) => {
-  const requiredProperties = [];
+  // Store the original root-level required array if it exists
+  const originalRequired = Array.isArray(schema.required) ? [...schema.required] : null;
 
-  // Iterate over the properties to get clean enum data
-  for (const key of Object.keys(schema.properties)) {
-    const property = schema.properties[key];
-    if (isRequiredProperty(property)) {
-      requiredProperties.push(key);
-      delete schema.properties[key].required;
-    }
-    if (isArrayProperty(property)) {
-      cleanUpRequiredProperty(property.items);
-    }
-  }
+  traverseSchema(schema, (node, path) => {
+    if (node.type === 'object' && node.properties) {
+      const localRequired: string[] = [];
 
-  if (requiredProperties.length > 0) {
-    // eslint-disable-next-line no-param-reassign
-    schema.required = requiredProperties;
-  }
+      Object.entries(node.properties).forEach(([key, property]: [string, any]) => {
+        if (isRequiredProperty(property)) {
+          localRequired.push(key);
+          delete property.required;
+        }
+      });
+
+      // Only modify required array if we found inline required properties
+      if (!isEmpty(localRequired)) {
+        // If this is the root schema and there was an original required array, merge them
+        if (path.length === 0 && originalRequired) {
+          const mergedRequired = [...originalRequired, ...localRequired];
+          node.required = Array.from(new Set(mergedRequired));
+        } else {
+          node.required = localRequired;
+        }
+      } else if (path.length > 0 && node.required) {
+        // Only delete required array for nested objects, not the root
+        delete node.required;
+      }
+    }
+  });
 
   return schema;
 };
@@ -223,7 +235,7 @@ const validateSchema = (validations: any, schema: any) => {
       if (isInactiveChoice(property)) {
         schema.schema.properties[key].enum = cleanUpInactiveEnumChoice(property);
 
-        if (schema.schema.properties[key].enum.length === 0) {
+        if (isEmpty(schema.schema.properties[key].enum.length)) {
           schema.schema.properties[key].enum = ['0'];
           schema.schema.properties[key].enumNames = { 0: 'No Options' };
         }
@@ -235,7 +247,8 @@ const validateSchema = (validations: any, schema: any) => {
     for (const key of Object.keys(schema.schema.properties)) {
       // Detect duplicated enum items
       if (
-        schema.schema.properties[key].enum?.length > 0
+        // schema.schema.properties[key].enum?.length > 0
+        !isEmpty(schema.schema.properties[key].enum)
         && hasDuplicatedItems(schema.schema.properties[key].enum)
       ) {
         throw new Error('Duplicated enum items');
@@ -269,10 +282,11 @@ export const validateJSONSchema = (stringSchema: string) => {
   }
 
   if (stringSchema.includes(REQUIRED_PROPERTY)) {
-    schema.schema = cleanUpRequiredProperty(schema.schema);
+    // Check for duplicated required properties in the original schema first
     if (schema.schema.required?.length > 0 && hasDuplicatedItems(schema.schema.required)) {
       throw new Error('Duplicated required properties');
     }
+    schema.schema = cleanUpRequiredProperty(schema.schema);
   }
   return schema;
 };

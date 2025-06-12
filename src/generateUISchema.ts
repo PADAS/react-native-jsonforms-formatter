@@ -6,11 +6,11 @@ import {
   DateTimeFormat,
   ElementDisplay,
   getFieldSetTitleKey,
+  isEmptyString,
   isFieldSet,
   isFieldSetTitleWithoutItems, isPropertyKey,
   isSchemaFieldSet, PropertyFormat,
 } from './utils/utils';
-import { isEmptyString } from './utils/stringUtils';
 
 // Enums
 enum SchemaTypes {
@@ -57,7 +57,7 @@ export const generateUISchema = (schema: any) => {
   } else {
     Object.keys(schema.schema.properties).forEach((key: string) => {
       const element = getUIElement(key, schema);
-      if (element) {
+      if (!isEmpty(element)) {
         elements.push(element);
       }
     });

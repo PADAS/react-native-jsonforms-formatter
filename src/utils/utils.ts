@@ -93,6 +93,29 @@ export const isSchemaFieldSet = (definition: any[]) => {
 
 export const isString = (item: any) => typeof item === STRING_TYPE;
 
+// Helper function to recursively traverse and process the schema
+export const traverseSchema = (
+  schema: any,
+  processor: (node: any, path: string[]) => void,
+  path: string[] = []
+) => {
+  if (typeof schema !== 'object' || schema === null) {
+    return;
+  }
+
+  processor(schema, path);
+
+  if (Array.isArray(schema)) {
+    schema.forEach((item, index) =>
+      traverseSchema(item, processor, [...path, index.toString()])
+    );
+  } else {
+    Object.entries(schema).forEach(([key, value]) =>
+      traverseSchema(value, processor, [...path, key])
+    );
+  }
+};
+
 //--------------------------------------------------------------
 // private functions
 //--------------------------------------------------------------
