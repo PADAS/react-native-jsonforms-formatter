@@ -3,10 +3,12 @@ import {
   COLLECTION_FIELD_HEADER_FAKE_DATA,
   FIELD_SET_HEADER_FAKE_DATA,
   JSON_SCHEMA_COLLECTION_FIELD_FAKE_DATA,
+  JSON_SCHEMA_COMMA_DECIMAL_NUMBERS,
   JSON_SCHEMA_DATE_TIME_FIELD_SETS,
   JSON_SCHEMA_DEFAULT_VALUES,
   JSON_SCHEMA_DUPLICATED_CHOICES_SINGLE_SELECT_FAKE_DATA,
   JSON_SCHEMA_DUPLICATED_REQUIRED_PROPERTIES_FAKE_DATA,
+  JSON_SCHEMA_EDGE_CASE_NUMBERS,
   JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
   JSON_SCHEMA_FIELD_SETS_FAKE_DATA,
   JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
@@ -26,6 +28,7 @@ import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
 import { generateUISchema } from "../src/generateUISchema";
 import { validateJSONSchema } from "../src/validateJsonSchema";
+import { normalizeDecimalSeparators } from "../src/utils/utils";
 
 describe("JSON Schema validation", () => {
   it("Special chars should throw an exception", () => {
@@ -169,6 +172,82 @@ describe("JSON Schema validation", () => {
   it("Validate schema validator should match expected json schema", () => {
     const validSchema = validateJSONSchema(JSON.stringify(jsonSchema));
     expect(validSchema).toMatchObject(expectedSchema);
+  });
+
+  it("Validate comma decimal separators are converted to periods", () => {
+    const validSchema = validateJSONSchema(JSON_SCHEMA_COMMA_DECIMAL_NUMBERS);
+    
+    // Check that comma decimals are converted to periods
+    expect(validSchema.schema.properties.price_with_comma.default).toBe("12.99");
+    expect(validSchema.schema.properties.price_with_comma.minimum).toBe("5.50");
+    expect(validSchema.schema.properties.price_with_comma.maximum).toBe("100.00");
+    
+    // Check negative numbers
+    expect(validSchema.schema.properties.negative_number.default).toBe("-15.75");
+    
+    // Check that regular numbers are unchanged
+    expect(validSchema.schema.properties.regular_number.default).toBe(25.50);
+    expect(validSchema.schema.properties.regular_number.minimum).toBe(0.01);
+    
+    // Check that string fields are not affected
+    expect(validSchema.schema.properties.string_field.default).toBe("12,99 text");
+  });
+
+  it("Validates edge cases for decimal separator conversion", () => {
+    const validSchema = validateJSONSchema(JSON_SCHEMA_EDGE_CASE_NUMBERS);
+    
+    // Should NOT convert numbers with thousands separators (European format: 1.234,56)
+    expect(validSchema.schema.properties.thousands_separator.default).toBe("1.234,56");
+    
+    // Should NOT convert numbers with multiple commas (thousands: 1,234,567)
+    expect(validSchema.schema.properties.multiple_commas.default).toBe("1,234,567");
+    
+    // Should leave empty defaults unchanged
+    expect(validSchema.schema.properties.empty_default.default).toBe("");
+    
+    // Should leave null defaults unchanged
+    expect(validSchema.schema.properties.null_default.default).toBe(null);
+    
+    // Should convert simple comma decimal (0,00 -> 0.00)
+    expect(validSchema.schema.properties.zero_comma.default).toBe("0.00");
+  });
+});
+
+describe("Decimal separator normalization", () => {
+  it("Converts comma decimal separators to periods", () => {
+    expect(normalizeDecimalSeparators("12,99")).toBe("12.99");
+    expect(normalizeDecimalSeparators("-15,75")).toBe("-15.75");
+    expect(normalizeDecimalSeparators("0,01")).toBe("0.01");
+    expect(normalizeDecimalSeparators("1000,50")).toBe("1000.50");
+  });
+
+  it("Leaves period decimal separators unchanged", () => {
+    expect(normalizeDecimalSeparators("12.99")).toBe("12.99");
+    expect(normalizeDecimalSeparators("-15.75")).toBe("-15.75");
+    expect(normalizeDecimalSeparators("0.01")).toBe("0.01");
+  });
+
+  it("Leaves numbers unchanged", () => {
+    expect(normalizeDecimalSeparators(12.99)).toBe(12.99);
+    expect(normalizeDecimalSeparators(-15.75)).toBe(-15.75);
+    expect(normalizeDecimalSeparators(0)).toBe(0);
+  });
+
+  it("Does not affect strings that are not decimal numbers", () => {
+    expect(normalizeDecimalSeparators("12,99 text")).toBe("12,99 text");
+    expect(normalizeDecimalSeparators("text 12,99")).toBe("text 12,99");
+    expect(normalizeDecimalSeparators("12,99,00")).toBe("12,99,00"); // Multiple commas
+    expect(normalizeDecimalSeparators("abc")).toBe("abc");
+    expect(normalizeDecimalSeparators("")).toBe("");
+    expect(normalizeDecimalSeparators(" ")).toBe(" ");
+  });
+
+  it("Handles edge cases properly", () => {
+    expect(normalizeDecimalSeparators(null)).toBe(null);
+    expect(normalizeDecimalSeparators(undefined)).toBe(undefined);
+    expect(normalizeDecimalSeparators("   12,99   ")).toBe("12.99"); // Trims whitespace
+    expect(normalizeDecimalSeparators("12,")).toBe("12,"); // No digits after comma
+    expect(normalizeDecimalSeparators(",99")).toBe(",99"); // No digits before comma
   });
 });
 

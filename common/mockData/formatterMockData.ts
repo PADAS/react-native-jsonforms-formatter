@@ -884,4 +884,81 @@ export const JSON_SCHEMA_DEFAULT_VALUES = '{\n' +
   '      "type": "textarea"\n' +
   '    }\n' +
   '  ]\n' +
+  '}';
+
+export const JSON_SCHEMA_COMMA_DECIMAL_NUMBERS = '{\n' +
+  ' "schema": {\n' +
+  '  "type": "object",\n' +
+  '  "properties": {\n' +
+  '   "price_with_comma": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Price with comma decimal",\n' +
+  '    "default": "12,99",\n' +
+  '    "minimum": "5,50",\n' +
+  '    "maximum": "100,00"\n' +
+  '   },\n' +
+  '   "negative_number": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Negative number with comma",\n' +
+  '    "default": "-15,75"\n' +
+  '   },\n' +
+  '   "regular_number": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Regular number with period",\n' +
+  '    "default": 25.50,\n' +
+  '    "minimum": 0.01\n' +
+  '   },\n' +
+  '   "string_field": {\n' +
+  '    "type": "string",\n' +
+  '    "title": "String field (should not be affected)",\n' +
+  '    "default": "12,99 text"\n' +
+  '   }\n' +
+  '  }\n' +
+  ' },\n' +
+  ' "definition": [\n' +
+  '  "price_with_comma",\n' +
+  '  "negative_number",\n' +
+  '  "regular_number",\n' +
+  '  "string_field"\n' +
+  ' ]\n' +
+  '}';
+
+export const JSON_SCHEMA_EDGE_CASE_NUMBERS = '{\n' +
+  ' "schema": {\n' +
+  '  "type": "object",\n' +
+  '  "properties": {\n' +
+  '   "thousands_separator": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Number with thousands separator (should not convert)",\n' +
+  '    "default": "1.234,56"\n' +
+  '   },\n' +
+  '   "multiple_commas": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Multiple commas (should not convert)",\n' +
+  '    "default": "1,234,567"\n' +
+  '   },\n' +
+  '   "empty_default": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Empty default",\n' +
+  '    "default": ""\n' +
+  '   },\n' +
+  '   "null_default": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Null default",\n' +
+  '    "default": null\n' +
+  '   },\n' +
+  '   "zero_comma": {\n' +
+  '    "type": "number",\n' +
+  '    "title": "Zero with comma",\n' +
+  '    "default": "0,00"\n' +
+  '   }\n' +
+  '  }\n' +
+  ' },\n' +
+  ' "definition": [\n' +
+  '  "thousands_separator",\n' +
+  '  "multiple_commas",\n' +
+  '  "empty_default",\n' +
+  '  "null_default",\n' +
+  '  "zero_comma"\n' +
+  ' ]\n' +
   '}'
