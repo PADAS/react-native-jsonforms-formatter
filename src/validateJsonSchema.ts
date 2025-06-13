@@ -16,6 +16,7 @@ import {
   isRequiredProperty,
   isSchemaFieldSet,
   isString,
+  normalizeDecimalSeparators,
   REQUIRED_PROPERTY,
   traverseSchema,
 } from './utils/utils';
@@ -226,6 +227,33 @@ const validateDefinition = (validations: any, item: any, schema: any, parentItem
   }
 };
 
+const normalizeNumberFields = (schema: any) => {
+  traverseSchema(schema, (node) => {
+    if (node.type === 'object' && node.properties) {
+      Object.entries(node.properties).forEach(([, property]: [string, any]) => {
+        if (property.type === 'number') {
+          // Normalize default values
+          if (property.default !== undefined) {
+            property.default = normalizeDecimalSeparators(property.default);
+          }
+          
+          // Normalize minimum values
+          if (property.minimum !== undefined) {
+            property.minimum = normalizeDecimalSeparators(property.minimum);
+          }
+          
+          // Normalize maximum values
+          if (property.maximum !== undefined) {
+            property.maximum = normalizeDecimalSeparators(property.maximum);
+          }
+        }
+      });
+    }
+  });
+  
+  return schema;
+};
+
 const validateSchema = (validations: any, schema: any) => {
   const { hasInactiveChoices, hasEnums } = validations;
   if (hasInactiveChoices) {
@@ -271,6 +299,9 @@ export const validateJSONSchema = (stringSchema: string) => {
   formatDefinitionInSchema(schema);
 
   const schemaValidations = getSchemaValidations(stringSchema);
+
+  // Normalize decimal separators in number fields
+  normalizeNumberFields(schema.schema);
 
   validateSchema(schemaValidations, schema);
 
