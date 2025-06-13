@@ -93,6 +93,44 @@ export const isSchemaFieldSet = (definition: any[]) => {
 
 export const isString = (item: any) => typeof item === STRING_TYPE;
 
+export const normalizeDecimalSeparators = (value: string | number): string | number => {
+  // If it's already a number, return as-is
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  // If it's not a string, return as-is
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  // Trim whitespace
+  const trimmedValue = value.trim();
+
+  // If empty string, return as-is
+  if (trimmedValue === '') {
+    return value;
+  }
+
+  // Check if it looks like a number with comma decimal separator
+  // Pattern: optional minus, digits, comma, digits (e.g., "12,34", "-5,678")
+  const commaDecimalPattern = /^-?\d+,\d+$/;
+
+  if (commaDecimalPattern.test(trimmedValue)) {
+    // Replace comma with period for decimal separator
+    const normalizedValue = trimmedValue.replace(',', '.');
+    
+    // Validate that the result is a valid number
+    const numValue = parseFloat(normalizedValue);
+    if (!isNaN(numValue)) {
+      return normalizedValue;
+    }
+  }
+
+  // Return original value if no conversion needed or possible
+  return value;
+};
+
 // Helper function to recursively traverse and process the schema
 export const traverseSchema = (
   schema: any,
