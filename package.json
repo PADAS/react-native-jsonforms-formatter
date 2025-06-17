@@ -1,11 +1,11 @@
 {
   "name": "@earthranger/react-native-jsonforms-formatter",
-  "version": "1.0.4",
-  "type": "module",
+  "version": "1.0.5",
   "description": "Converts JTD into JSON Schema ",
-  "main": "./dist/src/index.js",
+  "main": "./dist/bundle.js",
   "types": "./dist/src/index.d.ts",
   "module": "./dist/src/index.js",
+  "browser": "./dist/bundle.js",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -13,6 +13,7 @@
       "require": "./dist/bundle.js"
     }
   },
+  "react-native": "./dist/bundle.js",
   "scripts": {
     "preinstall": "git config core.hooksPath .githooks",
     "build": "npx webpack",
