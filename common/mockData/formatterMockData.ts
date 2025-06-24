@@ -1,4 +1,4 @@
-import { ElementDisplay } from "../../src/utils/utils";
+import { ElementDisplay } from "../../src/v1/utils/utils";
 
 export const JSON_SCHEMA_SPECIAL_CHARS_FAKE_DATA = '{\n' +
   ' "definition": [\n' +

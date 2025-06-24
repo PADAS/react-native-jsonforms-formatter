@@ -26,9 +26,9 @@ import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import jsonSchema from "../common/mockData/jsonSchemaMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
-import { generateUISchema } from "../src/generateUISchema";
-import { validateJSONSchema } from "../src/validateJsonSchema";
-import { normalizeDecimalSeparators } from "../src/utils/utils";
+import { generateUISchema } from "../src/v1/generateUISchema";
+import { validateJSONSchema } from "../src/v1/validateJsonSchema";
+import { normalizeDecimalSeparators } from "../src/v1/utils/utils";
 
 describe("JSON Schema validation", () => {
   it("Special chars should throw an exception", () => {
