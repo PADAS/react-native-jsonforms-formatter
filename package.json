@@ -11,6 +11,11 @@
       "types": "./dist/src/index.d.ts",
       "import": "./dist/src/index.js",
       "require": "./dist/bundle.js"
+    },
+    "./v1": {
+      "types": "./dist/src/v1.d.ts",
+      "import": "./dist/src/v1.js",
+      "require": "./dist/bundle.js"
     }
   },
   "react-native": "./dist/bundle.js",
