@@ -78,6 +78,7 @@ describe("JSON Schema validation", () => {
 
   it("Validate remove inactive enum choices", () => {
     const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA);
+    expect(validSchema.schema.properties.invasivespecies_urgency.enum).toContain("unknown");
     expect(validSchema.schema.properties.invasivespecies_urgency.enum).not.toContain("test");
   });
 
