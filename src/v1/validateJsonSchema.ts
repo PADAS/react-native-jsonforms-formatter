@@ -182,6 +182,9 @@ const validateFieldSetDefinition = (validations: any, schema: any) => {
           validateDefinition(validations, subItem, schema, item);
         }
         break;
+      case isCheckbox(item):
+        validateDefinition(validations, item, schema);
+        break;
       default:
         break;
     }

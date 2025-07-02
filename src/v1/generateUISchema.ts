@@ -49,6 +49,22 @@ const getDateTimeControlFormat = (key: string, jsonSchema: any, fieldSetItem: an
   return undefined;
 };
 
+const getCheckboxDefinition = (key: string, jsonSchema: any) => {
+  try {
+    const definitionObject = jsonSchema.definition.find((object: any) => (object.key === key));
+
+    if (definitionObject.fieldHtmlClass === 'json-schema-checkbox-wrapper' || definitionObject.type === 'checkboxes') {
+      return definitionObject;
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+};
+
 export const generateUISchema = (schema: any) => {
   const elements: Object[] = [];
 
@@ -134,6 +150,7 @@ const getElementOptions = (format: string = '', display: string = '') => {
 
 const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) => {
   let options = {};
+
   switch (schema.schema.properties[key].type as SchemaTypes) {
     case SchemaTypes.Number:
       return getBaseUIObject(key, schema.schema.properties[key].title || '');
@@ -159,6 +176,13 @@ const getUIElement = (key: string, schema: any, fieldSetItem: any = undefined) =
       return getBaseUIObject(key, schema.schema.properties[key].title || '', options);
 
     case undefined: {
+      const checkboxDefinition = getCheckboxDefinition(key, schema);
+
+      if (checkboxDefinition) {
+        options = getElementOptions(PropertyFormat.MultiSelect);
+        return getBaseUIObject(key, checkboxDefinition.title || '', options);
+      }
+
       const dateTimeFormat = getDateTimeControlFormat(key, schema, fieldSetItem);
       if (!isEmptyString(dateTimeFormat)) {
         options = getElementOptions(PropertyFormat.DateTime, dateTimeFormat);
