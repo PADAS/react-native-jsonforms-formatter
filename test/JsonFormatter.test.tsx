@@ -79,7 +79,8 @@ describe("JSON Schema validation", () => {
   it("Validate remove inactive enum choices", () => {
     const validSchema = validateJSONSchema(JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA);
     expect(validSchema.schema.properties.invasivespecies_urgency.enum).toContain("unknown");
-    expect(validSchema.schema.properties.invasivespecies_urgency.enum).not.toContain("test");
+    // Before fixing this, it was generating the enum as ["0"]. This test makes sure that's not the case anymore.
+    expect(validSchema.schema.properties.invasivespecies_urgency.enum).not.toContain("0");
   });
 
   it("Validate remove disabled titleMap choices", () => {
