@@ -1,0 +1,64 @@
+{
+  "schema": {
+    "title": "Arrest Report (arrest_rep)",
+    "type": "object",
+    "required": [
+      "arrestrep_reasonforarrest"
+    ],
+    "properties": {
+      "arrestrep_reasonforarrest": {
+        "type": "array",
+        "uniqueItems": true,
+        "isHidden": false,
+        "title": "Reason for Arrest",
+        "items": {
+          "enum": [
+            "rhino_value",
+            "blackrhino_value",
+            "whiterhino"
+          ],
+          "enumNames": [
+            "Rhino",
+            "Black Rhino",
+            "White Rhino"
+          ]
+        }
+      },
+      "fieldset__title_arrest_details": {
+        "type": "string",
+        "readOnly": true,
+        "isHidden": false,
+        "display": "header",
+        "title": "Arrest Details"
+      }
+    }
+  },
+  "definition": [
+    {
+      "type": "fieldset",
+      "title": "Arrest Details",
+      "htmlClass": "col-lg-12",
+      "items": []
+    },
+    {
+      "key": "arrestrep_reasonforarrest",
+      "htmlClass": "json-schema-checkbox-wrapper",
+      "type": "checkboxes",
+      "title": "Reason for Arrest",
+      "titleMap": [
+        {
+          "name": "Rhino",
+          "value": "rhino_value"
+        },
+        {
+          "name": "Black Rhino",
+          "value": "blackrhino_value"
+        },
+        {
+          "name": "White Rhino",
+          "value": "whiterhino"
+        }
+      ]
+    }
+  ]
+}

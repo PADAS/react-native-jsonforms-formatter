@@ -1,0 +1,21 @@
+{
+  "type": "Category",
+  "elements": [
+    {
+      "type": "Control",
+      "scope": "#/properties/fieldset__title_arrest_details",
+      "label": "Arrest Details",
+      "options": {
+        "format": "form-label"
+      }
+    },
+    {
+      "type": "Control",
+      "scope": "#/properties/arrestrep_reasonforarrest",
+      "label": "Reason for Arrest",
+      "options": {
+        "format": "multiselect"
+      }
+    }
+  ]
+}

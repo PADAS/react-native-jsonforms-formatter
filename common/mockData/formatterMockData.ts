@@ -391,6 +391,49 @@ export const JSON_SCHEMA_FIELD_SETS_FAKE_DATA = '{\n' +
   ' }\n' +
   '}';
 
+export const JSON_SCHEMA_FIELD_SET_WITH_CHECKBOX = '{\n' +
+  '"schema": {\n' +
+  ' "title": "Arrest Report (arrest_rep)",\n' +
+  ' "type": "object",\n' +
+  ' "required": [\n' +
+  '   "arrestrep_reasonforarrest"\n' +
+  ' ],\n' +
+  ' "properties": {\n' +
+  '   "arrestrep_reasonforarrest": {\n' +
+  '     "key": "arrest_reasonforarrest"\n' +
+  '   }\n' +
+  ' }\n' +
+  '},\n' +
+  '"definition": [\n' +
+  ' {\n' +
+  '   "type": "fieldset",\n' +
+  '   "title": "Arrest Details",\n' +
+  '   "htmlClass": "col-lg-12",\n' +
+  '   "items": []\n' +
+  ' },\n' +
+  ' {\n' +
+  '   "key": "arrestrep_reasonforarrest",\n' +
+  '   "htmlClass": "json-schema-checkbox-wrapper",\n' +
+  '   "type": "checkboxes",\n' +
+  '   "title": "Reason for Arrest",\n' +
+  '   "titleMap": [\n' +
+  '      {\n' +
+  '       "name": "Rhino",\n' +
+  '       "value": "rhino_value"\n' +
+  '      },\n' +
+  '      {\n' +
+  '        "name": "Black Rhino",\n' +
+  '        "value": "blackrhino_value"\n' +
+  '      },\n' +
+  '      {\n' +
+  '        "name": "White Rhino",\n' +
+  '        "value": "whiterhino"\n' +
+  '      }\n' +
+  '   ]\n' +
+  ' }\n' +
+  ']\n' +
+'}';
+
 export const FIELD_SET_HEADER_FAKE_DATA = {
   fieldset__title_fieldset_title: {
     type: 'string',
