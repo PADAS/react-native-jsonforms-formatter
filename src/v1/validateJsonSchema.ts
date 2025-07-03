@@ -262,8 +262,7 @@ const validateSchema = (validations: any, schema: any) => {
       // Clean up inactive choices
       if (isInactiveChoice(property)) {
         schema.schema.properties[key].enum = cleanUpInactiveEnumChoice(property);
-
-        if (isEmpty(schema.schema.properties[key].enum.length)) {
+        if (isEmpty(schema.schema.properties[key].enum)) {
           schema.schema.properties[key].enum = ['0'];
           schema.schema.properties[key].enumNames = { 0: 'No Options' };
         }
