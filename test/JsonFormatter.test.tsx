@@ -10,6 +10,7 @@ import {
   JSON_SCHEMA_DUPLICATED_REQUIRED_PROPERTIES_FAKE_DATA,
   JSON_SCHEMA_EDGE_CASE_NUMBERS,
   JSON_SCHEMA_EMPTY_CHOICES_FAKE_DATA,
+  JSON_SCHEMA_FIELD_SET_WITH_CHECKBOX,
   JSON_SCHEMA_FIELD_SETS_FAKE_DATA,
   JSON_SCHEMA_ID_$SCHEMA_FAKE_DATA,
   JSON_SCHEMA_INACTIVE_CHOICES_FAKE_DATA,
@@ -26,6 +27,8 @@ import jsonSchemaFieldSets from "../common/mockData/jsonSchemaFielSetMock.json";
 import jsonSchema from "../common/mockData/jsonSchemaMock.json";
 import expectedUISchema from "../common/mockData/uiSchemaExpectedMock.json";
 import expectedFieldSetUISchema from "../common/mockData/uiSchemaFielSetExpectedMock.json";
+import expectedFieldSetWithCheckboxUISchema from "../common/mockData/uiSchemaFieldSetWithCheckboxExpectedMock.json";
+import expectedFieldSetWithCheckboxJSONSchema from "../common/mockData/jsonSchemaFieldSetWithCheckboxExpectedMock.json";
 import { generateUISchema } from "../src/v1/generateUISchema";
 import { validateJSONSchema } from "../src/v1/validateJsonSchema";
 import { normalizeDecimalSeparators } from "../src/v1/utils/utils";
@@ -117,6 +120,12 @@ describe("JSON Schema validation", () => {
     expect(validSchema.schema.properties["fieldset__title_fieldset_number_title"]).toMatchObject(
       FIELD_SET_HEADER_FAKE_DATA.fieldset__title_fieldset_number_title,
     );
+  });
+
+  it("Formats checkbox inside a field set", () => {
+    const validSchema = validateJSONSchema(JSON_SCHEMA_FIELD_SET_WITH_CHECKBOX);
+
+    expect(validSchema).toMatchObject(expectedFieldSetWithCheckboxJSONSchema);
   });
 
   it("Format collection field headers", () => {
@@ -272,5 +281,12 @@ describe("JSON UI Schema generation", () => {
     const validSchema = validateJSONSchema(JSON.stringify(jsonSchemaFieldSets));
     const uiSchema = generateUISchema(validSchema);
     expect(uiSchema).toMatchObject(expectedFieldSetUISchema);
+  });
+
+  it('Generates UI Schema for field set with checkbox inside', () => {
+    const validSchema = validateJSONSchema(JSON_SCHEMA_FIELD_SET_WITH_CHECKBOX);
+    const uiSchema = generateUISchema(validSchema);
+
+    expect(uiSchema).toMatchObject(expectedFieldSetWithCheckboxUISchema);
   });
 });
