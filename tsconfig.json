@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
-    "module": "es6",
+    "module": "commonjs",
     "target": "es5",
     "declaration": true,
     "declarationMap": true,
@@ -39,7 +39,6 @@
     "node_modules",
     "babel.config.cjs",
     "metro.config.js",
-    "jest.config.js",
-    "common/**/*"
+    "jest.config.js"
   ]
 }
