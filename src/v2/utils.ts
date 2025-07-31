@@ -52,10 +52,9 @@ export const createControl = (
       break;
 
     case 'DATE_TIME':
-      if (property.format) {
-        control.options!.format = property.format;
-        control.options!.display = property.format;
-      }
+      // Always set format and display for DATE_TIME fields
+      control.options!.format = property.format || 'date-time';
+      control.options!.display = property.format || 'date-time';
       break;
 
     case 'CHOICE_LIST':
