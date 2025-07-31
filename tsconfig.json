@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "es6",
     "target": "es5",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "isolatedModules": true,
     "allowJs": true,
     "moduleResolution": "node",
@@ -32,13 +32,13 @@
     }
   },
   "include": [
-    "src/**/*",
-    "test/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "babel.config.cjs",
     "metro.config.js",
-    "jest.config.js"
+    "jest.config.js",
+    "common/**/*"
   ]
 }
