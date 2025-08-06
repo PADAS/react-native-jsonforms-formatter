@@ -10,7 +10,9 @@ const config = {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "commonjs2",
-    clean: true,
+    clean: {
+      keep: /\.(js|d\.ts|js\.map|d\.ts\.map)$/,
+    },
   },
   module: {
     rules: [
