@@ -4,7 +4,6 @@ i# React Native JSONForms Formatter - Component Diagram
 graph TD
     %% External consumers
     RN[React Native App]
-    WEB[Web App]
     
     %% Main library interface
     LIB[📦 @earthranger/react-native-jsonforms-formatter]
@@ -26,11 +25,11 @@ graph TD
     UI_GEN_V1[🖼️ UI Generation V1]
     
     %% V2 Processing modules
-    FIELD_VISIBILITY[👁️ Field Visibility Check]
-    CONTROL_CREATION[🎛️ Control Creation & Auto-Collection]
-    SECTION_LAYOUT[📐 Section Layout]
-    CONSTRAINT_HANDLING[📏 Constraint Handling]
-    UI_GEN_V2[🖼️ UI Generation V2]
+    FIELD_VISIBILITY[👁️ Field Visibility Processing]
+    FIELD_GROUPING[📋 Field Grouping by Section]
+    SECTION_ORDER[📑 Section Order Processing]
+    CONTROL_CREATION[🎛️ Field Control Creation]
+    LAYOUT_CREATION[🏗️ Section Layout Creation]
     
     %% V1 Utility functions
     UTILS_V1[🛠️ V1 Utils]
@@ -44,16 +43,15 @@ graph TD
     %% V2 Utility functions  
     UTILS_V2[🛠️ V2 Utils]
     IS_VISIBLE[isFieldVisible]
+    GET_VISIBLE[getVisibleFields]
+    GROUP_FIELDS[groupFieldsBySection]
     CREATE_CONTROL[createControl]
     CREATE_HEADER[createHeaderLabel]
     CREATE_SECTION[createSectionLayout]
-    GET_VISIBLE[getVisibleFields]
-    GROUP_FIELDS[groupFieldsBySection]
     COLLECTION_INTERNAL[generateCollectionUISchemaInternal]
     
     %% Data flow
     RN --> LIB
-    WEB --> LIB
     
     LIB --> V1_API
     LIB --> V2_API
@@ -86,23 +84,23 @@ graph TD
     V2_API --> GENERATE_V2
     
     GENERATE_V2 --> FIELD_VISIBILITY
+    GENERATE_V2 --> FIELD_GROUPING
+    GENERATE_V2 --> SECTION_ORDER
     GENERATE_V2 --> CONTROL_CREATION
-    GENERATE_V2 --> SECTION_LAYOUT
-    GENERATE_V2 --> CONSTRAINT_HANDLING
-    GENERATE_V2 --> UI_GEN_V2
+    GENERATE_V2 --> LAYOUT_CREATION
     
     FIELD_VISIBILITY --> UTILS_V2
+    FIELD_GROUPING --> UTILS_V2
+    SECTION_ORDER --> UTILS_V2
     CONTROL_CREATION --> UTILS_V2
-    SECTION_LAYOUT --> UTILS_V2
-    CONSTRAINT_HANDLING --> UTILS_V2
-    UI_GEN_V2 --> UTILS_V2
+    LAYOUT_CREATION --> UTILS_V2
     
     UTILS_V2 --> IS_VISIBLE
+    UTILS_V2 --> GET_VISIBLE
+    UTILS_V2 --> GROUP_FIELDS
     UTILS_V2 --> CREATE_CONTROL
     UTILS_V2 --> CREATE_HEADER
     UTILS_V2 --> CREATE_SECTION
-    UTILS_V2 --> GET_VISIBLE
-    UTILS_V2 --> GROUP_FIELDS
     UTILS_V2 --> COLLECTION_INTERNAL
     
     %% Styling
@@ -114,9 +112,9 @@ graph TD
     
     class LIB,V1_API,V2_API,VALIDATE,GENERATE_V1,GENERATE_V2 publicAPI
     class JSON_PROC,SCHEMA_VAL,NUMBER_NORM,FIELD_PROC,UI_GEN_V1 v1Internal
-    class FIELD_VISIBILITY,CONTROL_CREATION,SECTION_LAYOUT,CONSTRAINT_HANDLING,UI_GEN_V2 v2Internal
+    class FIELD_VISIBILITY,FIELD_GROUPING,SECTION_ORDER,CONTROL_CREATION,LAYOUT_CREATION v2Internal
     class UTILS_V1,TRAVERSE,NORMALIZE,DUPLICATE,REQUIRED,CHECKBOX,FIELDSET v1Utility
-    class UTILS_V2,IS_VISIBLE,CREATE_CONTROL,CREATE_HEADER,CREATE_SECTION,GET_VISIBLE,GROUP_FIELDS,COLLECTION_INTERNAL v2Utility
+    class UTILS_V2,IS_VISIBLE,GET_VISIBLE,GROUP_FIELDS,CREATE_CONTROL,CREATE_HEADER,CREATE_SECTION,COLLECTION_INTERNAL v2Utility
 ```
 
 ## Component Description
@@ -137,11 +135,11 @@ graph TD
 - **UI Generation V1**: Creates UI schema elements from JSON schema
 
 ### 🟠 V2 Internal Processing (Orange)
-- **Field Visibility Check**: Filters deprecated and invisible fields
-- **Control Creation & Auto-Collection**: Creates JSONForms controls with automatic collection item schema embedding
-- **Section Layout**: Organizes fields into React Native optimized single-column layouts
-- **Constraint Handling**: Processes maxItems/minItems and other field constraints
-- **UI Generation V2**: Creates UI schema from V2 schema format with mobile optimization
+- **Field Visibility Processing**: Filters deprecated and invisible fields using getVisibleFields
+- **Field Grouping by Section**: Groups visible fields by their parent sections using groupFieldsBySection
+- **Section Order Processing**: Processes sections in the order specified by the schema's ui.order array
+- **Field Control Creation**: Creates JSONForms controls for each visible field with field-type-specific options
+- **Section Layout Creation**: Creates single-column VerticalLayout sections with ordered elements (leftColumn first, then rightColumn)
 
 ### 🟢 V1 Utilities (Green)
 - **V1 Utils Module**: Core utility functions for V1 processing
@@ -155,11 +153,11 @@ graph TD
 ### 🔴 V2 Utilities (Pink)
 - **V2 Utils Module**: Specialized utility functions for V2 processing
 - **isFieldVisible**: Checks if field should be rendered (not deprecated)
-- **createControl**: Creates JSONForms control elements with automatic collection embedding
-- **createHeaderLabel**: Creates header/label elements for sections
-- **createSectionLayout**: Creates single-column layouts optimized for React Native
 - **getVisibleFields**: Filters and returns all visible fields from schema
-- **groupFieldsBySection**: Groups fields by their parent section for layout
+- **groupFieldsBySection**: Groups fields by their parent section for layout processing  
+- **createControl**: Creates JSONForms control elements with field-type-specific options and collection embedding
+- **createHeaderLabel**: Creates header/label elements for sections
+- **createSectionLayout**: Creates single-column VerticalLayout optimized for React Native with ordered elements
 - **generateCollectionUISchemaInternal**: Internal function for automatic collection item UI schema generation
 
 ## Data Flow
@@ -174,9 +172,12 @@ graph TD
 ### V2 Flow (New Schema Format)
 1. Consumer apps import V2 functions  
 2. Structured V2 schema objects are passed to generateUISchema
-3. V2 processors check field visibility and create controls with automatic collection handling
-4. V2 utilities handle section layouts, field grouping, constraint processing, and collection embedding
-5. React Native optimized UI schemas with embedded collection details and constraints are returned to consumers
+3. **Field Visibility Processing**: getVisibleFields filters out deprecated fields
+4. **Field Grouping**: groupFieldsBySection organizes fields by their parent sections
+5. **Section Processing**: Iterate through ui.order array to process sections in specified order
+6. **Control Creation**: createControl generates JSONForms controls with field-type-specific options
+7. **Layout Creation**: createSectionLayout builds single-column VerticalLayout with ordered elements
+8. React Native optimized UI schemas with embedded collection details are returned to consumers
 
 ## Key Differences
 - **V1**: Processes raw JSON strings, requires validation and normalization
