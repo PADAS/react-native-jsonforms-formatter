@@ -58,18 +58,26 @@ export const createControl = (
       break;
 
     case 'CHOICE_LIST':
-      if (uiField.inputType === 'DROPDOWN') {
-        control.options!.format = 'dropdown';
-        if (uiField.placeholder) {
-          control.options!.placeholder = uiField.placeholder;
-        }
-      } else if (uiField.inputType === 'LIST') {
-        control.options!.format = 'radio';
-      }
-      
-      // Handle multiple choice (array type)
+      // Handle multiple choice (array type) first
       if (property.type === 'array') {
         control.options!.multi = true;
+        // For arrays, use appropriate multi-select format
+        if (uiField.inputType === 'DROPDOWN') {
+          control.options!.format = 'dropdown';
+        } else if (uiField.inputType === 'LIST') {
+          control.options!.format = 'checkbox';
+        }
+      } else {
+        // Single select
+        if (uiField.inputType === 'DROPDOWN') {
+          control.options!.format = 'dropdown';
+        } else if (uiField.inputType === 'LIST') {
+          control.options!.format = 'radio';
+        }
+      }
+      
+      if (uiField.placeholder) {
+        control.options!.placeholder = uiField.placeholder;
       }
       break;
 
