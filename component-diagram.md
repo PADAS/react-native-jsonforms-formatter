@@ -50,11 +50,17 @@ graph TD
     CREATE_SECTION[createSectionLayout]
     COLLECTION_INTERNAL[generateCollectionUISchemaInternal]
     
+    %% Shared Schema Utilities
+    SCHEMA_UTILS[🔧 Schema Utils]
+    DETECT_VERSION[detectSchemaVersion]
+    PROCESS_SCHEMA[processSchema]
+    
     %% Data flow
     RN --> LIB
     
     LIB --> V1_API
     LIB --> V2_API
+    LIB --> SCHEMA_UTILS
     
     %% V1 Flow
     V1_API --> VALIDATE
@@ -103,18 +109,23 @@ graph TD
     UTILS_V2 --> CREATE_SECTION
     UTILS_V2 --> COLLECTION_INTERNAL
     
+    SCHEMA_UTILS --> DETECT_VERSION
+    SCHEMA_UTILS --> PROCESS_SCHEMA
+    
     %% Styling
     classDef publicAPI fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
     classDef v1Internal fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
     classDef v2Internal fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
     classDef v1Utility fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
     classDef v2Utility fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef sharedUtility fill:#f0f4c3,stroke:#827717,stroke-width:2px
     
     class LIB,V1_API,V2_API,VALIDATE,GENERATE_V1,GENERATE_V2 publicAPI
     class JSON_PROC,SCHEMA_VAL,NUMBER_NORM,FIELD_PROC,UI_GEN_V1 v1Internal
     class FIELD_VISIBILITY,FIELD_GROUPING,SECTION_ORDER,CONTROL_CREATION,LAYOUT_CREATION v2Internal
     class UTILS_V1,TRAVERSE,NORMALIZE,DUPLICATE,REQUIRED,CHECKBOX,FIELDSET v1Utility
     class UTILS_V2,IS_VISIBLE,GET_VISIBLE,GROUP_FIELDS,CREATE_CONTROL,CREATE_HEADER,CREATE_SECTION,COLLECTION_INTERNAL v2Utility
+    class SCHEMA_UTILS,DETECT_VERSION,PROCESS_SCHEMA sharedUtility
 ```
 
 ## Component Description
@@ -159,6 +170,11 @@ graph TD
 - **createHeaderLabel**: Creates header/label elements for sections
 - **createSectionLayout**: Creates single-column VerticalLayout optimized for React Native with ordered elements
 - **generateCollectionUISchemaInternal**: Internal function for automatic collection item UI schema generation
+
+### 🟡 Shared Schema Utilities (Yellow-Green)
+- **Schema Utils Module**: Cross-version utility functions for schema processing
+- **detectSchemaVersion**: Analyzes schema structure to determine if it's V1 or V2 format
+- **processSchema**: Processes schema string and returns version-appropriate data structure
 
 ## Data Flow
 
