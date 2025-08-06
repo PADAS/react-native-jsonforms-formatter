@@ -29,7 +29,11 @@ export const mockV2Schema = {
         "type": "string",
         "anyOf": [
           {
-            "$ref": "http://localhost:3000/api/v2.0/schemas/choices.json?field=patrol_activity"
+            "oneOf": [
+              { "const": "routine", "title": "Routine Patrol" },
+              { "const": "emergency", "title": "Emergency Response" },
+              { "const": "investigation", "title": "Investigation" }
+            ]
           }
         ]
       },
@@ -84,7 +88,12 @@ export const mockV2Schema = {
               "type": "string",
               "anyOf": [
                 {
-                  "$ref": "http://localhost:3000/api/v2.0/schemas/choices.json?field=item_condition"
+                  "oneOf": [
+                    { "const": "excellent", "title": "Excellent" },
+                    { "const": "good", "title": "Good" },
+                    { "const": "fair", "title": "Fair" },
+                    { "const": "poor", "title": "Poor" }
+                  ]
                 }
               ]
             }
