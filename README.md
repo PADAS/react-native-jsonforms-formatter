@@ -435,6 +435,12 @@ const V2App = () => {
   );
 };
 ```
+
+## Contributors
+<a href="https://github.com/PADAS/react-native-jsonforms-formatter/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=PADAS/react-native-jsonforms-formatter" />
+</a>
+
 ## Licensing
 
 A copy of the license is available in the repository's [LICENSE](LICENSE) file.
