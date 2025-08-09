@@ -12,6 +12,60 @@ import {
 } from './utils';
 
 /**
+ * Validates V2 schema structure for known issues
+ */
+const validateV2Schema = (schema: V2Schema): void => {
+  const invalidFields: string[] = [];
+  const supportedFieldTypes = ['TEXT', 'NUMERIC', 'DATE_TIME', 'CHOICE_LIST', 'LOCATION', 'COLLECTION', 'ATTACHMENT'];
+
+  // Check each field for validity
+  Object.entries(schema.json.properties).forEach(([fieldName, property]) => {
+    const uiField = schema.ui.fields[fieldName];
+    
+    // Skip deprecated fields without UI definitions (they won't be rendered anyway)
+    if (!uiField && property.deprecated) {
+      return;
+    }
+    
+    if (!uiField) {
+      invalidFields.push(`${fieldName}: missing UI field definition`);
+      return;
+    }
+
+    // Check for unsupported field types
+    if (!supportedFieldTypes.includes(uiField.type)) {
+      invalidFields.push(`${fieldName}: unsupported field type '${uiField.type}'`);
+      return;
+    }
+
+    // Check CHOICE_LIST fields for valid structure (not content)
+    if (uiField.type === 'CHOICE_LIST') {
+      let hasValidStructure = false;
+      
+      if (property.type === 'array' && property.items?.anyOf) {
+        // Check for oneOf arrays in anyOf items for array types (no $ref support)
+        hasValidStructure = property.items.anyOf.some((anyOfItem: any) => 
+          anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf) // Empty arrays are valid
+        );
+      } else if (property.anyOf) {
+        // Check direct anyOf structure for string types (no $ref support)
+        hasValidStructure = property.anyOf.some((anyOfItem: any) => 
+          anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf) // Empty arrays are valid
+        );
+      }
+      
+      if (!hasValidStructure) {
+        invalidFields.push(`${fieldName}: CHOICE_LIST field requires embedded oneOf arrays - $ref not supported`);
+      }
+    }
+  });
+
+  if (invalidFields.length > 0) {
+    throw new Error(`Invalid V2 schema structure: ${invalidFields.join(', ')}`);
+  }
+};
+
+/**
  * Generates a JSONForms-compatible UI schema from a EarthRanger V2 schema format
  * 
  * React Native Optimization:
@@ -21,8 +75,12 @@ import {
  * 
  * @param schema - EarthRanger V2 schema with json and ui properties
  * @returns JSONForms UI schema with single-column VerticalLayout for React Native
+ * @throws Error if schema has invalid structure or unsupported field configurations
  */
 export const generateUISchema = (schema: V2Schema): JSONFormsUISchema => {
+  // Validate schema structure first
+  validateV2Schema(schema);
+
   // Get all visible (non-deprecated) fields
   const visibleFields = getVisibleFields(schema);
   
