@@ -101,10 +101,10 @@ export const generateUISchema = (schema: V2Schema): JSONFormsUISchema => {
     
     // Only create layout if section is active and has content
     if (section?.isActive && (hasFields || hasHeaders)) {
-      const sectionControls = sectionFields.map(({ name, property, uiField }) => 
-        createControl(name, property, uiField)
+      const sectionControls = sectionFields.map(({ name, property, uiField }) =>
+        createControl(name, property, uiField, schema)
       );
-      
+
       const sectionLayout = createSectionLayout(sectionId, section, sectionControls, schema.ui.headers);
       sectionLayouts.push(sectionLayout);
     }
