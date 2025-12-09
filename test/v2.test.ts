@@ -290,9 +290,199 @@ describe('V2 generateUISchema', () => {
     });
     
     expect(secondSection.elements![1]).toMatchObject({
-      type: 'Control', 
+      type: 'Control',
       scope: '#/properties/equipment_used',
       label: 'Equipment Used'
+    });
+  });
+
+  it('should apply UI field properties to collection item fields', () => {
+    const result = generateUISchema(mockV2Schema);
+    const secondSection = result.elements![1];
+    const collectionControl = secondSection.elements![1];
+
+    // Verify the detail schema includes UI field properties
+    const detail = collectionControl.options!.detail;
+    expect(detail).toBeDefined();
+    expect(detail!.elements).toHaveLength(2);
+
+    // item_name should get TEXT field properties
+    const itemNameControl = detail!.elements![0];
+    expect(itemNameControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/item_name',
+      label: 'Item Name',
+      options: {
+        placeholder: 'Equipment name'
+      }
+    });
+
+    // item_condition should get CHOICE_LIST field properties (LIST inputType = radio)
+    const itemConditionControl = detail!.elements![1];
+    expect(itemConditionControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/item_condition',
+      label: 'Item Condition'
+    });
+    // Should have radio format for LIST inputType with single select
+    expect(itemConditionControl.options).toMatchObject({
+      format: 'radio'
+    });
+  });
+
+  it('should support nested collections (collection within collection)', () => {
+    const nestedSchema: V2Schema = {
+      json: {
+        properties: {
+          tasks: {
+            deprecated: false,
+            title: "Tasks",
+            type: "array",
+            items: {
+              properties: {
+                task_name: {
+                  deprecated: false,
+                  title: "Task Name",
+                  type: "string"
+                },
+                subtasks: {
+                  deprecated: false,
+                  title: "Subtasks",
+                  type: "array",
+                  items: {
+                    properties: {
+                      subtask_name: {
+                        deprecated: false,
+                        title: "Subtask Name",
+                        type: "string"
+                      },
+                      priority: {
+                        deprecated: false,
+                        title: "Priority",
+                        type: "number"
+                      }
+                    },
+                    type: "object"
+                  }
+                }
+              },
+              type: "object"
+            }
+          }
+        },
+        type: "object"
+      },
+      ui: {
+        fields: {
+          tasks: {
+            buttonText: "Add Task",
+            itemIdentifier: "task_name",
+            leftColumn: ["task_name", "subtasks"],
+            rightColumn: [],
+            type: "COLLECTION",
+            parent: "section-1"
+          },
+          task_name: {
+            inputType: "SHORT_TEXT",
+            placeholder: "Enter task name",
+            type: "TEXT",
+            parent: "tasks"
+          },
+          subtasks: {
+            buttonText: "Add Subtask",
+            itemIdentifier: "subtask_name",
+            leftColumn: ["subtask_name", "priority"],
+            rightColumn: [],
+            type: "COLLECTION",
+            parent: "tasks"
+          },
+          subtask_name: {
+            inputType: "SHORT_TEXT",
+            placeholder: "Enter subtask",
+            type: "TEXT",
+            parent: "subtasks"
+          },
+          priority: {
+            placeholder: "1-5",
+            type: "NUMERIC",
+            parent: "subtasks"
+          }
+        },
+        headers: {},
+        order: ["section-1"],
+        sections: {
+          "section-1": {
+            columns: 1,
+            isActive: true,
+            label: "Task Manager",
+            leftColumn: [{ name: "tasks", type: "field" }],
+            rightColumn: []
+          }
+        }
+      }
+    };
+
+    const result = generateUISchema(nestedSchema);
+
+    // Get the top-level tasks collection
+    const tasksControl = result.elements![0].elements![0];
+    expect(tasksControl.options).toMatchObject({
+      format: 'array',
+      addButtonText: 'Add Task',
+      itemIdentifier: 'task_name'
+    });
+
+    // Verify tasks has detail schema with 2 fields
+    const tasksDetail = tasksControl.options!.detail;
+    expect(tasksDetail).toBeDefined();
+    expect(tasksDetail!.elements).toHaveLength(2);
+
+    // First field should be task_name with TEXT properties
+    expect(tasksDetail!.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/task_name',
+      label: 'Task Name',
+      options: {
+        placeholder: 'Enter task name'
+      }
+    });
+
+    // Second field should be the nested subtasks collection
+    const subtasksControl = tasksDetail!.elements![1];
+    expect(subtasksControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/subtasks',
+      label: 'Subtasks'
+    });
+    expect(subtasksControl.options).toMatchObject({
+      format: 'array',
+      addButtonText: 'Add Subtask',
+      itemIdentifier: 'subtask_name'
+    });
+
+    // Verify nested collection has its own detail schema
+    const subtasksDetail = subtasksControl.options!.detail;
+    expect(subtasksDetail).toBeDefined();
+    expect(subtasksDetail!.elements).toHaveLength(2);
+
+    // Verify nested collection item fields have proper UI properties
+    expect(subtasksDetail!.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/subtask_name',
+      label: 'Subtask Name',
+      options: {
+        placeholder: 'Enter subtask'
+      }
+    });
+
+    expect(subtasksDetail!.elements![1]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/priority',
+      label: 'Priority',
+      options: {
+        format: 'number',
+        placeholder: '1-5'
+      }
     });
   });
 });
