@@ -36,7 +36,7 @@ const getSchemaForCheckbox = (
   definition: any,
   title: string,
   required: boolean,
-  defaultValue: string,
+  defaultValue: any,
 ) => ({
   type: 'array',
   uniqueItems: true,
@@ -47,7 +47,7 @@ const getSchemaForCheckbox = (
     enum: definition.titleMap.map((item: any) => item.value),
     enumNames: definition.titleMap.map((item: any) => item.name),
   },
-  ...defaultValue && { default: defaultValue },
+  ...(!required && { default: Array.isArray(defaultValue) ? defaultValue : [] }),
 });
 
 const getTitleProperty = (title: string) => ({
