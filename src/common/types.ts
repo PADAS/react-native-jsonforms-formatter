@@ -72,6 +72,7 @@ export interface V2UIField {
   leftColumn?: string[];
   rightColumn?: string[];
   allowableFileTypes?: string[];
+  conditionalDependents?: string[];
 }
 
 export interface V2Choices {
@@ -90,12 +91,26 @@ export interface V2Header {
   size: 'LARGE' | 'MEDIUM' | 'SMALL';
 }
 
+export type V2ConditionOperator =
+  | 'CONTAINS'
+  | 'DOES_NOT_HAVE_INPUT'
+  | 'HAS_INPUT'
+  | 'INPUT_IS_EXACTLY';
+
+export interface V2Condition {
+  field: string;
+  id: string;
+  operator: V2ConditionOperator;
+  value?: string | number | boolean | null;
+}
+
 export interface V2Section {
   columns: 1 | 2;
   isActive: boolean;
   label: string;
   leftColumn: V2ColumnItem[];
   rightColumn: V2ColumnItem[];
+  conditions?: V2Condition[];
 }
 
 export interface V2ColumnItem {
@@ -125,10 +140,23 @@ export interface JSONFormsControl extends JSONFormsUIElement {
   };
 }
 
+export type JSONFormsRuleEffect = 'SHOW' | 'HIDE' | 'ENABLE' | 'DISABLE';
+
+export interface JSONFormsSchemaBasedCondition {
+  scope: string;
+  schema: Record<string, unknown>;
+}
+
+export interface JSONFormsRule {
+  effect: JSONFormsRuleEffect;
+  condition: JSONFormsSchemaBasedCondition;
+}
+
 export interface JSONFormsLayout extends JSONFormsUIElement {
   type: 'VerticalLayout' | 'HorizontalLayout' | 'Group' | 'Categorization';
   elements: JSONFormsUIElement[];
   label?: string;
+  rule?: JSONFormsRule;
 }
 
 export interface JSONFormsLabel extends JSONFormsUIElement {
