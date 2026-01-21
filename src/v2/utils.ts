@@ -11,6 +11,8 @@ import {
   JSONFormsUISchema,
 } from "../common/types";
 
+import { createSectionRule } from "./conditions";
+
 /**
  * Determines if a field should be rendered based on deprecation status
  */
@@ -198,7 +200,45 @@ export const createSectionLayout = (
   });
 
   layout.elements = orderedElements;
+
+  // Add rule if section has conditions
+  if (section.conditions && section.conditions.length > 0) {
+    layout.rule = createSectionRule(section.conditions);
+  }
+
   return layout;
+};
+
+/**
+ * Extracts properties defined in allOf/if/then conditional structures.
+ * These are fields that are conditionally added to the schema based on other field values.
+ */
+export const extractConditionalProperties = (
+  schema: V2Schema,
+): Record<string, V2Property> => {
+  const conditionalProperties: Record<string, V2Property> = {};
+
+  // Check if schema has allOf with if/then structures
+  const allOf = (schema.json as any).allOf;
+  if (!Array.isArray(allOf)) {
+    return conditionalProperties;
+  }
+
+  allOf.forEach((item: any) => {
+    // Look for if/then structures
+    if (item.then?.properties) {
+      Object.entries(item.then.properties).forEach(
+        ([fieldName, property]: [string, any]) => {
+          // Only add if not already in top-level properties
+          if (!schema.json.properties[fieldName]) {
+            conditionalProperties[fieldName] = property as V2Property;
+          }
+        },
+      );
+    }
+  });
+
+  return conditionalProperties;
 };
 
 /**
@@ -214,6 +254,16 @@ export const getVisibleFields = (
   }> = [];
 
   Object.entries(schema.json.properties).forEach(([fieldName, property]) => {
+    const uiField = schema.ui.fields[fieldName];
+
+    if (isFieldVisible(property) && uiField) {
+      visibleFields.push({ name: fieldName, property, uiField });
+    }
+  });
+
+  // Get conditional properties from allOf/if/then structures
+  const conditionalProperties = extractConditionalProperties(schema);
+  Object.entries(conditionalProperties).forEach(([fieldName, property]) => {
     const uiField = schema.ui.fields[fieldName];
 
     if (isFieldVisible(property) && uiField) {
