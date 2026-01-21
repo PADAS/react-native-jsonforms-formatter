@@ -1,15 +1,18 @@
-import { 
-  V2Schema, 
-  JSONFormsUISchema, 
+import {
+  V2Schema,
+  JSONFormsUISchema,
   JSONFormsLayout
 } from '../common/types';
 
 import {
   createControl,
   createSectionLayout,
+  extractConditionalProperties,
   getVisibleFields,
   groupFieldsBySection
 } from './utils';
+
+import { validateConditions } from './conditions';
 
 /**
  * Validates V2 schema structure for known issues
@@ -56,6 +59,23 @@ const validateV2Schema = (schema: V2Schema): void => {
       
       if (!hasValidStructure) {
         invalidFields.push(`${fieldName}: CHOICE_LIST field requires embedded oneOf arrays - $ref not supported`);
+      }
+    }
+  });
+
+  // Validate section conditions
+  const conditionalProperties = extractConditionalProperties(schema);
+  const fieldNames = [
+    ...Object.keys(schema.json.properties),
+    ...Object.keys(conditionalProperties),
+  ];
+
+  Object.entries(schema.ui.sections).forEach(([sectionId, section]) => {
+    if (section.conditions && section.conditions.length > 0) {
+      try {
+        validateConditions(section.conditions, fieldNames);
+      } catch (error) {
+        invalidFields.push(`Section '${sectionId}': ${(error as Error).message}`);
       }
     }
   });
