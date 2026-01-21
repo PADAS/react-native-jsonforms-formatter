@@ -18,17 +18,10 @@ export const buildContainsSchema = (value: string): Record<string, unknown> => {
 
 /**
  * Builds a JSON Schema for the DOES_NOT_HAVE_INPUT operator.
- * Matches when the field has no meaningful input (null, undefined, empty string, empty array, empty object).
  */
 export const buildDoesNotHaveInputSchema = (): Record<string, unknown> => {
   return {
-    anyOf: [
-      { not: {} }, // undefined/not required
-      { type: 'array', maxItems: 0 }, // empty array
-      { type: 'object', maxProperties: 0 }, // empty object
-      { type: 'string', maxLength: 0 }, // empty string
-      { type: 'null' }, // null value
-    ],
+    not: buildHasInputSchema(),
   };
 };
 
