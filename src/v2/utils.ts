@@ -28,6 +28,7 @@ export const createControl = (
   property: V2Property,
   uiField: V2UIField,
   schema?: V2Schema,
+  conditionallyRequired?: boolean,
 ): JSONFormsControl => {
   const control: JSONFormsControl = {
     type: "Control",
@@ -35,6 +36,11 @@ export const createControl = (
     label: property.title,
     options: {},
   };
+
+  // Mark field as conditionally required if applicable
+  if (conditionallyRequired) {
+    control.options!.conditionallyRequired = true;
+  }
 
   // Add format based on field type
   switch (uiField.type) {
@@ -239,6 +245,31 @@ export const extractConditionalProperties = (
   });
 
   return conditionalProperties;
+};
+
+/**
+ * Extracts field names that are conditionally required from allOf/if/then structures.
+ * These are fields listed in allOf[].then.required arrays.
+ */
+export const extractConditionalRequired = (schema: V2Schema): Set<string> => {
+  const conditionalRequired = new Set<string>();
+
+  // Check if schema has allOf with if/then structures
+  const allOf = (schema.json as any).allOf;
+  if (!Array.isArray(allOf)) {
+    return conditionalRequired;
+  }
+
+  allOf.forEach((item: any) => {
+    // Look for if/then structures with required arrays
+    if (item.then?.required && Array.isArray(item.then.required)) {
+      item.then.required.forEach((fieldName: string) => {
+        conditionalRequired.add(fieldName);
+      });
+    }
+  });
+
+  return conditionalRequired;
 };
 
 /**

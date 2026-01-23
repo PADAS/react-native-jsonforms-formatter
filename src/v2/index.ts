@@ -10,7 +10,7 @@ export {
 } from './conditions';
 
 // Schema utilities
-export { extractConditionalProperties } from './utils';
+export { extractConditionalProperties, extractConditionalRequired } from './utils';
 
 // Re-export types for convenience
 export type {
