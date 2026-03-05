@@ -95,13 +95,18 @@ export type V2ConditionOperator =
   | 'CONTAINS'
   | 'DOES_NOT_HAVE_INPUT'
   | 'HAS_INPUT'
-  | 'INPUT_IS_EXACTLY';
+  | 'INPUT_IS_EXACTLY'
+  | 'IS_CONTAINED_BY'
+  | 'IS_EMPTY'
+  | 'IS_EXACTLY'
+  | 'IS_NOT_CONTAINED_BY'
+  | 'IS_NOT_EMPTY';
 
 export interface V2Condition {
   field: string;
   id: string;
   operator: V2ConditionOperator;
-  value?: string | number | boolean | null;
+  value?: string | string[] | number | boolean | null;
 }
 
 export interface V2Section {
