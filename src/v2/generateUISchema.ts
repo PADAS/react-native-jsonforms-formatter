@@ -1,15 +1,19 @@
-import { 
-  V2Schema, 
-  JSONFormsUISchema, 
+import {
+  V2Schema,
+  JSONFormsUISchema,
   JSONFormsLayout
 } from '../common/types';
 
 import {
   createControl,
   createSectionLayout,
+  extractConditionalProperties,
+  extractConditionalRequired,
   getVisibleFields,
   groupFieldsBySection
 } from './utils';
+
+import { validateConditions } from './conditions';
 
 /**
  * Validates V2 schema structure for known issues
@@ -60,6 +64,23 @@ const validateV2Schema = (schema: V2Schema): void => {
     }
   });
 
+  // Validate section conditions
+  const conditionalProperties = extractConditionalProperties(schema);
+  const fieldNames = [
+    ...Object.keys(schema.json.properties),
+    ...Object.keys(conditionalProperties),
+  ];
+
+  Object.entries(schema.ui.sections).forEach(([sectionId, section]) => {
+    if (section.conditions && section.conditions.length > 0) {
+      try {
+        validateConditions(section.conditions, fieldNames);
+      } catch (error) {
+        invalidFields.push(`Section '${sectionId}': ${(error as Error).message}`);
+      }
+    }
+  });
+
   if (invalidFields.length > 0) {
     throw new Error(`Invalid V2 schema structure: ${invalidFields.join(', ')}`);
   }
@@ -83,9 +104,12 @@ export const generateUISchema = (schema: V2Schema): JSONFormsUISchema => {
 
   // Get all visible (non-deprecated) fields
   const visibleFields = getVisibleFields(schema);
-  
+
   // Group fields by their parent sections
   const fieldsBySection = groupFieldsBySection(visibleFields, schema.ui.sections);
+
+  // Get conditionally required fields
+  const conditionallyRequiredFields = extractConditionalRequired(schema);
 
   // Create section layouts in the specified order
   const sectionLayouts: JSONFormsLayout[] = [];
@@ -93,16 +117,16 @@ export const generateUISchema = (schema: V2Schema): JSONFormsUISchema => {
   schema.ui.order.forEach(sectionId => {
     const section = schema.ui.sections[sectionId];
     const sectionFields = fieldsBySection[sectionId] || [];
-    
+
     // Check if section has any content (fields or headers)
     const hasFields = sectionFields.length > 0;
     const hasHeaders = [...section.leftColumn, ...section.rightColumn]
       .some(item => item.type === 'header' && schema.ui.headers[item.name]);
-    
+
     // Only create layout if section is active and has content
     if (section?.isActive && (hasFields || hasHeaders)) {
       const sectionControls = sectionFields.map(({ name, property, uiField }) =>
-        createControl(name, property, uiField, schema)
+        createControl(name, property, uiField, schema, conditionallyRequiredFields.has(name))
       );
 
       const sectionLayout = createSectionLayout(sectionId, section, sectionControls, schema.ui.headers);

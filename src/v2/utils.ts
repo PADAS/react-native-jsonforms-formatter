@@ -11,6 +11,8 @@ import {
   JSONFormsUISchema,
 } from "../common/types";
 
+import { createSectionRule } from "./conditions";
+
 /**
  * Determines if a field should be rendered based on deprecation status
  */
@@ -26,6 +28,7 @@ export const createControl = (
   property: V2Property,
   uiField: V2UIField,
   schema?: V2Schema,
+  conditionallyRequired?: boolean,
 ): JSONFormsControl => {
   const control: JSONFormsControl = {
     type: "Control",
@@ -33,6 +36,11 @@ export const createControl = (
     label: property.title,
     options: {},
   };
+
+  // Mark field as conditionally required if applicable
+  if (conditionallyRequired) {
+    control.options!.conditionallyRequired = true;
+  }
 
   // Add format based on field type
   switch (uiField.type) {
@@ -198,7 +206,70 @@ export const createSectionLayout = (
   });
 
   layout.elements = orderedElements;
+
+  // Add rule if section has conditions
+  if (section.conditions && section.conditions.length > 0) {
+    layout.rule = createSectionRule(section.conditions);
+  }
+
   return layout;
+};
+
+/**
+ * Extracts properties defined in allOf/if/then conditional structures.
+ * These are fields that are conditionally added to the schema based on other field values.
+ */
+export const extractConditionalProperties = (
+  schema: V2Schema,
+): Record<string, V2Property> => {
+  const conditionalProperties: Record<string, V2Property> = {};
+
+  // Check if schema has allOf with if/then structures
+  const allOf = (schema.json as any).allOf;
+  if (!Array.isArray(allOf)) {
+    return conditionalProperties;
+  }
+
+  allOf.forEach((item: any) => {
+    // Look for if/then structures
+    if (item.then?.properties) {
+      Object.entries(item.then.properties).forEach(
+        ([fieldName, property]: [string, any]) => {
+          // Only add if not already in top-level properties
+          if (!schema.json.properties[fieldName]) {
+            conditionalProperties[fieldName] = property as V2Property;
+          }
+        },
+      );
+    }
+  });
+
+  return conditionalProperties;
+};
+
+/**
+ * Extracts field names that are conditionally required from allOf/if/then structures.
+ * These are fields listed in allOf[].then.required arrays.
+ */
+export const extractConditionalRequired = (schema: V2Schema): Set<string> => {
+  const conditionalRequired = new Set<string>();
+
+  // Check if schema has allOf with if/then structures
+  const allOf = (schema.json as any).allOf;
+  if (!Array.isArray(allOf)) {
+    return conditionalRequired;
+  }
+
+  allOf.forEach((item: any) => {
+    // Look for if/then structures with required arrays
+    if (item.then?.required && Array.isArray(item.then.required)) {
+      item.then.required.forEach((fieldName: string) => {
+        conditionalRequired.add(fieldName);
+      });
+    }
+  });
+
+  return conditionalRequired;
 };
 
 /**
@@ -214,6 +285,16 @@ export const getVisibleFields = (
   }> = [];
 
   Object.entries(schema.json.properties).forEach(([fieldName, property]) => {
+    const uiField = schema.ui.fields[fieldName];
+
+    if (isFieldVisible(property) && uiField) {
+      visibleFields.push({ name: fieldName, property, uiField });
+    }
+  });
+
+  // Get conditional properties from allOf/if/then structures
+  const conditionalProperties = extractConditionalProperties(schema);
+  Object.entries(conditionalProperties).forEach(([fieldName, property]) => {
     const uiField = schema.ui.fields[fieldName];
 
     if (isFieldVisible(property) && uiField) {
