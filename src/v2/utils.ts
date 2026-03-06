@@ -44,6 +44,10 @@ export const createControl = (
 
   // Add format based on field type
   switch (uiField.type) {
+    case "BOOLEAN":
+      control.options!.format = "boolean";
+      break;
+
     case "TEXT":
       if (uiField.inputType === "LONG_TEXT") {
         control.options!.multi = true;
