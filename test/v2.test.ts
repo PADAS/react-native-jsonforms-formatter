@@ -488,6 +488,80 @@ describe('V2 generateUISchema', () => {
 });
 
 
+describe('BOOLEAN field type', () => {
+  const booleanSchema: V2Schema = {
+    json: {
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      additionalProperties: false,
+      properties: {
+        requires_medicine: {
+          deprecated: false,
+          title: 'Animal Requires Medicine',
+          default: true,
+          description: 'Does the veterinarian require medicine for the animal?',
+          type: 'boolean',
+        },
+      },
+      required: [],
+      type: 'object',
+    },
+    ui: {
+      fields: {
+        requires_medicine: {
+          conditionalDependents: [],
+          parent: 'section-1',
+          type: 'BOOLEAN',
+        },
+      },
+      headers: {},
+      order: ['section-1'],
+      sections: {
+        'section-1': {
+          columns: 1,
+          conditions: [],
+          isActive: true,
+          label: 'Animal Care',
+          leftColumn: [{ name: 'requires_medicine', type: 'field' }],
+          rightColumn: [],
+        },
+      },
+    },
+  };
+
+  it('generates a Control with boolean format', () => {
+    const result = generateUISchema(booleanSchema);
+    const control = result.elements![0].elements![0];
+    expect(control).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/requires_medicine',
+      label: 'Animal Requires Medicine',
+      options: { format: 'boolean' },
+    });
+  });
+
+  it('includes the description in options', () => {
+    const result = generateUISchema(booleanSchema);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.description).toBe(
+      'Does the veterinarian require medicine for the animal?',
+    );
+  });
+
+  it('deprecated boolean field is not rendered', () => {
+    const schema: V2Schema = {
+      ...booleanSchema,
+      json: {
+        ...booleanSchema.json,
+        properties: {
+          requires_medicine: { ...booleanSchema.json.properties.requires_medicine, deprecated: true },
+        },
+      },
+    };
+    const result = generateUISchema(schema);
+    expect(result.elements).toHaveLength(0);
+  });
+});
+
 // Helper function to extract all controls from nested structure
 function getAllControls(uiSchema: any): any[] {
   const controls: any[] = [];
