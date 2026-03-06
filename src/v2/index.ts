@@ -4,9 +4,14 @@ export { generateUISchema } from './generateUISchema';
 // Condition utilities
 export {
   buildConditionSchema,
+  buildContainsSchema,
+  buildIsContainedBySchema,
+  buildIsEmptySchema,
+  buildIsExactlySchema,
+  buildIsNotContainedBySchema,
   buildSchemaBasedCondition,
   createSectionRule,
-  validateConditions
+  validateConditions,
 } from './conditions';
 
 // Schema utilities
