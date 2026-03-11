@@ -34,7 +34,7 @@ export interface V2Schema {
 
 // Base property interface for nested properties (doesn't require deprecated/title)
 export interface V2BaseProperty {
-  type: 'string' | 'number' | 'array' | 'object';
+  type: 'boolean' | 'string' | 'number' | 'array' | 'object';
   description?: string;
   default?: any;
   minimum?: number;
@@ -60,7 +60,7 @@ export interface V2Property extends V2BaseProperty {
 }
 
 export interface V2UIField {
-  type: 'TEXT' | 'NUMERIC' | 'CHOICE_LIST' | 'DATE_TIME' | 'LOCATION' | 'COLLECTION' | 'ATTACHMENT';
+  type: 'BOOLEAN' | 'TEXT' | 'NUMERIC' | 'CHOICE_LIST' | 'DATE_TIME' | 'LOCATION' | 'COLLECTION' | 'ATTACHMENT';
   parent: string;
   inputType?: 'SHORT_TEXT' | 'LONG_TEXT' | 'DROPDOWN' | 'LIST';
   placeholder?: string;

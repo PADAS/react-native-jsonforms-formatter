@@ -20,7 +20,7 @@ import { validateConditions } from './conditions';
  */
 const validateV2Schema = (schema: V2Schema): void => {
   const invalidFields: string[] = [];
-  const supportedFieldTypes = ['TEXT', 'NUMERIC', 'DATE_TIME', 'CHOICE_LIST', 'LOCATION', 'COLLECTION', 'ATTACHMENT'];
+  const supportedFieldTypes = ['BOOLEAN', 'TEXT', 'NUMERIC', 'DATE_TIME', 'CHOICE_LIST', 'LOCATION', 'COLLECTION', 'ATTACHMENT'];
 
   // Check each field for validity
   Object.entries(schema.json.properties).forEach(([fieldName, property]) => {
