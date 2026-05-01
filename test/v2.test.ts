@@ -330,6 +330,103 @@ describe('V2 generateUISchema', () => {
     });
   });
 
+  it('should resolve same-named fields at different nesting levels using qualified ids', () => {
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: ['name'],
+        type: 'object',
+        properties: {
+          name: {
+            deprecated: false,
+            title: 'Report Name',
+            type: 'string',
+          },
+          sightings: {
+            deprecated: false,
+            title: 'Sightings',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  deprecated: false,
+                  title: 'Animal Name',
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          name: {
+            inputType: 'SHORT_TEXT',
+            parent: 'section-1',
+            placeholder: 'Enter report name',
+            type: 'TEXT',
+          },
+          sightings: {
+            buttonText: 'Add Sighting',
+            itemIdentifier: 'name',
+            leftColumn: ['sightings.name'],
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'section-1',
+          },
+          'sightings.name': {
+            inputType: 'SHORT_TEXT',
+            parent: 'sightings',
+            placeholder: 'Enter animal name',
+            type: 'TEXT',
+          },
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: 'Report',
+            leftColumn: [
+              { name: 'name', type: 'field' },
+              { name: 'sightings', type: 'field' },
+            ],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const section = result.elements![0];
+
+    // Top-level name field gets its own placeholder
+    expect(section.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/name',
+      label: 'Report Name',
+      options: { placeholder: 'Enter report name' },
+    });
+
+    // Collection item name field gets its own placeholder via sightings.name qualified id
+    const collectionControl = section.elements![1];
+    expect(collectionControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/sightings',
+      label: 'Sightings',
+    });
+    const detail = collectionControl.options!.detail;
+    expect(detail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/name',
+      label: 'Animal Name',
+      options: { placeholder: 'Enter animal name' },
+    });
+  });
+
   it('should support nested collections (collection within collection)', () => {
     const nestedSchema: V2Schema = {
       json: {
