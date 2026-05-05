@@ -427,6 +427,101 @@ describe('V2 generateUISchema', () => {
     });
   });
 
+  it('should handle old-format schema where collection child shares name with parent collection', () => {
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          items_replaced: {
+            deprecated: false,
+            title: 'Items Replaced',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                items_replaced: {
+                  deprecated: false,
+                  title: 'Items',
+                  type: 'string',
+                },
+                equipment_quantity: {
+                  deprecated: false,
+                  title: 'Quantity',
+                  type: 'number',
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          // Old format: collection child keys are unqualified
+          items_replaced: {
+            buttonText: 'Add',
+            columns: 1,
+            itemIdentifier: '',
+            itemName: '',
+            leftColumn: ['items_replaced', 'equipment_quantity'],
+            parent: 'section-1',
+            rightColumn: [],
+            type: 'COLLECTION',
+          },
+          equipment_quantity: {
+            parent: 'items_replaced',
+            placeholder: '0',
+            type: 'NUMERIC',
+          },
+          // Note: no entry for the child 'items_replaced' field — old format collision case
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: 'Maintenance',
+            leftColumn: [{ name: 'items_replaced', type: 'field' }],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    // Should not throw "Maximum call stack size exceeded"
+    const result = generateUISchema(schema);
+    const collectionControl = result.elements![0].elements![0];
+
+    expect(collectionControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/items_replaced',
+      label: 'Items Replaced',
+      options: { format: 'array' },
+    });
+
+    const detail = collectionControl.options!.detail;
+    expect(detail).toBeDefined();
+    expect(detail!.elements).toHaveLength(2);
+
+    // Child 'items_replaced' (string): no UI config found (parent check blocks
+    // the COLLECTION fallback), so falls through to a generic control.
+    expect(detail!.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/items_replaced',
+      label: 'Items',
+    });
+    // Child 'equipment_quantity' resolves via parent-validated fallback.
+    expect(detail!.elements![1]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/equipment_quantity',
+      label: 'Quantity',
+      options: { placeholder: '0' },
+    });
+  });
+
   it('should handle doubly-nested collections with shared field names (Nested.Nest_1.Nest_Text)', () => {
     // Exact schema structure from the server - two Nest_Text fields at different depths
     const schema: V2Schema = {

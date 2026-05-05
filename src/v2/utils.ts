@@ -104,7 +104,11 @@ export const createControl = (
       control.options!.format = "array";
       control.options!.addButtonText = uiField.buttonText || "Add Item";
       if (uiField.itemIdentifier) {
-        control.options!.itemIdentifier = uiField.itemIdentifier;
+        const effectiveId = collectionId ?? fieldName;
+        const prefix = `${effectiveId}.`;
+        control.options!.itemIdentifier = uiField.itemIdentifier.startsWith(prefix)
+          ? uiField.itemIdentifier.slice(prefix.length)
+          : uiField.itemIdentifier;
       }
 
       // Add collection constraints
@@ -375,7 +379,14 @@ const generateCollectionUISchemaInternal = (
     property: V2BaseProperty,
   ): JSONFormsControl => {
     const qualifiedId = `${collectionId}.${localName}`;
-    const itemUiField = schema.ui.fields[qualifiedId] ?? schema.ui.fields[localName];
+    const fallbackField = schema.ui.fields[localName];
+    const collectionLocalName = collectionId.split(".").pop()!;
+    const itemUiField =
+      schema.ui.fields[qualifiedId] ??
+      (fallbackField?.parent === collectionId ||
+      fallbackField?.parent === collectionLocalName
+        ? fallbackField
+        : undefined);
 
     if (itemUiField) {
       return createControl(

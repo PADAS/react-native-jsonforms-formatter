@@ -157,7 +157,7 @@ export const mockV2Schema = {
       "equipment_used": {
         "buttonText": "Add Equipment",
         "columns": 1,
-        "itemIdentifier": "item_name",
+        "itemIdentifier": "equipment_used.item_name",
         "itemName": "Equipment Item",
         "leftColumn": ["equipment_used.item_name", "equipment_used.item_condition"],
         "rightColumn": [],
