@@ -427,6 +427,128 @@ describe('V2 generateUISchema', () => {
     });
   });
 
+  it('should handle doubly-nested collections with shared field names (Nested.Nest_1.Nest_Text)', () => {
+    // Exact schema structure from the server - two Nest_Text fields at different depths
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          Nested: {
+            deprecated: false,
+            title: 'Nested',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                Nest_Text: { deprecated: false, title: 'Nest Text', type: 'string', default: '' },
+                Nest_1: {
+                  deprecated: false,
+                  title: 'Nest 1',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      Nest_Text: { deprecated: false, title: 'Nest Text', type: 'string', default: '' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          Nested: {
+            type: 'COLLECTION',
+            parent: 'section-1',
+            buttonText: 'Create a Nest Now',
+            columns: 1,
+            itemIdentifier: '',
+            leftColumn: ['Nested.Nest_Text', 'Nested.Nest_1'],
+            rightColumn: [],
+          },
+          'Nested.Nest_Text': {
+            type: 'TEXT',
+            inputType: 'SHORT_TEXT',
+            parent: 'Nested',
+            placeholder: 'Text for the Nest',
+          },
+          'Nested.Nest_1': {
+            type: 'COLLECTION',
+            parent: 'Nested',
+            buttonText: 'Next 1',
+            columns: 1,
+            itemIdentifier: '',
+            leftColumn: ['Nested.Nest_1.Nest_Text'],
+            rightColumn: [],
+          },
+          'Nested.Nest_1.Nest_Text': {
+            type: 'TEXT',
+            inputType: 'SHORT_TEXT',
+            parent: 'Nested.Nest_1',
+            placeholder: 'New Nest',
+          },
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: '',
+            leftColumn: [{ name: 'Nested', type: 'field' }],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const nestedControl = result.elements![0].elements![0];
+
+    // Top-level collection scope
+    expect(nestedControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nested',
+      label: 'Nested',
+      options: { format: 'array', addButtonText: 'Create a Nest Now' },
+    });
+
+    const nestedDetail = nestedControl.options!.detail;
+    expect(nestedDetail.elements).toHaveLength(2);
+
+    // Nested.Nest_Text → scope is bare local name, gets its own placeholder
+    expect(nestedDetail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_Text',
+      label: 'Nest Text',
+      options: { placeholder: 'Text for the Nest' },
+    });
+
+    // Nested.Nest_1 → inner collection
+    const nest1Control = nestedDetail.elements![1];
+    expect(nest1Control).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_1',
+      label: 'Nest 1',
+      options: { format: 'array', addButtonText: 'Next 1' },
+    });
+
+    // Nested.Nest_1.Nest_Text → same local name as sibling above, gets its own placeholder
+    const nest1Detail = nest1Control.options!.detail;
+    expect(nest1Detail.elements).toHaveLength(1);
+    expect(nest1Detail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_Text',
+      label: 'Nest Text',
+      options: { placeholder: 'New Nest' },
+    });
+  });
+
   it('should support nested collections (collection within collection)', () => {
     const nestedSchema: V2Schema = {
       json: {
