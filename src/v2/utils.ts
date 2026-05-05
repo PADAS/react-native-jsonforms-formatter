@@ -381,10 +381,12 @@ const generateCollectionUISchemaInternal = (
     const qualifiedId = `${collectionId}.${localName}`;
     const fallbackField = schema.ui.fields[localName];
     const collectionLocalName = collectionId.split(".").pop()!;
+    const fallbackParent = fallbackField?.parent;
     const itemUiField =
       schema.ui.fields[qualifiedId] ??
-      (fallbackField?.parent === collectionId ||
-      fallbackField?.parent === collectionLocalName
+      (fallbackParent === collectionId ||
+      (fallbackParent === collectionLocalName &&
+        !schema.ui.sections[fallbackParent])
         ? fallbackField
         : undefined);
 
