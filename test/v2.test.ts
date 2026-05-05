@@ -427,6 +427,107 @@ describe('V2 generateUISchema', () => {
     });
   });
 
+  it('should not apply a top-level field config to a collection child when the section id matches the collection local name', () => {
+    // Regression: collectionLocalName = "subtasks", section id also = "subtasks".
+    // Old-format schema — no qualified keys in ui.fields, so the fallback path
+    // is exercised. A top-level "name" field parented to section "subtasks" must
+    // NOT be picked up as the UI config for the "name" child inside tasks.subtasks.
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          name: { title: 'Report Name', type: 'string' },
+          tasks: {
+            title: 'Tasks',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                subtasks: {
+                  title: 'Subtasks',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { title: 'Subtask Name', type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          // Root-level "name" parented to section "subtasks" — section id
+          // coincidentally equals the nested collection's local name.
+          name: {
+            inputType: 'SHORT_TEXT',
+            parent: 'subtasks',
+            placeholder: 'Report placeholder',
+            type: 'TEXT',
+          },
+          // Old-format: no qualified keys — both collections use unqualified ids.
+          tasks: {
+            buttonText: 'Add Task',
+            leftColumn: ['subtasks'],   // unqualified
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'subtasks',
+          },
+          subtasks: {
+            buttonText: 'Add Subtask',
+            leftColumn: ['name'],       // unqualified — triggers the fallback path
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'tasks',
+          },
+          // Deliberately no 'tasks.subtasks.name' qualified entry
+        },
+        headers: {},
+        order: ['subtasks'],
+        sections: {
+          subtasks: {   // section id = "subtasks" = nested collection local name
+            columns: 1,
+            isActive: true,
+            label: 'Report',
+            leftColumn: [
+              { name: 'name', type: 'field' },
+              { name: 'tasks', type: 'field' },
+            ],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const section = result.elements![0];
+
+    // Top-level name renders with its own placeholder
+    expect(section.elements![0]).toMatchObject({
+      scope: '#/properties/name',
+      options: { placeholder: 'Report placeholder' },
+    });
+
+    // Drill into tasks → subtasks → name
+    const tasksControl = section.elements![1];
+    const subtasksControl = tasksControl.options!.detail.elements![0];
+    const subtaskNameControl = subtasksControl.options!.detail.elements![0];
+
+    // "name" child inside tasks.subtasks must NOT inherit the top-level
+    // "Report placeholder" — the section-id collision must be blocked.
+    expect(subtaskNameControl).toMatchObject({
+      scope: '#/properties/name',
+      label: 'Subtask Name',
+    });
+    expect(subtaskNameControl.options?.placeholder).toBeUndefined();
+  });
+
   it('should handle old-format schema where collection child shares name with parent collection', () => {
     const schema: V2Schema = {
       json: {
