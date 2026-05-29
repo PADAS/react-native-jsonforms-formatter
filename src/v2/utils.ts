@@ -29,6 +29,7 @@ export const createControl = (
   uiField: V2UIField,
   schema?: V2Schema,
   conditionallyRequired?: boolean,
+  collectionId?: string,
 ): JSONFormsControl => {
   const control: JSONFormsControl = {
     type: "Control",
@@ -103,7 +104,11 @@ export const createControl = (
       control.options!.format = "array";
       control.options!.addButtonText = uiField.buttonText || "Add Item";
       if (uiField.itemIdentifier) {
-        control.options!.itemIdentifier = uiField.itemIdentifier;
+        const effectiveId = collectionId ?? fieldName;
+        const prefix = `${effectiveId}.`;
+        control.options!.itemIdentifier = uiField.itemIdentifier.startsWith(prefix)
+          ? uiField.itemIdentifier.slice(prefix.length)
+          : uiField.itemIdentifier;
       }
 
       // Add collection constraints
@@ -119,6 +124,7 @@ export const createControl = (
           property,
           uiField,
           schema,
+          collectionId ?? fieldName,
         );
       }
       break;
@@ -346,6 +352,7 @@ const generateCollectionUISchemaInternal = (
   collectionProperty: V2Property,
   uiField: V2UIField,
   schema: V2Schema,
+  collectionId: string,
 ): JSONFormsUISchema => {
   if (
     collectionProperty.type !== "array" ||
@@ -359,26 +366,45 @@ const generateCollectionUISchemaInternal = (
   const itemProperties = collectionProperty.items.properties;
   const itemControls: JSONFormsControl[] = [];
 
+  const getLocalName = (columnEntry: string): string => {
+    const prefix = `${collectionId}.`;
+    return columnEntry.startsWith(prefix)
+      ? columnEntry.slice(prefix.length)
+      : columnEntry;
+  };
+
   // Helper function to create control for a collection item field
   const createItemControl = (
-    fieldName: string,
+    localName: string,
     property: V2BaseProperty,
   ): JSONFormsControl => {
-    const itemUiField = schema.ui.fields[fieldName];
+    const qualifiedId = `${collectionId}.${localName}`;
+    const fallbackField = schema.ui.fields[localName];
+    const collectionLocalName = collectionId.split(".").pop()!;
+    const fallbackParent = fallbackField?.parent;
+    const itemUiField =
+      schema.ui.fields[qualifiedId] ??
+      (fallbackParent === collectionId ||
+      (fallbackParent === collectionLocalName &&
+        !schema.ui.sections[fallbackParent])
+        ? fallbackField
+        : undefined);
 
     if (itemUiField) {
       return createControl(
-        fieldName,
+        localName,
         property as V2Property,
         itemUiField,
         schema,
+        undefined,
+        qualifiedId,
       );
     }
 
     const control: JSONFormsControl = {
       type: "Control",
-      scope: `#/properties/${fieldName}`,
-      label: (property as any).title || fieldName,
+      scope: `#/properties/${localName}`,
+      label: (property as any).title || localName,
       options: {},
     };
 
@@ -406,28 +432,26 @@ const generateCollectionUISchemaInternal = (
   if (uiField && (uiField.leftColumn || uiField.rightColumn)) {
     // Add left column fields first
     if (uiField.leftColumn) {
-      uiField.leftColumn.forEach((fieldName) => {
-        if (itemProperties[fieldName]) {
-          itemControls.push(
-            createItemControl(fieldName, itemProperties[fieldName]),
-          );
+      uiField.leftColumn.forEach((columnEntry) => {
+        const localName = getLocalName(columnEntry);
+        if (itemProperties[localName]) {
+          itemControls.push(createItemControl(localName, itemProperties[localName]));
         }
       });
     }
 
     // Add right column fields after (React Native single-column)
     if (uiField.rightColumn) {
-      uiField.rightColumn.forEach((fieldName) => {
-        if (itemProperties[fieldName]) {
-          itemControls.push(
-            createItemControl(fieldName, itemProperties[fieldName]),
-          );
+      uiField.rightColumn.forEach((columnEntry) => {
+        const localName = getLocalName(columnEntry);
+        if (itemProperties[localName]) {
+          itemControls.push(createItemControl(localName, itemProperties[localName]));
         }
       });
     }
   } else {
-    Object.entries(itemProperties).forEach(([fieldName, property]) => {
-      itemControls.push(createItemControl(fieldName, property));
+    Object.entries(itemProperties).forEach(([localName, property]) => {
+      itemControls.push(createItemControl(localName, property));
     });
   }
 

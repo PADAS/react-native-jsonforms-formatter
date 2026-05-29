@@ -330,6 +330,421 @@ describe('V2 generateUISchema', () => {
     });
   });
 
+  it('should resolve same-named fields at different nesting levels using qualified ids', () => {
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: ['name'],
+        type: 'object',
+        properties: {
+          name: {
+            deprecated: false,
+            title: 'Report Name',
+            type: 'string',
+          },
+          sightings: {
+            deprecated: false,
+            title: 'Sightings',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  deprecated: false,
+                  title: 'Animal Name',
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          name: {
+            inputType: 'SHORT_TEXT',
+            parent: 'section-1',
+            placeholder: 'Enter report name',
+            type: 'TEXT',
+          },
+          sightings: {
+            buttonText: 'Add Sighting',
+            itemIdentifier: 'name',
+            leftColumn: ['sightings.name'],
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'section-1',
+          },
+          'sightings.name': {
+            inputType: 'SHORT_TEXT',
+            parent: 'sightings',
+            placeholder: 'Enter animal name',
+            type: 'TEXT',
+          },
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: 'Report',
+            leftColumn: [
+              { name: 'name', type: 'field' },
+              { name: 'sightings', type: 'field' },
+            ],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const section = result.elements![0];
+
+    // Top-level name field gets its own placeholder
+    expect(section.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/name',
+      label: 'Report Name',
+      options: { placeholder: 'Enter report name' },
+    });
+
+    // Collection item name field gets its own placeholder via sightings.name qualified id
+    const collectionControl = section.elements![1];
+    expect(collectionControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/sightings',
+      label: 'Sightings',
+    });
+    const detail = collectionControl.options!.detail;
+    expect(detail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/name',
+      label: 'Animal Name',
+      options: { placeholder: 'Enter animal name' },
+    });
+  });
+
+  it('should not apply a top-level field config to a collection child when the section id matches the collection local name', () => {
+    // Regression: collectionLocalName = "subtasks", section id also = "subtasks".
+    // Old-format schema — no qualified keys in ui.fields, so the fallback path
+    // is exercised. A top-level "name" field parented to section "subtasks" must
+    // NOT be picked up as the UI config for the "name" child inside tasks.subtasks.
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          name: { title: 'Report Name', type: 'string' },
+          tasks: {
+            title: 'Tasks',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                subtasks: {
+                  title: 'Subtasks',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { title: 'Subtask Name', type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          // Root-level "name" parented to section "subtasks" — section id
+          // coincidentally equals the nested collection's local name.
+          name: {
+            inputType: 'SHORT_TEXT',
+            parent: 'subtasks',
+            placeholder: 'Report placeholder',
+            type: 'TEXT',
+          },
+          // Old-format: no qualified keys — both collections use unqualified ids.
+          tasks: {
+            buttonText: 'Add Task',
+            leftColumn: ['subtasks'],   // unqualified
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'subtasks',
+          },
+          subtasks: {
+            buttonText: 'Add Subtask',
+            leftColumn: ['name'],       // unqualified — triggers the fallback path
+            rightColumn: [],
+            type: 'COLLECTION',
+            parent: 'tasks',
+          },
+          // Deliberately no 'tasks.subtasks.name' qualified entry
+        },
+        headers: {},
+        order: ['subtasks'],
+        sections: {
+          subtasks: {   // section id = "subtasks" = nested collection local name
+            columns: 1,
+            isActive: true,
+            label: 'Report',
+            leftColumn: [
+              { name: 'name', type: 'field' },
+              { name: 'tasks', type: 'field' },
+            ],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const section = result.elements![0];
+
+    // Top-level name renders with its own placeholder
+    expect(section.elements![0]).toMatchObject({
+      scope: '#/properties/name',
+      options: { placeholder: 'Report placeholder' },
+    });
+
+    // Drill into tasks → subtasks → name
+    const tasksControl = section.elements![1];
+    const subtasksControl = tasksControl.options!.detail.elements![0];
+    const subtaskNameControl = subtasksControl.options!.detail.elements![0];
+
+    // "name" child inside tasks.subtasks must NOT inherit the top-level
+    // "Report placeholder" — the section-id collision must be blocked.
+    expect(subtaskNameControl).toMatchObject({
+      scope: '#/properties/name',
+      label: 'Subtask Name',
+    });
+    expect(subtaskNameControl.options?.placeholder).toBeUndefined();
+  });
+
+  it('should handle old-format schema where collection child shares name with parent collection', () => {
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          items_replaced: {
+            deprecated: false,
+            title: 'Items Replaced',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                items_replaced: {
+                  deprecated: false,
+                  title: 'Items',
+                  type: 'string',
+                },
+                equipment_quantity: {
+                  deprecated: false,
+                  title: 'Quantity',
+                  type: 'number',
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          // Old format: collection child keys are unqualified
+          items_replaced: {
+            buttonText: 'Add',
+            columns: 1,
+            itemIdentifier: '',
+            itemName: '',
+            leftColumn: ['items_replaced', 'equipment_quantity'],
+            parent: 'section-1',
+            rightColumn: [],
+            type: 'COLLECTION',
+          },
+          equipment_quantity: {
+            parent: 'items_replaced',
+            placeholder: '0',
+            type: 'NUMERIC',
+          },
+          // Note: no entry for the child 'items_replaced' field — old format collision case
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: 'Maintenance',
+            leftColumn: [{ name: 'items_replaced', type: 'field' }],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    // Should not throw "Maximum call stack size exceeded"
+    const result = generateUISchema(schema);
+    const collectionControl = result.elements![0].elements![0];
+
+    expect(collectionControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/items_replaced',
+      label: 'Items Replaced',
+      options: { format: 'array' },
+    });
+
+    const detail = collectionControl.options!.detail;
+    expect(detail).toBeDefined();
+    expect(detail!.elements).toHaveLength(2);
+
+    // Child 'items_replaced' (string): no UI config found (parent check blocks
+    // the COLLECTION fallback), so falls through to a generic control.
+    expect(detail!.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/items_replaced',
+      label: 'Items',
+    });
+    // Child 'equipment_quantity' resolves via parent-validated fallback.
+    expect(detail!.elements![1]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/equipment_quantity',
+      label: 'Quantity',
+      options: { placeholder: '0' },
+    });
+  });
+
+  it('should handle doubly-nested collections with shared field names (Nested.Nest_1.Nest_Text)', () => {
+    // Exact schema structure from the server - two Nest_Text fields at different depths
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          Nested: {
+            deprecated: false,
+            title: 'Nested',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                Nest_Text: { deprecated: false, title: 'Nest Text', type: 'string', default: '' },
+                Nest_1: {
+                  deprecated: false,
+                  title: 'Nest 1',
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      Nest_Text: { deprecated: false, title: 'Nest Text', type: 'string', default: '' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          Nested: {
+            type: 'COLLECTION',
+            parent: 'section-1',
+            buttonText: 'Create a Nest Now',
+            columns: 1,
+            itemIdentifier: '',
+            leftColumn: ['Nested.Nest_Text', 'Nested.Nest_1'],
+            rightColumn: [],
+          },
+          'Nested.Nest_Text': {
+            type: 'TEXT',
+            inputType: 'SHORT_TEXT',
+            parent: 'Nested',
+            placeholder: 'Text for the Nest',
+          },
+          'Nested.Nest_1': {
+            type: 'COLLECTION',
+            parent: 'Nested',
+            buttonText: 'Next 1',
+            columns: 1,
+            itemIdentifier: '',
+            leftColumn: ['Nested.Nest_1.Nest_Text'],
+            rightColumn: [],
+          },
+          'Nested.Nest_1.Nest_Text': {
+            type: 'TEXT',
+            inputType: 'SHORT_TEXT',
+            parent: 'Nested.Nest_1',
+            placeholder: 'New Nest',
+          },
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: '',
+            leftColumn: [{ name: 'Nested', type: 'field' }],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const nestedControl = result.elements![0].elements![0];
+
+    // Top-level collection scope
+    expect(nestedControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nested',
+      label: 'Nested',
+      options: { format: 'array', addButtonText: 'Create a Nest Now' },
+    });
+
+    const nestedDetail = nestedControl.options!.detail;
+    expect(nestedDetail.elements).toHaveLength(2);
+
+    // Nested.Nest_Text → scope is bare local name, gets its own placeholder
+    expect(nestedDetail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_Text',
+      label: 'Nest Text',
+      options: { placeholder: 'Text for the Nest' },
+    });
+
+    // Nested.Nest_1 → inner collection
+    const nest1Control = nestedDetail.elements![1];
+    expect(nest1Control).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_1',
+      label: 'Nest 1',
+      options: { format: 'array', addButtonText: 'Next 1' },
+    });
+
+    // Nested.Nest_1.Nest_Text → same local name as sibling above, gets its own placeholder
+    const nest1Detail = nest1Control.options!.detail;
+    expect(nest1Detail.elements).toHaveLength(1);
+    expect(nest1Detail.elements![0]).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Nest_Text',
+      label: 'Nest Text',
+      options: { placeholder: 'New Nest' },
+    });
+  });
+
   it('should support nested collections (collection within collection)', () => {
     const nestedSchema: V2Schema = {
       json: {

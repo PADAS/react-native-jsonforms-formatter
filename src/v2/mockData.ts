@@ -157,20 +157,20 @@ export const mockV2Schema = {
       "equipment_used": {
         "buttonText": "Add Equipment",
         "columns": 1,
-        "itemIdentifier": "item_name",
+        "itemIdentifier": "equipment_used.item_name",
         "itemName": "Equipment Item",
-        "leftColumn": ["item_name", "item_condition"],
+        "leftColumn": ["equipment_used.item_name", "equipment_used.item_condition"],
         "rightColumn": [],
         "parent": "section-location",
         "type": "COLLECTION"
       },
-      "item_name": {
+      "equipment_used.item_name": {
         "inputType": "SHORT_TEXT",
         "parent": "equipment_used",
         "placeholder": "Equipment name",
         "type": "TEXT"
       },
-      "item_condition": {
+      "equipment_used.item_condition": {
         "choices": {
           "eventTypeCategories": [],
           "existingChoiceList": ["item_condition"],
