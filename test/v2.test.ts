@@ -977,6 +977,208 @@ describe('BOOLEAN field type', () => {
   });
 });
 
+// ─── enum + x-enumExtra (issue #41) ──────────────────────────────────────────
+
+const enumChoiceSchema: V2Schema = {
+  json: {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    additionalProperties: false,
+    required: [],
+    type: 'object',
+    properties: {
+      Fire_Status: {
+        deprecated: false,
+        title: 'Fire Status',
+        description: 'Only get one choice',
+        type: 'string',
+        anyOf: [
+          {
+            type: 'string',
+            title: 'Choices',
+            description: 'All choices schema list',
+            enum: ['active', 'inactive'],
+            'x-enumExtra': {
+              active: { display: 'Active', description: 'firerep_status' },
+              inactive: { display: 'Inactive', description: 'firerep_status' },
+            },
+          } as any,
+        ],
+      },
+      Equipment: {
+        deprecated: false,
+        title: 'Equipment',
+        description: 'Make many choices',
+        type: 'array',
+        uniqueItems: true,
+        items: {
+          type: 'string',
+          anyOf: [
+            {
+              type: 'string',
+              title: 'Choices',
+              description: 'All choices schema list',
+              enum: ['emergencykit', 'stretcher', 'other', 'none'],
+              'x-enumExtra': {
+                emergencykit: { display: 'Complete Emergency Kit', description: 'medevacrep_specialequipment' },
+                stretcher: { display: 'Stretcher and other mobilisation devices', description: 'medevacrep_specialequipment' },
+                other: { display: 'Other requirements', description: 'medevacrep_specialequipment' },
+                none: { display: 'None', description: 'medevacrep_specialequipment' },
+              },
+            } as any,
+          ],
+        },
+      },
+    },
+  },
+  ui: {
+    fields: {
+      Fire_Status: {
+        conditionalDependents: [],
+        parent: 'section-1',
+        type: 'CHOICE_LIST',
+        choices: {
+          eventTypeCategories: [],
+          existingChoiceList: ['firerep_status'],
+          featureCategories: [],
+          myDataType: 'EVENT_TYPES_FROM_EVENT_CATEGORY',
+          subjectGroups: [],
+          subjectSubtypes: [],
+          type: 'EXISTING_CHOICE_LIST',
+        },
+        inputType: 'DROPDOWN',
+        placeholder: 'Single Choice',
+      },
+      Equipment: {
+        conditionalDependents: [],
+        parent: 'section-1',
+        type: 'CHOICE_LIST',
+        choices: {
+          eventTypeCategories: [],
+          existingChoiceList: ['medevacrep_specialequipment'],
+          featureCategories: [],
+          myDataType: 'EVENT_TYPES_FROM_EVENT_CATEGORY',
+          subjectGroups: [],
+          subjectSubtypes: [],
+          type: 'EXISTING_CHOICE_LIST',
+        },
+        inputType: 'DROPDOWN',
+        placeholder: 'Multiple Choice',
+      },
+    },
+    headers: {},
+    order: ['section-1'],
+    sections: {
+      'section-1': {
+        columns: 1,
+        conditions: [],
+        isActive: true,
+        label: '',
+        leftColumn: [
+          { name: 'Fire_Status', type: 'field' },
+          { name: 'Equipment', type: 'field' },
+        ],
+        rightColumn: [],
+      },
+    },
+  },
+};
+
+describe('V2 generateUISchema — enum + x-enumExtra format (issue #41)', () => {
+  it('accepts single-select CHOICE_LIST with enum format without throwing', () => {
+    expect(() => generateUISchema(enumChoiceSchema)).not.toThrow();
+  });
+
+  it('accepts multi-select CHOICE_LIST with enum format on items without throwing', () => {
+    expect(() => generateUISchema(enumChoiceSchema)).not.toThrow();
+  });
+
+  it('generates dropdown control for single-select enum field with placeholder', () => {
+    const result = generateUISchema(enumChoiceSchema);
+    const section = result.elements![0];
+    const fireStatusControl = section.elements![0];
+    expect(fireStatusControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Fire_Status',
+      label: 'Fire Status',
+      options: { format: 'dropdown', placeholder: 'Single Choice' },
+    });
+  });
+
+  it('injects options.oneOf with display titles for single-select enum field', () => {
+    const result = generateUISchema(enumChoiceSchema);
+    const fireStatusControl = result.elements![0].elements![0];
+    expect(fireStatusControl.options!.oneOf).toEqual([
+      { const: 'active', title: 'Active' },
+      { const: 'inactive', title: 'Inactive' },
+    ]);
+  });
+
+  it('generates multi dropdown control for array enum field with placeholder', () => {
+    const result = generateUISchema(enumChoiceSchema);
+    const section = result.elements![0];
+    const equipmentControl = section.elements![1];
+    expect(equipmentControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/Equipment',
+      label: 'Equipment',
+      options: { format: 'dropdown', multi: true, placeholder: 'Multiple Choice' },
+    });
+  });
+
+  it('injects options.oneOf with display titles for multi-select array enum field', () => {
+    const result = generateUISchema(enumChoiceSchema);
+    const equipmentControl = result.elements![0].elements![1];
+    expect(equipmentControl.options!.oneOf).toEqual([
+      { const: 'emergencykit', title: 'Complete Emergency Kit' },
+      { const: 'stretcher', title: 'Stretcher and other mobilisation devices' },
+      { const: 'other', title: 'Other requirements' },
+      { const: 'none', title: 'None' },
+    ]);
+  });
+
+  it('falls back to raw enum value as title when x-enumExtra is missing an entry', () => {
+    const schemaWithGap: V2Schema = {
+      ...enumChoiceSchema,
+      json: {
+        ...enumChoiceSchema.json,
+        properties: {
+          Fire_Status: {
+            ...enumChoiceSchema.json.properties['Fire_Status'],
+            anyOf: [
+              {
+                enum: ['active', 'unknown'],
+                'x-enumExtra': {
+                  active: { display: 'Active', description: '' },
+                  // 'unknown' intentionally absent
+                },
+              } as any,
+            ],
+          },
+        },
+      },
+    };
+    const result = generateUISchema(schemaWithGap);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.oneOf).toEqual([
+      { const: 'active', title: 'Active' },
+      { const: 'unknown', title: 'unknown' },
+    ]);
+  });
+
+  it('does not inject options.oneOf for old-format oneOf schemas (backward compatibility)', () => {
+    // mockV2Schema uses the old anyOf[{ oneOf: [...] }] format — options.oneOf must be absent
+    const result = generateUISchema(mockV2Schema);
+    const activityControl = result.elements![0].elements![2]; // patrol_activity
+    expect(activityControl.options!.oneOf).toBeUndefined();
+  });
+
+  it('does not mutate the original schema.json', () => {
+    const original = JSON.stringify(enumChoiceSchema.json);
+    generateUISchema(enumChoiceSchema);
+    expect(JSON.stringify(enumChoiceSchema.json)).toBe(original);
+  });
+});
+
 // Helper function to extract all controls from nested structure
 function getAllControls(uiSchema: any): any[] {
   const controls: any[] = [];
