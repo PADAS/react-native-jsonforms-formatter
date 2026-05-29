@@ -71,7 +71,7 @@ export const createControl = (
       control.options!.display = property.format || "date-time";
       break;
 
-    case "CHOICE_LIST":
+    case "CHOICE_LIST": {
       // Handle multiple choice (array type) first
       if (property.type === "array") {
         control.options!.multi = true;
@@ -93,7 +93,19 @@ export const createControl = (
       if (uiField.placeholder) {
         control.options!.placeholder = uiField.placeholder;
       }
+
+      const anyOfSource = property.type === "array"
+        ? (property.items as any)?.anyOf
+        : (property as any).anyOf;
+      const enumItem = anyOfSource?.find((a: any) => a.enum && a["x-enumExtra"]);
+      if (enumItem) {
+        control.options!.oneOf = enumItem.enum.map((value: any) => ({
+          const: value,
+          title: enumItem["x-enumExtra"][value]?.display ?? String(value),
+        }));
+      }
       break;
+    }
 
     case "LOCATION":
       control.options!.format = "location";
