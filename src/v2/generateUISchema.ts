@@ -46,16 +46,14 @@ const validateV2Schema = (schema: V2Schema): void => {
     if (uiField.type === 'CHOICE_LIST') {
       let hasValidStructure = false;
       
+      const isValidChoiceItem = (anyOfItem: any): boolean =>
+        (anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf)) ||
+        (anyOfItem.enum && Array.isArray(anyOfItem.enum));
+
       if (property.type === 'array' && property.items?.anyOf) {
-        // Check for oneOf arrays in anyOf items for array types (no $ref support)
-        hasValidStructure = property.items.anyOf.some((anyOfItem: any) => 
-          anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf) // Empty arrays are valid
-        );
+        hasValidStructure = property.items.anyOf.some(isValidChoiceItem);
       } else if (property.anyOf) {
-        // Check direct anyOf structure for string types (no $ref support)
-        hasValidStructure = property.anyOf.some((anyOfItem: any) => 
-          anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf) // Empty arrays are valid
-        );
+        hasValidStructure = property.anyOf.some(isValidChoiceItem);
       }
       
       if (!hasValidStructure) {

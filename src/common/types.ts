@@ -40,7 +40,11 @@ export interface V2BaseProperty {
   minimum?: number;
   maximum?: number;
   format?: 'date-time' | 'date' | 'time' | 'uri';
-  anyOf?: Array<{ $ref: string } | { oneOf: Array<{ const: any; title?: string }> }>;
+  anyOf?: Array<
+    | { $ref: string }
+    | { oneOf: Array<{ const: any; title?: string }> }
+    | { type?: string; title?: string; description?: string; enum: any[]; 'x-enumExtra'?: Record<string, { display: string; description?: string }> }
+  >;
   items?: V2BaseProperty;
   properties?: Record<string, V2BaseProperty>;
   required?: string[];
