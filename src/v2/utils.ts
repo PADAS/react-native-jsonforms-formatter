@@ -144,12 +144,31 @@ export const createControl = (
       }
       break;
 
-    case "ATTACHMENT":
+    case "ATTACHMENT": {
       control.options!.format = "file";
       if (uiField.allowableFileTypes) {
         control.options!.accept = uiField.allowableFileTypes.join(",");
       }
+      if (property.type === "array") {
+        control.options!.multi = true;
+        if (property.maxItems !== undefined) {
+          control.options!.maxItems = property.maxItems;
+        }
+        if (property.minItems !== undefined) {
+          control.options!.minItems = property.minItems;
+        }
+        if (property.uniqueItems) {
+          control.options!.uniqueItems = true;
+        }
+        const itemKey =
+          property.items?.required?.[0] ??
+          Object.keys(property.items?.properties ?? {})[0];
+        if (itemKey) {
+          control.options!.itemKey = itemKey;
+        }
+      }
       break;
+    }
   }
 
   // Add description if available
