@@ -1094,6 +1094,35 @@ describe('ATTACHMENT field type', () => {
     expect(control.options!.accept).toBe('image,document');
   });
 
+  it('derives itemKey from items.required, not property declaration order', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      json: {
+        ...attachmentSchema.json,
+        properties: {
+          photo: {
+            deprecated: false,
+            title: 'Attachment Field',
+            type: 'array',
+            items: {
+              type: 'object',
+              // caption declared first, but uploadId is the binding (required) key
+              properties: {
+                caption: { type: 'string' },
+                uploadId: { format: 'uuid', type: 'string' },
+              },
+              required: ['uploadId'],
+              unevaluatedProperties: false,
+            },
+          },
+        },
+      },
+    };
+    const result = generateUISchema(schema);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.itemKey).toBe('uploadId');
+  });
+
   it('supports ATTACHMENT inside a COLLECTION', () => {
     const schema: V2Schema = {
       json: {

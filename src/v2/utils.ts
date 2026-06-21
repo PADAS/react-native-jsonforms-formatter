@@ -160,7 +160,9 @@ export const createControl = (
         if (property.uniqueItems) {
           control.options!.uniqueItems = true;
         }
-        const itemKey = Object.keys(property.items?.properties ?? {})[0];
+        const itemKey =
+          property.items?.required?.[0] ??
+          Object.keys(property.items?.properties ?? {})[0];
         if (itemKey) {
           control.options!.itemKey = itemKey;
         }
