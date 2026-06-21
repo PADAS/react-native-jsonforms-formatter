@@ -43,7 +43,7 @@ export interface V2BaseProperty {
   anyOf?: Array<
     | { $ref: string }
     | { oneOf: Array<{ const: any; title?: string }> }
-    | { type?: string; title?: string; description?: string; enum: any[]; 'x-enumExtra'?: Record<string, { display: string; description?: string }> }
+    | { type?: string; title?: string; description?: string; enum: any[]; 'x-enumExtra'?: Record<string, { display: string; description?: string; [key: string]: unknown }> }
   >;
   items?: V2BaseProperty;
   properties?: Record<string, V2BaseProperty>;

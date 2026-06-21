@@ -57,7 +57,7 @@ const validateV2Schema = (schema: V2Schema): void => {
       }
       
       if (!hasValidStructure) {
-        invalidFields.push(`${fieldName}: CHOICE_LIST field requires embedded oneOf arrays - $ref not supported`);
+        invalidFields.push(`${fieldName}: CHOICE_LIST field requires embedded oneOf or enum arrays - $ref not supported`);
       }
     }
   });
