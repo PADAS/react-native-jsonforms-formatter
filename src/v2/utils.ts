@@ -95,9 +95,12 @@ export const createControl = (
       }
 
       const anyOfSource = property.type === "array"
-        ? (property.items as any)?.anyOf
-        : (property as any).anyOf;
-      const enumItem = anyOfSource?.find((a: any) => Array.isArray(a.enum));
+        ? property.items?.anyOf
+        : property.anyOf;
+      const enumItem = anyOfSource?.find(
+        (a): a is { enum: any[]; "x-enumExtra"?: Record<string, { display: string; [key: string]: unknown }> } =>
+          "enum" in a
+      );
       if (enumItem) {
         control.options!.oneOf = enumItem.enum.map((value: any) => ({
           const: value,
