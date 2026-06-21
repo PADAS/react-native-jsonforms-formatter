@@ -1165,6 +1165,30 @@ describe('V2 generateUISchema — enum + x-enumExtra format (issue #41)', () => 
     ]);
   });
 
+  it('injects options.oneOf using raw values as titles when x-enumExtra is entirely absent', () => {
+    const schemaNoExtra: V2Schema = {
+      ...enumChoiceSchema,
+      json: {
+        ...enumChoiceSchema.json,
+        properties: {
+          Fire_Status: {
+            ...enumChoiceSchema.json.properties['Fire_Status'],
+            anyOf: [
+              { enum: ['active', 'inactive'] } as any,
+            ],
+          },
+          Equipment: enumChoiceSchema.json.properties['Equipment'],
+        },
+      },
+    };
+    const result = generateUISchema(schemaNoExtra);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.oneOf).toEqual([
+      { const: 'active', title: 'active' },
+      { const: 'inactive', title: 'inactive' },
+    ]);
+  });
+
   it('does not inject options.oneOf for old-format oneOf schemas (backward compatibility)', () => {
     // mockV2Schema uses the old anyOf[{ oneOf: [...] }] format — options.oneOf must be absent
     const result = generateUISchema(mockV2Schema);
