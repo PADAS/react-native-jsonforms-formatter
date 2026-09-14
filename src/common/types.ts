@@ -39,7 +39,7 @@ export interface V2BaseProperty {
   default?: any;
   minimum?: number;
   maximum?: number;
-  format?: 'date-time' | 'date' | 'time' | 'uri';
+  format?: 'date-time' | 'date' | 'time' | 'uri' | 'uuid';
   anyOf?: Array<
     | { $ref: string }
     | { oneOf: Array<{ const: any; title?: string }> }
@@ -50,6 +50,7 @@ export interface V2BaseProperty {
   required?: string[];
   additionalProperties?: boolean;
   unevaluatedItems?: boolean;
+  unevaluatedProperties?: boolean;
   maxItems?: number;
   minItems?: number;
   uniqueItems?: boolean;

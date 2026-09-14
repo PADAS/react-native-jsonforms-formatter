@@ -60,6 +60,19 @@ const validateV2Schema = (schema: V2Schema): void => {
         invalidFields.push(`${fieldName}: CHOICE_LIST field requires embedded oneOf or enum arrays - $ref not supported`);
       }
     }
+
+    if (uiField.type === 'ATTACHMENT') {
+      const hasItemKey =
+        property.items?.properties !== undefined &&
+        Object.keys(property.items.properties).length > 0;
+      const hasRequired =
+        Array.isArray(property.items?.required) &&
+        property.items!.required!.length > 0;
+
+      if (property.type !== 'array' || !hasItemKey || !hasRequired) {
+        invalidFields.push(`${fieldName}: ATTACHMENT field requires an array type with items.properties and items.required`);
+      }
+    }
   });
 
   // Validate section conditions

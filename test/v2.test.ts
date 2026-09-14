@@ -977,6 +977,278 @@ describe('BOOLEAN field type', () => {
   });
 });
 
+// ─── ATTACHMENT field type ───────────────────────────────────────────────────
+
+describe('ATTACHMENT field type', () => {
+  const attachmentSchema: V2Schema = {
+    json: {
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      additionalProperties: false,
+      properties: {
+        photo: {
+          deprecated: false,
+          title: 'Attachment Field',
+          description: 'Upload files',
+          type: 'array',
+          uniqueItems: true,
+          minItems: 0,
+          maxItems: 5,
+          items: {
+            type: 'object',
+            properties: {
+              uploadId: {
+                format: 'uuid',
+                type: 'string',
+              },
+            },
+            required: ['uploadId'],
+            unevaluatedProperties: false,
+          },
+        },
+      },
+      required: [],
+      type: 'object',
+    },
+    ui: {
+      fields: {
+        photo: {
+          type: 'ATTACHMENT',
+          parent: 'section-1',
+          allowableFileTypes: ['image'],
+        },
+      },
+      headers: {},
+      order: ['section-1'],
+      sections: {
+        'section-1': {
+          columns: 1,
+          isActive: true,
+          label: 'Attachments',
+          leftColumn: [{ name: 'photo', type: 'field' }],
+          rightColumn: [],
+        },
+      },
+    },
+  };
+
+  it('generates a file control with array semantics', () => {
+    const result = generateUISchema(attachmentSchema);
+    const control = result.elements![0].elements![0];
+    expect(control).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/photo',
+      label: 'Attachment Field',
+      options: {
+        format: 'file',
+        multi: true,
+        maxItems: 5,
+        minItems: 0,
+        uniqueItems: true,
+        itemKey: 'uploadId',
+        accept: 'image',
+        description: 'Upload files',
+      },
+    });
+  });
+
+  it('omits maxItems/minItems when not declared', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      json: {
+        ...attachmentSchema.json,
+        properties: {
+          photo: (() => {
+            const { minItems, maxItems, ...rest } = attachmentSchema.json.properties.photo;
+            return rest;
+          })(),
+        },
+      },
+    };
+    const result = generateUISchema(schema);
+    const control = result.elements![0].elements![0];
+    expect(control.options).toMatchObject({
+      format: 'file',
+      multi: true,
+      uniqueItems: true,
+      itemKey: 'uploadId',
+    });
+    expect(control.options!.maxItems).toBeUndefined();
+    expect(control.options!.minItems).toBeUndefined();
+  });
+
+  it('joins multiple allowableFileTypes into accept', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      ui: {
+        ...attachmentSchema.ui,
+        fields: {
+          photo: {
+            ...attachmentSchema.ui.fields.photo,
+            allowableFileTypes: ['image', 'document'],
+          },
+        },
+      },
+    };
+    const result = generateUISchema(schema);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.accept).toBe('image,document');
+  });
+
+  it('derives itemKey from items.required, not property declaration order', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      json: {
+        ...attachmentSchema.json,
+        properties: {
+          photo: {
+            deprecated: false,
+            title: 'Attachment Field',
+            type: 'array',
+            items: {
+              type: 'object',
+              // caption declared first, but uploadId is the binding (required) key
+              properties: {
+                caption: { type: 'string' },
+                uploadId: { format: 'uuid', type: 'string' },
+              },
+              required: ['uploadId'],
+              unevaluatedProperties: false,
+            },
+          },
+        },
+      },
+    };
+    const result = generateUISchema(schema);
+    const control = result.elements![0].elements![0];
+    expect(control.options!.itemKey).toBe('uploadId');
+  });
+
+  it('supports ATTACHMENT inside a COLLECTION', () => {
+    const schema: V2Schema = {
+      json: {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        additionalProperties: false,
+        required: [],
+        type: 'object',
+        properties: {
+          arrests: {
+            deprecated: false,
+            title: 'Arrests',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { title: 'Name', type: 'string' },
+                arrestee_photo: {
+                  title: 'Arrestee Photo',
+                  type: 'array',
+                  uniqueItems: true,
+                  maxItems: 3,
+                  items: {
+                    type: 'object',
+                    properties: { uploadId: { format: 'uuid', type: 'string' } },
+                    required: ['uploadId'],
+                    unevaluatedProperties: false,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      ui: {
+        fields: {
+          arrests: {
+            type: 'COLLECTION',
+            parent: 'section-1',
+            buttonText: 'Add Arrest',
+            leftColumn: ['arrests.name', 'arrests.arrestee_photo'],
+            rightColumn: [],
+          },
+          'arrests.name': {
+            type: 'TEXT',
+            inputType: 'SHORT_TEXT',
+            parent: 'arrests',
+          },
+          'arrests.arrestee_photo': {
+            type: 'ATTACHMENT',
+            parent: 'arrests',
+            allowableFileTypes: ['image'],
+          },
+        },
+        headers: {},
+        order: ['section-1'],
+        sections: {
+          'section-1': {
+            columns: 1,
+            isActive: true,
+            label: 'Arrests',
+            leftColumn: [{ name: 'arrests', type: 'field' }],
+            rightColumn: [],
+          },
+        },
+      },
+    };
+
+    const result = generateUISchema(schema);
+    const collectionControl = result.elements![0].elements![0];
+    const detail = collectionControl.options!.detail;
+    const photoControl = detail!.elements![1];
+
+    expect(photoControl).toMatchObject({
+      type: 'Control',
+      scope: '#/properties/arrestee_photo',
+      label: 'Arrestee Photo',
+      options: {
+        format: 'file',
+        multi: true,
+        maxItems: 3,
+        uniqueItems: true,
+        itemKey: 'uploadId',
+        accept: 'image',
+      },
+    });
+  });
+
+  it('throws when an ATTACHMENT field is not an array', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      json: {
+        ...attachmentSchema.json,
+        properties: {
+          photo: {
+            deprecated: false,
+            title: 'Bad Attachment',
+            type: 'string',
+          },
+        },
+      },
+    };
+    expect(() => generateUISchema(schema)).toThrow(/ATTACHMENT field requires an array type/);
+  });
+
+  it('throws when an ATTACHMENT array lacks items.required', () => {
+    const schema: V2Schema = {
+      ...attachmentSchema,
+      json: {
+        ...attachmentSchema.json,
+        properties: {
+          photo: {
+            deprecated: false,
+            title: 'Bad Attachment',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: { uploadId: { format: 'uuid', type: 'string' } },
+            },
+          },
+        },
+      },
+    };
+    expect(() => generateUISchema(schema)).toThrow(/ATTACHMENT field requires an array type/);
+  });
+});
+
 // ─── enum + x-enumExtra (issue #41) ──────────────────────────────────────────
 
 const enumChoiceSchema: V2Schema = {
