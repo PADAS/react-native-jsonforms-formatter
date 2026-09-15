@@ -580,6 +580,64 @@ describe('buildSchemaBasedCondition', () => {
       });
     });
   });
+
+  describe('field grouping', () => {
+    it('same-field conditions are OR\'d (anyOf) with no schema flag needed', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'yes'),
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'no'),
+      ]) as any;
+      expect(result.schema.anyOf).toHaveLength(2);
+      expect(result.schema.allOf).toBeUndefined();
+    });
+
+    it('each same-field condition is still field-wrapped under anyOf', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'yes'),
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'no'),
+      ]) as any;
+      expect(result.schema.anyOf[0].properties.yes_or_no).toBeDefined();
+      expect(result.schema.anyOf[0].required).toContain('yes_or_no');
+    });
+
+    it('three same-field conditions all OR together', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('status', 'IS_EXACTLY', 'active'),
+        makeCondition('status', 'IS_EXACTLY', 'pending'),
+        makeCondition('status', 'IS_EXACTLY', 'closed'),
+      ]) as any;
+      expect(result.schema.anyOf).toHaveLength(3);
+    });
+
+    it('different-field conditions are AND\'d (allOf), unchanged from before', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('injured_animal', 'CONTAINS', 'elephant'),
+        makeCondition('requires_attention', 'IS_NOT_EMPTY'),
+      ]) as any;
+      expect(result.schema.allOf).toHaveLength(2);
+      expect(result.schema.anyOf).toBeUndefined();
+    });
+
+    it('mixes grouping: same-field group OR\'d, then AND\'d with other fields', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'yes'),
+        makeCondition('yes_or_no', 'IS_EXACTLY', 'no'),
+        makeCondition('requires_attention', 'IS_NOT_EMPTY'),
+      ]) as any;
+      expect(result.schema.allOf).toHaveLength(2);
+      // First group: the two yes_or_no conditions, OR'd
+      expect(result.schema.allOf[0].anyOf).toHaveLength(2);
+      // Second group: the single requires_attention condition, not wrapped in anyOf
+      expect(result.schema.allOf[1].properties.requires_attention).toBeDefined();
+    });
+
+    it('field grouping does not apply to a single condition', () => {
+      const result = buildSchemaBasedCondition([
+        makeCondition('injured_animal', 'CONTAINS', 'elephant'),
+      ]);
+      expect(result.scope).toBe('#/properties/injured_animal');
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -606,6 +664,22 @@ describe('createSectionRule', () => {
       { field: 'injured_animal', id: 'c1', operator: 'IS_EMPTY' },
     ]);
     expect(rule.condition.scope).toBe('#');
+  });
+
+  it('uses anyOf for multiple conditions on the same field, with no flag needed', () => {
+    const rule = createSectionRule([
+      { field: 'yes_or_no', id: 'c1', operator: 'IS_EXACTLY', value: 'yes' },
+      { field: 'yes_or_no', id: 'c2', operator: 'IS_EXACTLY', value: 'no' },
+    ]) as any;
+    expect(rule.condition.schema.anyOf).toHaveLength(2);
+  });
+
+  it('uses allOf for multiple conditions on different fields', () => {
+    const rule = createSectionRule([
+      { field: 'injured_animal', id: 'c1', operator: 'CONTAINS', value: 'elephant' },
+      { field: 'requires_attention', id: 'c2', operator: 'IS_NOT_EMPTY' },
+    ]) as any;
+    expect(rule.condition.schema.allOf).toHaveLength(2);
   });
 });
 
