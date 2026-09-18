@@ -341,13 +341,44 @@ export const buildConditionSchema = (
 };
 
 /**
+ * Groups conditions by field, preserving the order fields first appear in.
+ */
+const groupConditionsByField = (conditions: V2Condition[]): V2Condition[][] => {
+  const order: string[] = [];
+  const groups: Record<string, V2Condition[]> = {};
+
+  conditions.forEach((condition) => {
+    if (!groups[condition.field]) {
+      groups[condition.field] = [];
+      order.push(condition.field);
+    }
+    groups[condition.field].push(condition);
+  });
+
+  return order.map((field) => groups[field]);
+};
+
+const buildFieldGroupSchema = (group: V2Condition[]): Record<string, unknown> => {
+  if (group.length === 1) {
+    return buildConditionSchema(group[0]);
+  }
+
+  return {
+    anyOf: group.map((condition) => buildConditionSchema(condition)),
+  };
+};
+
+/**
  * Builds a JSONForms schema-based condition from one or more V2 conditions.
  *
  * Single condition:
  *   - IS_EMPTY → root scope "#" (must check for field absence at object level)
  *   - All others → field scope "#/properties/fieldName"
  *
- * Multiple conditions: root scope "#" with allOf combining all condition schemas.
+ * Multiple conditions: grouped by field, then combined at root scope "#" —
+ * conditions on the same field are OR'd together (anyOf) as alternative
+ * values, and the resulting per-field groups are AND'd together (allOf) as
+ * independent requirements.
  */
 export const buildSchemaBasedCondition = (
   conditions: V2Condition[],
@@ -372,13 +403,19 @@ export const buildSchemaBasedCondition = (
     };
   }
 
-  // Multiple conditions: combine with allOf at root scope
-  const allOfSchemas = conditions.map((condition) => buildConditionSchema(condition));
+  const groups = groupConditionsByField(conditions);
+
+  if (groups.length === 1) {
+    return {
+      scope: '#',
+      schema: buildFieldGroupSchema(groups[0]),
+    };
+  }
 
   return {
     scope: '#',
     schema: {
-      allOf: allOfSchemas,
+      allOf: groups.map((group) => buildFieldGroupSchema(group)),
     },
   };
 };
