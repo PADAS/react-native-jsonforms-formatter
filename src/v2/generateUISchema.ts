@@ -102,7 +102,7 @@ const validateV2Schema = (schema: V2Schema): void => {
  * 
  * React Native Optimization:
  * - All layouts are converted to single-column VerticalLayout
- * - Multi-column sections are flattened: leftColumn fields first, then rightColumn fields
+ * - Two-column sections are flattened row by row: left[0], right[0], left[1], right[1], ...
  * - Optimized for mobile form rendering
  * 
  * @param schema - EarthRanger V2 schema with json and ui properties

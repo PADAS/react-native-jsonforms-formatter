@@ -194,6 +194,35 @@ export const createHeaderLabel = (
 };
 
 /**
+ * Flattens left/right columns into a single column in row order:
+ * left[0], right[0], left[1], right[1], ... followed by any remaining
+ * items from the longer column. Non-two-column layouts keep the
+ * leftColumn items first, then any rightColumn items.
+ */
+export const flattenColumns = <T>(
+  leftColumn: T[] = [],
+  rightColumn: T[] = [],
+  columns?: number,
+): T[] => {
+  if (columns !== 2) {
+    return [...leftColumn, ...rightColumn];
+  }
+
+  const flattened: T[] = [];
+  const rowCount = Math.max(leftColumn.length, rightColumn.length);
+  for (let i = 0; i < rowCount; i++) {
+    if (i < leftColumn.length) {
+      flattened.push(leftColumn[i]);
+    }
+    if (i < rightColumn.length) {
+      flattened.push(rightColumn[i]);
+    }
+  }
+
+  return flattened;
+};
+
+/**
  * Creates a single-column vertical layout for a section
  */
 export const createSectionLayout = (
@@ -208,29 +237,10 @@ export const createSectionLayout = (
     elements: [],
   };
 
-  // Order: leftColumn items first, then rightColumn items
+  // Order: two-column sections are read row by row (left, right, left, right, ...)
   const orderedElements: JSONFormsUIElement[] = [];
 
-  // Add left column elements first
-  section.leftColumn.forEach((item) => {
-    if (item.type === "field") {
-      const element = fieldControls.find(
-        (el) => el.scope === `#/properties/${item.name}`,
-      );
-      if (element) {
-        orderedElements.push(element);
-      }
-    } else if (item.type === "header") {
-      const header = headers[item.name];
-      if (header) {
-        const headerLabel = createHeaderLabel(item.name, header);
-        orderedElements.push(headerLabel);
-      }
-    }
-  });
-
-  // Add right column elements after left column
-  section.rightColumn.forEach((item) => {
+  flattenColumns(section.leftColumn, section.rightColumn, section.columns).forEach((item) => {
     if (item.type === "field") {
       const element = fieldControls.find(
         (el) => el.scope === `#/properties/${item.name}`,
@@ -460,27 +470,14 @@ const generateCollectionUISchemaInternal = (
     return control;
   };
 
-  // If leftColumn/rightColumn are specified, use that order
+  // If leftColumn/rightColumn are specified, use that order (row by row for two columns)
   if (uiField && (uiField.leftColumn || uiField.rightColumn)) {
-    // Add left column fields first
-    if (uiField.leftColumn) {
-      uiField.leftColumn.forEach((columnEntry) => {
-        const localName = getLocalName(columnEntry);
-        if (itemProperties[localName]) {
-          itemControls.push(createItemControl(localName, itemProperties[localName]));
-        }
-      });
-    }
-
-    // Add right column fields after (React Native single-column)
-    if (uiField.rightColumn) {
-      uiField.rightColumn.forEach((columnEntry) => {
-        const localName = getLocalName(columnEntry);
-        if (itemProperties[localName]) {
-          itemControls.push(createItemControl(localName, itemProperties[localName]));
-        }
-      });
-    }
+    flattenColumns(uiField.leftColumn, uiField.rightColumn, uiField.columns).forEach((columnEntry) => {
+      const localName = getLocalName(columnEntry);
+      if (itemProperties[localName]) {
+        itemControls.push(createItemControl(localName, itemProperties[localName]));
+      }
+    });
   } else {
     Object.entries(itemProperties).forEach(([localName, property]) => {
       itemControls.push(createItemControl(localName, property));
