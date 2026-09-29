@@ -253,13 +253,13 @@ describe('V2 generateUISchema', () => {
       minItems: 1
     });
 
-    // Check that the detail UI schema respects leftColumn/rightColumn order
+    // Check that the detail UI schema reads the two columns row by row
     expect(collectionControl.options.detail).toMatchObject({
       type: 'VerticalLayout',
       elements: [
         { type: 'Control', scope: '#/properties/field1', label: 'field1' },
-        { type: 'Control', scope: '#/properties/field2', label: 'field2' },
-        { type: 'Control', scope: '#/properties/field3', label: 'field3' }
+        { type: 'Control', scope: '#/properties/field3', label: 'field3' },
+        { type: 'Control', scope: '#/properties/field2', label: 'field2' }
       ]
     });
   });
@@ -280,19 +280,110 @@ describe('V2 generateUISchema', () => {
     expect(secondSection.type).toBe('VerticalLayout');
     expect(secondSection.label).toBe('Location & Equipment');
     
-    // Fields are combined into single column: leftColumn first, then rightColumn
+    // Fields are combined into single column row by row: left[0], right[0], ...
     expect(secondSection.elements).toHaveLength(2); // patrol_location + equipment_used
-    
+
     expect(secondSection.elements![0]).toMatchObject({
       type: 'Control',
       scope: '#/properties/patrol_location',
       label: 'Patrol Location'
     });
-    
+
     expect(secondSection.elements![1]).toMatchObject({
       type: 'Control',
       scope: '#/properties/equipment_used',
       label: 'Equipment Used'
+    });
+  });
+
+  describe('column ordering', () => {
+    const buildColumnSchema = (
+      leftColumn: string[],
+      rightColumn: string[],
+      columns: 1 | 2 = 2,
+    ): V2Schema => {
+      const fieldNames = [...leftColumn, ...rightColumn];
+      return {
+        json: {
+          $schema: 'https://json-schema.org/draft/2020-12/schema',
+          type: 'object',
+          additionalProperties: false,
+          properties: Object.fromEntries(fieldNames.map(name => [
+            name,
+            { type: 'number', title: name, deprecated: false }
+          ])),
+          required: []
+        },
+        ui: {
+          fields: Object.fromEntries(fieldNames.map(name => [
+            name,
+            { type: 'NUMERIC', parent: 'section-1' }
+          ])),
+          headers: {},
+          order: ['section-1'],
+          sections: {
+            'section-1': {
+              columns,
+              isActive: true,
+              label: '',
+              leftColumn: leftColumn.map(name => ({ type: 'field', name })),
+              rightColumn: rightColumn.map(name => ({ type: 'field', name }))
+            }
+          }
+        }
+      } as V2Schema;
+    };
+
+    const scopesOf = (schema: V2Schema): string[] =>
+      generateUISchema(schema).elements![0].elements!.map((el: any) =>
+        el.scope.replace('#/properties/', '')
+      );
+
+    it('should read two column sections row by row when the left column is longer', () => {
+      const schema = buildColumnSchema(
+        ['species', 'numbermales', 'numberjuveniles', 'distance', 'pastureuse', 'collared'],
+        ['numberanimals', 'numberfemales', 'bearing', 'activity', 'additionalInfo']
+      );
+
+      expect(scopesOf(schema)).toEqual([
+        'species',
+        'numberanimals',
+        'numbermales',
+        'numberfemales',
+        'numberjuveniles',
+        'bearing',
+        'distance',
+        'activity',
+        'pastureuse',
+        'additionalInfo',
+        'collared'
+      ]);
+    });
+
+    it('should append remaining right column items when the right column is longer', () => {
+      const schema = buildColumnSchema(['a'], ['b', 'c', 'd']);
+
+      expect(scopesOf(schema)).toEqual(['a', 'b', 'c', 'd']);
+    });
+
+    it('should interleave headers by their row position', () => {
+      const schema = buildColumnSchema(['a', 'c'], ['b']);
+      schema.ui.headers = { 'header-1': { label: 'Right Header', size: 'MEDIUM' } } as any;
+      schema.ui.sections['section-1'].rightColumn.unshift({ type: 'header', name: 'header-1' });
+
+      const elements = generateUISchema(schema).elements![0].elements!;
+      expect(elements.map((el: any) => el.scope ?? el.text)).toEqual([
+        '#/properties/a',
+        'Right Header',
+        '#/properties/c',
+        '#/properties/b'
+      ]);
+    });
+
+    it('should keep leftColumn then rightColumn order for single column sections', () => {
+      const schema = buildColumnSchema(['a', 'b'], ['c'], 1);
+
+      expect(scopesOf(schema)).toEqual(['a', 'b', 'c']);
     });
   });
 
