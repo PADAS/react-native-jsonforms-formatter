@@ -21,6 +21,7 @@ export { extractConditionalProperties, extractConditionalRequired } from './util
 export type {
   V2Schema,
   V2Property,
+  V2EmptyChoiceItem,
   V2UIField,
   V2Section,
   V2Header,

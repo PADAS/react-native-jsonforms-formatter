@@ -1,6 +1,6 @@
 import { generateUISchema } from '../src/v2/generateUISchema';
 import { mockV2Schema } from '../src/v2/mockData';
-import { V2Schema } from '../src/common/types';
+import { V2EmptyChoiceItem, V2Schema } from '../src/common/types';
 
 describe('V2 generateUISchema', () => {
   it('should generate UI schema for basic V2 schema', () => {
@@ -1563,6 +1563,95 @@ describe('V2 generateUISchema — enum + x-enumExtra format (issue #41)', () => 
     const original = JSON.stringify(enumChoiceSchema.json);
     generateUISchema(enumChoiceSchema);
     expect(JSON.stringify(enumChoiceSchema.json)).toBe(original);
+  });
+});
+
+// ─── empty choice list: all choices inactive (not: {}) ──────────────────────
+
+const inactiveChoiceItem = (): V2EmptyChoiceItem => ({
+  type: 'string',
+  title: 'Choices',
+  description: 'All choices schema list',
+  'x-enumExtra': {},
+  not: {},
+});
+
+const buildInactiveChoiceSchema = (deprecated: boolean): V2Schema => ({
+  ...enumChoiceSchema,
+  json: {
+    ...enumChoiceSchema.json,
+    properties: {
+      Fire_Status: {
+        ...enumChoiceSchema.json.properties['Fire_Status'],
+        deprecated,
+        anyOf: [inactiveChoiceItem()],
+      },
+      Equipment: {
+        ...enumChoiceSchema.json.properties['Equipment'],
+        deprecated,
+        items: { type: 'string', anyOf: [inactiveChoiceItem()] },
+      },
+    },
+  },
+});
+
+describe('V2 generateUISchema — empty choice list (not: {})', () => {
+  it('accepts single and multi-select CHOICE_LIST fields whose choices are all inactive', () => {
+    expect(() => generateUISchema(buildInactiveChoiceSchema(false))).not.toThrow();
+  });
+
+  it('renders the controls without injecting options.oneOf', () => {
+    const controls = getAllControls(generateUISchema(buildInactiveChoiceSchema(false)));
+
+    expect(controls.map((control) => control.scope)).toEqual([
+      '#/properties/Fire_Status',
+      '#/properties/Equipment',
+    ]);
+    controls.forEach((control) => expect(control.options!.oneOf).toBeUndefined());
+  });
+
+  it('accepts deprecated fields with an empty choice list and leaves them out of the UI schema', () => {
+    const schema = buildInactiveChoiceSchema(true);
+
+    expect(() => generateUISchema(schema)).not.toThrow();
+    expect(getAllControls(generateUISchema(schema))).toHaveLength(0);
+  });
+
+  it('still rejects a CHOICE_LIST with no oneOf, enum or not', () => {
+    const schema: V2Schema = {
+      ...enumChoiceSchema,
+      json: {
+        ...enumChoiceSchema.json,
+        properties: {
+          ...enumChoiceSchema.json.properties,
+          Fire_Status: {
+            ...enumChoiceSchema.json.properties['Fire_Status'],
+            anyOf: [{ $ref: '/api/v2.0/schemas/choices.json?field=firerep_status' } as any],
+          },
+        },
+      },
+    };
+
+    expect(() => generateUISchema(schema)).toThrow(/Fire_Status: CHOICE_LIST field requires embedded oneOf or enum arrays/);
+  });
+
+  it('skips validation of deprecated fields that keep a UI definition', () => {
+    const schema: V2Schema = {
+      ...enumChoiceSchema,
+      json: {
+        ...enumChoiceSchema.json,
+        properties: {
+          ...enumChoiceSchema.json.properties,
+          Fire_Status: {
+            ...enumChoiceSchema.json.properties['Fire_Status'],
+            deprecated: true,
+            anyOf: [{ $ref: '/api/v2.0/schemas/choices.json?field=firerep_status' } as any],
+          },
+        },
+      },
+    };
+
+    expect(() => generateUISchema(schema)).not.toThrow();
   });
 });
 
