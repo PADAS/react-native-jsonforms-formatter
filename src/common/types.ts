@@ -32,6 +32,14 @@ export interface V2Schema {
   };
 }
 
+export interface V2EmptyChoiceItem {
+  type?: string;
+  title?: string;
+  description?: string;
+  not: Record<string, never>;
+  'x-enumExtra'?: Record<string, never>;
+}
+
 // Base property interface for nested properties (doesn't require deprecated/title)
 export interface V2BaseProperty {
   type: 'boolean' | 'string' | 'number' | 'array' | 'object';
@@ -44,6 +52,7 @@ export interface V2BaseProperty {
     | { $ref: string }
     | { oneOf: Array<{ const: any; title?: string }> }
     | { type?: string; title?: string; description?: string; enum: any[]; 'x-enumExtra'?: Record<string, { display: string; description?: string; [key: string]: unknown }> }
+    | V2EmptyChoiceItem
   >;
   items?: V2BaseProperty;
   properties?: Record<string, V2BaseProperty>;
