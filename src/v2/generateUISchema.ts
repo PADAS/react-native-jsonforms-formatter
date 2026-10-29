@@ -48,7 +48,8 @@ const validateV2Schema = (schema: V2Schema): void => {
       
       const isValidChoiceItem = (anyOfItem: any): boolean =>
         (anyOfItem.oneOf && Array.isArray(anyOfItem.oneOf)) ||
-        (anyOfItem.enum && Array.isArray(anyOfItem.enum));
+        (anyOfItem.enum && Array.isArray(anyOfItem.enum)) ||
+        (anyOfItem.not !== undefined && !anyOfItem.enum && !anyOfItem.oneOf);
 
       if (property.type === 'array' && property.items?.anyOf) {
         hasValidStructure = property.items.anyOf.some(isValidChoiceItem);
