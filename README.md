@@ -8,10 +8,10 @@ A Node.js library for validating JSONSchema and generating UISchema for a custom
 
 ## Features
 
-- ✅ **JSON Schema Validation**: Validates and sanitizes JSON schema strings
-- 🎨 **UI Schema Generation**: Creates UI schemas compatible with JSONForms
-- 📱 **React Native Ready**: Optimized for React Native applications
-- 🔄 **Dual Version Support**: V1 (legacy) and V2 (modern) schema formats
+-  **JSON Schema Validation**: Validates and sanitizes JSON schema strings
+-  **UI Schema Generation**: Creates UI schemas compatible with JSONForms
+-  **React Native Ready**: Optimized for React Native applications
+-  **Dual Version Support**: V1 (legacy) and V2 (modern) schema formats
 
 ## Architecture
 
