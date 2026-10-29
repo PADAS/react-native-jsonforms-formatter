@@ -26,8 +26,8 @@ const validateV2Schema = (schema: V2Schema): void => {
   Object.entries(schema.json.properties).forEach(([fieldName, property]) => {
     const uiField = schema.ui.fields[fieldName];
     
-    // Skip deprecated fields without UI definitions (they won't be rendered anyway)
-    if (!uiField && property.deprecated) {
+    // Skip deprecated fields (they won't be rendered anyway)
+    if (property.deprecated) {
       return;
     }
     
