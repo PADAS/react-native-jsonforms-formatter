@@ -1,6 +1,6 @@
 import { generateUISchema } from '../src/v2/generateUISchema';
 import { mockV2Schema } from '../src/v2/mockData';
-import { V2Schema } from '../src/common/types';
+import { V2EmptyChoiceItem, V2Schema } from '../src/common/types';
 
 describe('V2 generateUISchema', () => {
   it('should generate UI schema for basic V2 schema', () => {
@@ -1568,7 +1568,7 @@ describe('V2 generateUISchema — enum + x-enumExtra format (issue #41)', () => 
 
 // ─── empty choice list: all choices inactive (not: {}) ──────────────────────
 
-const inactiveChoiceItem = (): any => ({
+const inactiveChoiceItem = (): V2EmptyChoiceItem => ({
   type: 'string',
   title: 'Choices',
   description: 'All choices schema list',
